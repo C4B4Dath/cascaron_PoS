@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Reportes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Libraries for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+/* Tab Styles */
+.tab-btn {
+    flex: 1; text-align: center; padding-bottom: 0.75rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent; transition: all 0.15s ease; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 0.375rem;
+}
+.tab-btn.active { color: var(--slate-900); border-bottom-color: var(--slate-900); }
+.tab-btn:not(.active) { color: var(--slate-400); }
+.tab-btn:not(.active):hover { color: var(--slate-600); }
+
+/* Report Card */
+.report-card {
+    border: 1px solid var(--slate-100); border-radius: 1rem; padding: 1.5rem;
+    background: white; transition: all 0.15s ease;
+}
+.report-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.report-card .formats { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+.report-card .format-badge {
+    padding: 0.125rem 0.5rem; border-radius: 0.375rem;
+    font-size: 0.625rem; font-weight: 800; text-transform: uppercase;
+}
+.format-badge.pdf { background: var(--rose-50); color: var(--rose-700); }
+.format-badge.csv { background: var(--blue-50); color: var(--blue-600); }
+.format-badge.xls { background: var(--amber-50); color: var(--amber-700); }
+.format-badge.xml { background: var(--purple-50); color: var(--purple-600); }
+
+/* Progress Bar */
+.progress-bar { height: 0.5rem; background: var(--slate-100); border-radius: 9999px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 9999px; transition: width 0.3s ease; }
+.progress-fill.emerald { background: var(--emerald-500); }
+.progress-fill.blue { background: var(--blue-500); }
+.progress-fill.amber { background: var(--amber-500); }
+
+/* Audit Badge */
+.audit-badge { padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.625rem; font-weight: 800; text-transform: uppercase; }
+.audit-badge.login { background: var(--blue-50); color: var(--blue-600); }
+.audit-badge.modify { background: var(--amber-50); color: var(--amber-700); }
+.audit-badge.delete { background: var(--rose-50); color: var(--rose-600); }
+.audit-badge.export { background: var(--emerald-50); color: var(--emerald-600); }
+.audit-badge.backup { background: var(--purple-50); color: var(--purple-600); }
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+
+/* Filter Bar */
+.filter-bar {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+    padding: 1rem; background: var(--slate-50); border-radius: 0.75rem; margin-bottom: 1rem;
+}
+.filter-bar .form-input { min-width: 140px; }
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+
+/* Submenu for Report Categories */
+.report-submenu {
+    display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+}
+.submenu-btn {
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 700; text-transform: uppercase;
+    background: var(--slate-100); color: var(--slate-600);
+    transition: all 0.15s ease; cursor: pointer; border: 1px solid transparent;
+}
+.submenu-btn:hover { background: var(--slate-200); }
+.submenu-btn.active { background: var(--slate-900); color: white; border-color: var(--slate-700); }
+
+/* Empty State */
+.empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--slate-400);
+}
+.empty-state i { width: 3rem; height: 3rem; margin: 0 auto 1rem; opacity: 0.5; }
+.empty-state p { font-size: 0.875rem; }
+
+/* Schedule Badge */
+.schedule-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.25rem 0.5rem; border-radius: 0.375rem;
+    font-size: 0.625rem; font-weight: 700; background: var(--blue-50); color: var(--blue-700);
+}
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-12 space-y-10">
+
+            <!-- Header with Actions -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-3">
+                        <i data-lucide="bar-chart-3" class="w-7 h-7 text-slate-400"></i>
+                        Reportes
+                    </h1>
+                    <p class="text-slate-500 mt-1 text-sm">Generación y exportación de informes del sistema</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openScheduleModal()" class="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span>Programar</span>
+                    </button>
+                    <button onclick="exportAll()" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Exportar Todo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-100 overflow-x-auto custom-scrollbar">
+                <button class="tab-btn active whitespace-nowrap" data-tab="ventas" onclick="switchTab('ventas')">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    <span>Ventas</span>
+                </button>
+                <button class="tab-btn whitespace-nowrap" data-tab="inventario" onclick="switchTab('inventario')">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>Inventario</span>
+                </button>
+                <button class="tab-btn whitespace-nowrap" data-tab="financieros" onclick="switchTab('financieros')">
+                    <i data-lucide="coins" class="w-4 h-4"></i>
+                    <span>Financieros</span>
+                </button>
+                <button class="tab-btn whitespace-nowrap" data-tab="fiscales" onclick="switchTab('fiscales')">
+                    <i data-lucide="file-check" class="w-4 h-4"></i>
+                    <span>Fiscales (SAT)</span>
+                </button>
+                <button class="tab-btn whitespace-nowrap" data-tab="analiticos" onclick="switchTab('analiticos')">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                    <span>Analíticos</span>
+                </button>
+                <button class="tab-btn whitespace-nowrap" data-tab="config" onclick="switchTab('config')">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>Configuración</span>
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tabContent" class="space-y-10">
+
+                <!-- VENTAS TAB -->
+                <div id="tab-ventas" class="tab-panel space-y-10">
+
+                    <!-- Submenu de Reportes de Ventas -->
+                    <div class="report-submenu">
+                        <button class="submenu-btn active" onclick="filterReportCategory('todos')">Todos</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('diarios')">Diarios</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('cajeros')">Por Cajero</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('productos')">Por Producto</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('cancelaciones')">Cancelaciones</button>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="filter-bar">
+                        <div class="relative flex-1 min-w-[200px]">
+                            <input type="text" id="filterSearch" placeholder="Buscar ticket o cajero..." class="form-input py-2 pl-9 pr-3 text-xs w-full" oninput="filterReports()">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                        <input type="date" id="filterDateFrom" class="form-input py-2 px-3 text-xs" title="Fecha desde" onchange="filterReports()">
+                        <input type="date" id="filterDateTo" class="form-input py-2 px-3 text-xs" title="Fecha hasta" onchange="filterReports()">
+                        <select id="filterMethod" class="form-input py-2 px-3 text-xs cursor-pointer" onchange="filterReports()">
+                            <option value="">Todos los métodos</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                            <option value="Transferencia">Transferencia</option>
+                        </select>
+                        <button onclick="resetFilters()" class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                            <i data-lucide="refresh-ccw" class="w-3.5 h-3.5"></i>Limpiar
+                        </button>
+                    </div>
+
+                    <!-- Report Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Ventas Diarias -->
+                        <div class="report-card space-y-4" data-category="diarios">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                    Ventas Diarias
+                                </h3>
+                                <p class="text-xs text-slate-400">Resumen de transacciones del día con desglose por hora</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('ventas-diarias')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Ventas por Cajero -->
+                        <div class="report-card space-y-4" data-category="cajeros">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+                                    Ventas por Cajero
+                                </h3>
+                                <p class="text-xs text-slate-400">Comparativa de productividad entre empleados</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('ventas-cajero')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Productos Más Vendidos -->
+                        <div class="report-card space-y-4" data-category="productos">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i>
+                                    Productos Top
+                                </h3>
+                                <p class="text-xs text-slate-400">Ranking de productos con mayor rotación y margen</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('productos-top')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Corte de Caja -->
+                        <div class="report-card space-y-4" data-category="diarios">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="cash" class="w-4 h-4 text-slate-400"></i>
+                                    Corte de Caja
+                                </h3>
+                                <p class="text-xs text-slate-400">Documento oficial con desglose de efectivo por turno</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('corte-caja')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Cancelaciones -->
+                        <div class="report-card space-y-4" data-category="cancelaciones">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="circle-x" class="w-4 h-4 text-rose-500"></i>
+                                    Cancelaciones
+                                </h3>
+                                <p class="text-xs text-slate-400">Reporte de tickets anulados con motivo y responsable</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('cancelaciones')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Ventas por Hora -->
+                        <div class="report-card space-y-4" data-category="diarios">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+                                    Ventas por Hora
+                                </h3>
+                                <p class="text-xs text-slate-400">Gráfico de barras con picos de venta por franja horaria</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge png">PNG</span>
+                            </div>
+                            <button onclick="generateReport('ventas-hora')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sales Summary Table -->
+                    <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                        <div class="p-5 border-b border-slate-100 flex justify-between items-center flex-wrap gap-3">
+                            <div>
+                                <h3 class="font-bold text-slate-900">Resumen de Ventas</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Últimas transacciones completadas</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-mono text-slate-500" id="salesCount">0 tickets</span>
+                                <button onclick="renderSalesTable()" class="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1 transition-colors">
+                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>Actualizar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
+                                        <th class="p-4 pl-6">Ticket</th>
+                                        <th class="p-4">Fecha</th>
+                                        <th class="p-4">Cajero</th>
+                                        <th class="p-4">Método</th>
+                                        <th class="p-4 text-right">Total</th>
+                                        <th class="p-4 text-center pr-6">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INVENTARIO TAB -->
+                <div id="tab-inventario" class="tab-panel hidden space-y-10">
+
+                    <!-- Submenu de Reportes de Inventario -->
+                    <div class="report-submenu">
+                        <button class="submenu-btn active" onclick="filterReportCategory('todos', 'inventario')">Todos</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('stock', 'inventario')">Stock</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('rotacion', 'inventario')">Rotación</button>
+                        <button class="submenu-btn" onclick="filterReportCategory('merma', 'inventario')">Merma</button>
+                    </div>
+
+                    <!-- Report Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Stock Crítico -->
+                        <div class="report-card space-y-4" data-category="stock">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+                                    Stock Crítico ⚠️
+                                </h3>
+                                <p class="text-xs text-slate-400">Productos con ≤5 unidades, con proveedor y costo de reposición</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                                <span class="format-badge csv">Email</span>
+                            </div>
+                            <button onclick="generateReport('stock-critico')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Rotación de Productos -->
+                        <div class="report-card space-y-4" data-category="rotacion">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="repeat" class="w-4 h-4 text-slate-400"></i>
+                                    Rotación ABC
+                                </h3>
+                                <p class="text-xs text-slate-400">Ranking de productos por velocidad de venta (Análisis ABC)</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('rotacion-abc')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Valoración de Inventario -->
+                        <div class="report-card space-y-4" data-category="stock">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="calculator" class="w-4 h-4 text-slate-400"></i>
+                                    Valoración de Inventario
+                                </h3>
+                                <p class="text-xs text-slate-400">Valor total del stock a costo y a precio de venta</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('valoracion-inventario')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Productos Sin Movimiento -->
+                        <div class="report-card space-y-4" data-category="rotacion">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="pause" class="w-4 h-4 text-amber-500"></i>
+                                    Sin Movimiento
+                                </h3>
+                                <p class="text-xs text-slate-400">Ítems sin ventas en últimos 30/60/90 días</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('sin-movimiento')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Merma y Pérdidas -->
+                        <div class="report-card space-y-4" data-category="merma">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-500"></i>
+                                    Merma y Pérdidas
+                                </h3>
+                                <p class="text-xs text-slate-400">Reporte de ajustes negativos con motivo y responsable</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('merma-perdidas')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Sugerencia de Pedido -->
+                        <div class="report-card space-y-4" data-category="stock">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4 text-purple-500"></i>
+                                    Sugerencia de Pedido ✨
+                                </h3>
+                                <p class="text-xs text-slate-400">IA básica: cuánto pedir según ventas históricas y lead time</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">Email</span>
+                            </div>
+                            <button onclick="generateReport('sugerencia-pedido')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FINANCIEROS TAB -->
+                <div id="tab-financieros" class="tab-panel hidden space-y-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Flujo de Caja -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="arrow-down-up" class="w-4 h-4 text-slate-400"></i>
+                                    Flujo de Caja Diario
+                                </h3>
+                                <p class="text-xs text-slate-400">Entradas/salidas de efectivo con saldo acumulado</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('flujo-caja')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Utilidad por Producto -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="percent" class="w-4 h-4 text-slate-400"></i>
+                                    Utilidad por Producto
+                                </h3>
+                                <p class="text-xs text-slate-400">Margen real considerando costo, IVA y descuentos</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge xls">XLS</span>
+                                <span class="format-badge pdf">PDF</span>
+                            </div>
+                            <button onclick="generateReport('utilidad-producto')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Gastos Operativos -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="receipt" class="w-4 h-4 text-slate-400"></i>
+                                    Gastos Operativos
+                                </h3>
+                                <p class="text-xs text-slate-400">Registro de egresos: servicios, proveedores, nómina</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('gastos-operativos')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FISCALES TAB (SAT) -->
+                <div id="tab-fiscales" class="tab-panel hidden space-y-10">
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                        <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-bold text-amber-800">Reportes para el SAT</p>
+                            <p class="text-xs text-amber-700 mt-1">Estos reportes cumplen con los requisitos del Servicio de Administración Tributaria para declaración mensual. Los archivos XML incluyen timbrado digital válido.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Resumen CFDI -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="file-check" class="w-4 h-4 text-emerald-600"></i>
+                                    Resumen CFDI Emitidos
+                                </h3>
+                                <p class="text-xs text-slate-400">Total de facturas, montos, UUIDs para contabilidad</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge xml">XML</span>
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('resumen-cfdi')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Reporte para Contador -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i>
+                                    Reporte para Contador
+                                </h3>
+                                <p class="text-xs text-slate-400">Formato estandarizado con RFCs, conceptos, impuestos</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge xls">XLS</span>
+                                <span class="format-badge csv">CSV</span>
+                            </div>
+                            <button onclick="generateReport('reporte-contador')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- IVA Acumulado -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="percent" class="w-4 h-4 text-slate-400"></i>
+                                    IVA Acumulado
+                                </h3>
+                                <p class="text-xs text-slate-400">Cálculo de IVA trasladado y acreditable para declaración</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('iva-acumulado')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Backup para SAT -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="package" class="w-4 h-4 text-purple-600"></i>
+                                    Backup para SAT 📦
+                                </h3>
+                                <p class="text-xs text-slate-400">Paquete de XMLs + PDFs listo para subir al buzón tributario</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge xml">ZIP</span>
+                            </div>
+                            <button onclick="generateReport('backup-sat')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANALÍTICOS TAB -->
+                <div id="tab-analiticos" class="tab-panel hidden space-y-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Tendencia de Ventas -->
+                        <div class="report-card space-y-4 lg:col-span-2">
+                            <div class="flex justify-between items-center">
+                                <div class="space-y-1">
+                                    <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                        <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i>
+                                        Tendencia de Ventas
+                                    </h3>
+                                    <p class="text-xs text-slate-400">Línea de tiempo con comparación vs período anterior</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="format-badge pdf">PDF</span>
+                                    <span class="format-badge png">PNG</span>
+                                    <span class="format-badge csv">Interactive</span>
+                                </div>
+                            </div>
+                            <!-- Placeholder for chart -->
+                            <div class="h-48 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <i data-lucide="bar-chart-2" class="w-12 h-12 text-slate-300 mx-auto mb-2"></i>
+                                    <p class="text-xs text-slate-400">Gráfico interactivo de tendencia</p>
+                                    <p class="text-[10px] text-slate-300 mt-1">(Disponible en versión completa)</p>
+                                </div>
+                            </div>
+                            <button onclick="generateReport('tendencia-ventas')" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar Reporte</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Estacionalidad por Categoría -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="calendar-range" class="w-4 h-4 text-slate-400"></i>
+                                    Estacionalidad por Categoría
+                                </h3>
+                                <p class="text-xs text-slate-400">Qué categorías venden más en qué meses</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge png">PNG</span>
+                            </div>
+                            <button onclick="generateReport('estacionalidad')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+
+                        <!-- Análisis de Canasta -->
+                        <div class="report-card space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="shopping-bag" class="w-4 h-4 text-slate-400"></i>
+                                    Análisis de Canasta
+                                </h3>
+                                <p class="text-xs text-slate-400">Productos que se compran juntos (Market Basket Analysis)</p>
+                            </div>
+                            <div class="formats">
+                                <span class="format-badge pdf">PDF</span>
+                                <span class="format-badge xls">XLS</span>
+                            </div>
+                            <button onclick="generateReport('analisis-canasta')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-98 flex items-center justify-center gap-2">
+                                <span class="btn-text">Generar</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURACIÓN TAB -->
+                <div id="tab-config" class="tab-panel hidden space-y-10">
+
+                    <!-- Programación de Envíos -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-xs space-y-6">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+                            Programar Envíos Automáticos
+                        </h3>
+                        <p class="text-sm text-slate-500">Configura reportes para que se generen y envíen automáticamente por email</p>
+
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Reporte</label>
+                                    <select id="scheduleReport" class="form-input cursor-pointer">
+                                        <option value="ventas-diarias">Ventas Diarias</option>
+                                        <option value="stock-critico">Stock Crítico</option>
+                                        <option value="corte-caja">Corte de Caja</option>
+                                        <option value="resumen-cfdi">Resumen CFDI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Frecuencia</label>
+                                    <select id="scheduleFrequency" class="form-input cursor-pointer">
+                                        <option value="daily">Diario</option>
+                                        <option value="weekly" selected>Semanal (Lunes 8 AM)</option>
+                                        <option value="monthly">Mensual (Día 1)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label">Destinatarios (emails separados por coma)</label>
+                                <input type="text" id="scheduleRecipients" placeholder="admin@empresa.com, contador@empresa.com" class="form-input" value="admin@nexpos.com">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="scheduleAttachPDF" checked class="rounded border-slate-300">
+                                <label for="scheduleAttachPDF" class="text-sm text-slate-700">Adjuntar en PDF</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="scheduleAttachXLS" checked class="rounded border-slate-300">
+                                <label for="scheduleAttachXLS" class="text-sm text-slate-700">Adjuntar en Excel</label>
+                            </div>
+                            <button onclick="saveSchedule()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                                <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                                <span>Guardar Programación</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Plantillas Personalizadas -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-xs space-y-6">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="layout-template" class="w-4 h-4 text-slate-400"></i>
+                            Plantillas Personalizadas
+                        </h3>
+                        <p class="text-sm text-slate-500">Configura el aspecto de tus reportes: logo, colores, footer legal</p>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label">Logo de la Empresa</label>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
+                                        <i data-lucide="image" class="w-6 h-6 text-slate-400"></i>
+                                    </div>
+                                    <button class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">Cambiar logo</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Color Primario</label>
+                                    <input type="color" value="#0f172a" class="w-full h-10 rounded cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="form-label">Texto del Footer Legal</label>
+                                    <input type="text" placeholder="© 2026 Mi Empresa. Todos los derechos reservados." class="form-input" value="© 2026 NexPoS. RFC: NEXP240101XXX">
+                                </div>
+                            </div>
+                            <button onclick="saveTemplate()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>Guardar Plantilla</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Permisos por Rol -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-xs space-y-6">
+                        <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-slate-400"></i>
+                            Permisos por Rol
+                        </h3>
+                        <p class="text-sm text-slate-500">Define qué reportes puede ver y exportar cada tipo de usuario</p>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-xs font-black uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                                        <th class="p-3">Rol</th>
+                                        <th class="p-3 text-center">Ventas</th>
+                                        <th class="p-3 text-center">Inventario</th>
+                                        <th class="p-3 text-center">Financieros</th>
+                                        <th class="p-3 text-center">Fiscales</th>
+                                        <th class="p-3 text-center">Exportar</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="p-3 font-bold text-slate-900">Administrador</td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-slate-900">Gerente</td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="x" class="w-4 h-4 text-slate-300 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-amber-600 inline"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-slate-900">Cajero</td>
+                                        <td class="p-3 text-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="x" class="w-4 h-4 text-slate-300 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="x" class="w-4 h-4 text-slate-300 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="x" class="w-4 h-4 text-slate-300 inline"></i></td>
+                                        <td class="p-3 text-center"><i data-lucide="x" class="w-4 h-4 text-slate-300 inline"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button onclick="savePermissions()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            <span>Guardar Permisos</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal-overlay hidden fixed inset-0 bg-slate-950/20 backdrop-blur-xs flex items-center justify-center z-[100]">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Programar Envío</h3>
+                <button onclick="closeScheduleModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p class="text-sm text-slate-500 mb-4">Selecciona el reporte y la frecuencia de envío automático:</p>
+            <div class="space-y-3">
+                <select id="modalReport" class="form-input cursor-pointer">
+                    <option value="ventas-diarias">Ventas Diarias</option>
+                    <option value="stock-critico">Stock Crítico</option>
+                    <option value="corte-caja">Corte de Caja</option>
+                    <option value="resumen-cfdi">Resumen CFDI</option>
+                </select>
+                <select id="modalFrequency" class="form-input cursor-pointer">
+                    <option value="daily">Diario a las 8:00 AM</option>
+                    <option value="weekly" selected>Semanal (Lunes 8:00 AM)</option>
+                    <option value="monthly">Mensual (Día 1, 9:00 AM)</option>
+                </select>
+                <input type="email" id="modalEmail" placeholder="correo@empresa.com" class="form-input" value="admin@nexpos.com">
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeScheduleModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="confirmSchedule()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Programar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+
+    getSales() { return this._get('sales', []); },
+    setSales(s) { this._set('sales', s); },
+
+    getAuditLog() {
+        let log = this._get('audit_log', []);
+        if (log.length === 0) {
+            log = [
+                { id: 1, user: 'Diego Mendoza', action: 'login', detail: 'Acceso correcto al panel admin', timestamp: '28/05/2026 08:15:23' },
+                { id: 2, user: 'María López', action: 'modify', detail: 'Actualización de precio producto #142', timestamp: '28/05/2026 09:42:11' },
+                { id: 3, user: 'Carlos Rivera', action: 'delete', detail: 'Cancelación de ticket #TKT-48291', timestamp: '28/05/2026 10:05:47' },
+                { id: 4, user: 'Diego Mendoza', action: 'export', detail: 'Exportación de reporte de ventas', timestamp: '28/05/2026 11:30:00' },
+                { id: 5, user: 'Sistema', action: 'backup', detail: 'Backup automático de base de datos', timestamp: '28/05/2026 02:00:00' },
+            ];
+            this._set('audit_log', log);
+        }
+        return log;
+    },
+
+    seedDemoData() {
+        if (this.getSales().length === 0) {
+            this.setSales([
+                { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, items: [{ name: 'Paracetamol 500mg', quantity: 5, price: 45.00 }] },
+                { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, items: [{ name: 'Detergente Líquido 1L', quantity: 5, price: 120.00 }] },
+                { ticket: 'TKT-00429', date: '27/05/2026', time: '18:05', cashier: 'María López', method: 'Efectivo', status: 'Cancelada', subtotal: 297.41, iva: 47.59, total: 345.00, items: [] },
+                { ticket: 'TKT-00428', date: '27/05/2026', time: '16:30', cashier: 'María López', method: 'Tarjeta', status: 'Completada', subtotal: 489.48, iva: 78.32, total: 567.80, items: [{ name: 'Coca-Cola 600ml', quantity: 6, price: 18.50 }] },
+                { ticket: 'TKT-00427', date: '27/05/2026', time: '14:00', cashier: 'Carlos Ruiz', method: 'Efectivo', status: 'Completada', subtotal: 775.86, iva: 124.14, total: 900.00, items: [{ name: 'Leche Entera 1L', quantity: 10, price: 28.00 }] },
+            ]);
+        }
+    }
+};
+
+let currentTab = 'ventas';
+let currentFilters = { search: '', dateFrom: '', dateTo: '', method: '' };
+let currentReportCategory = 'todos';
+
+function init() {
+    DB.seedDemoData();
+    renderSalesTable();
+    renderAuditTable();
+    updateLastSync();
+    lucide.createIcons();
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+
+    // Hide all panels, show active
+    document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+
+    // Update tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+
+    lucide.createIcons();
+}
+
+function filterReportCategory(category, tab = 'ventas') {
+    currentReportCategory = category;
+
+    // Update submenu buttons
+    document.querySelectorAll(`#${tab === 'ventas' ? 'tab-ventas' : 'tab-inventario'} .submenu-btn`).forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+
+    // Filter report cards
+    const cards = document.querySelectorAll(`#${tab === 'ventas' ? 'tab-ventas' : 'tab-inventario'} .report-card`);
+    cards.forEach(card => {
+        if (category === 'todos' || card.dataset.category === category) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+}
+
+// === SALES TABLE ===
+function renderSalesTable() {
+    const sales = DB.getSales().filter(s => s.status === 'Completada');
+    const tbody = document.getElementById('salesBody');
+
+    document.getElementById('salesCount').innerText = `${sales.length} tickets`;
+
+    if (sales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Sin ventas registradas</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = sales.slice(0, 10).map(s => `
+        <tr class="hover:bg-slate-50/40 transition-colors">
+            <td class="p-4 pl-6 font-mono text-xs text-slate-400">${s.ticket}</td>
+            <td class="p-4 text-sm">${s.date} <span class="text-slate-400">${s.time}</span></td>
+            <td class="p-4 font-bold text-slate-900">${s.cashier}</td>
+            <td class="p-4"><span class="text-xs font-bold ${s.method === 'Efectivo' ? 'text-emerald-600' : 'text-blue-600'}">${s.method}</span></td>
+            <td class="p-4 text-right font-mono font-bold">$${s.total.toFixed(2)}</td>
+            <td class="p-4 text-center pr-6"><span class="audit-badge login">${s.status}</span></td>
+        </tr>
+    `).join('');
+
+    lucide.createIcons();
+}
+
+function filterReports() {
+    currentFilters.search = document.getElementById('filterSearch').value.toLowerCase();
+    currentFilters.dateFrom = document.getElementById('filterDateFrom').value;
+    currentFilters.dateTo = document.getElementById('filterDateTo').value;
+    currentFilters.method = document.getElementById('filterMethod').value;
+
+    const sales = DB.getSales().filter(s => {
+        const matchSearch = !currentFilters.search ||
+            s.ticket.toLowerCase().includes(currentFilters.search) ||
+            s.cashier.toLowerCase().includes(currentFilters.search);
+        const matchMethod = !currentFilters.method || s.method === currentFilters.method;
+        let matchDate = true;
+        if (currentFilters.dateFrom || currentFilters.dateTo) {
+            const [d, m, y] = s.date.split('/').map(Number);
+            const saleDate = new Date(y, m - 1, d);
+            if (currentFilters.dateFrom && saleDate < new Date(currentFilters.dateFrom)) matchDate = false;
+            if (currentFilters.dateTo && saleDate > new Date(currentFilters.dateTo)) matchDate = false;
+        }
+        return matchSearch && matchMethod && matchDate;
+    });
+
+    const tbody = document.getElementById('salesBody');
+    document.getElementById('salesCount').innerText = `${sales.length} tickets`;
+
+    if (sales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No hay resultados</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = sales.slice(0, 10).map(s => `
+        <tr class="hover:bg-slate-50/40 transition-colors">
+            <td class="p-4 pl-6 font-mono text-xs text-slate-400">${s.ticket}</td>
+            <td class="p-4 text-sm">${s.date} <span class="text-slate-400">${s.time}</span></td>
+            <td class="p-4 font-bold text-slate-900">${s.cashier}</td>
+            <td class="p-4"><span class="text-xs font-bold ${s.method === 'Efectivo' ? 'text-emerald-600' : 'text-blue-600'}">${s.method}</span></td>
+            <td class="p-4 text-right font-mono font-bold">$${s.total.toFixed(2)}</td>
+            <td class="p-4 text-center pr-6"><span class="audit-badge login">${s.status}</span></td>
+        </tr>
+    `).join('');
+}
+
+function resetFilters() {
+    document.getElementById('filterSearch').value = '';
+    document.getElementById('filterDateFrom').value = '';
+    document.getElementById('filterDateTo').value = '';
+    document.getElementById('filterMethod').value = '';
+    currentFilters = { search: '', dateFrom: '', dateTo: '', method: '' };
+    renderSalesTable();
+    showToast('Filtros restablecidos', 'success');
+}
+
+// === AUDIT TABLE ===
+function renderAuditTable() {
+    const log = DB.getAuditLog();
+    const tbody = document.getElementById('auditBody');
+
+    const actionLabels = { login: 'Inicio de Sesión', modify: 'Modificación', delete: 'Eliminación', export: 'Exportación', backup: 'Backup' };
+    const actionClasses = { login: 'login', modify: 'modify', delete: 'delete', export: 'export', backup: 'backup' };
+
+    tbody.innerHTML = log.map(entry => `
+        <tr class="hover:bg-slate-50/40 transition-colors">
+            <td class="p-4 pl-6 font-bold text-slate-900">${entry.user}</td>
+            <td class="p-4"><span class="audit-badge ${actionClasses[entry.action] || 'login'}">${actionLabels[entry.action] || entry.action}</span></td>
+            <td class="p-4 text-slate-500 truncate max-w-[250px]">${entry.detail}</td>
+            <td class="p-4 pr-6 font-mono text-xs text-slate-400">${entry.timestamp}</td>
+        </tr>
+    `).join('');
+
+    lucide.createIcons();
+}
+
+function exportAuditLog() {
+    const log = DB.getAuditLog();
+    const data = [['Usuario', 'Acción', 'Detalle', 'Fecha/Hora'], ...log.map(e => [e.user, e.action, e.detail, e.timestamp])];
+    const csv = data.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `NexPoS_Auditoria_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+
+    showToast('Auditoría exportada a CSV', 'success');
+}
+
+// === REPORT GENERATION ===
+function generateReport(type) {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        const sales = DB.getSales().filter(s => s.status === 'Completada');
+        const total = sales.reduce((sum, s) => sum + s.total, 0);
+
+        const reports = {
+            'ventas-diarias': { name: 'Ventas Diarias', formats: ['pdf', 'csv', 'xls'] },
+            'ventas-cajero': { name: 'Ventas por Cajero', formats: ['pdf', 'xls'] },
+            'productos-top': { name: 'Productos Más Vendidos', formats: ['pdf', 'xls'] },
+            'corte-caja': { name: 'Corte de Caja', formats: ['pdf', 'csv'] },
+            'cancelaciones': { name: 'Cancelaciones', formats: ['pdf', 'csv'] },
+            'ventas-hora': { name: 'Ventas por Hora', formats: ['pdf', 'png'] },
+            'stock-critico': { name: 'Stock Crítico', formats: ['pdf', 'xls', 'email'] },
+            'rotacion-abc': { name: 'Rotación ABC', formats: ['pdf', 'xls'] },
+            'valoracion-inventario': { name: 'Valoración de Inventario', formats: ['pdf', 'xls'] },
+            'sin-movimiento': { name: 'Productos Sin Movimiento', formats: ['pdf', 'csv'] },
+            'merma-perdidas': { name: 'Merma y Pérdidas', formats: ['pdf', 'csv'] },
+            'sugerencia-pedido': { name: 'Sugerencia de Pedido', formats: ['pdf', 'email'] },
+            'flujo-caja': { name: 'Flujo de Caja', formats: ['pdf', 'csv'] },
+            'utilidad-producto': { name: 'Utilidad por Producto', formats: ['xls', 'pdf'] },
+            'gastos-operativos': { name: 'Gastos Operativos', formats: ['pdf', 'csv'] },
+            'resumen-cfdi': { name: 'Resumen CFDI', formats: ['xml', 'pdf', 'csv'] },
+            'reporte-contador': { name: 'Reporte para Contador', formats: ['xls', 'csv'] },
+            'iva-acumulado': { name: 'IVA Acumulado', formats: ['pdf', 'xls'] },
+            'backup-sat': { name: 'Backup para SAT', formats: ['zip'] },
+            'tendencia-ventas': { name: 'Tendencia de Ventas', formats: ['pdf', 'png', 'interactive'] },
+            'estacionalidad': { name: 'Estacionalidad por Categoría', formats: ['pdf', 'png'] },
+            'analisis-canasta': { name: 'Análisis de Canasta', formats: ['pdf', 'xls'] },
+        };
+
+        const report = reports[type];
+        showToast(`${report.name} generado · ${sales.length} tickets · $${total.toFixed(2)}`, 'success');
+
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 1200);
+}
+
+function exportAll() {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        const sales = DB.getSales().filter(s => s.status === 'Completada');
+        const total = sales.reduce((sum, s) => sum + s.total, 0);
+
+        // Generate CSV
+        const data = [
+            ['Reporte General NexPoS', new Date().toLocaleString('es-MX')],
+            [''],
+            ['Total Ventas:', `$${total.toFixed(2)}`],
+            ['Tickets Emitidos:', sales.length],
+            ['Productos Vendidos:', sales.reduce((s, v) => s + (v.items || []).reduce((a, i) => a + i.quantity, 0), 0)],
+            [''],
+            ['Ticket', 'Fecha', 'Cajero', 'Método', 'Total', 'Estado'],
+            ...sales.map(s => [s.ticket, s.date, s.cashier, s.method, `$${s.total.toFixed(2)}`, s.status])
+        ];
+
+        const csv = data.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `NexPoS_Reporte_Completo_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+
+        showToast('Reporte completo exportado exitosamente', 'success');
+
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 1500);
+}
+
+function updateLastSync() {
+    const now = new Date();
+    document.getElementById('lastSync').innerText = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    setTimeout(updateLastSync, 60000); // Update every minute
+}
+
+// === SCHEDULE MODAL ===
+function openScheduleModal() {
+    document.getElementById('scheduleModal').classList.remove('hidden');
+    lucide.createIcons();
+}
+
+function closeScheduleModal() {
+    document.getElementById('scheduleModal').classList.add('hidden');
+}
+
+function saveSchedule() {
+    const report = document.getElementById('scheduleReport').value;
+    const frequency = document.getElementById('scheduleFrequency').value;
+    const recipients = document.getElementById('scheduleRecipients').value;
+
+    showToast(`Programado: ${report} ${frequency} a ${recipients}`, 'success');
+}
+
+function confirmSchedule() {
+    const report = document.getElementById('modalReport').value;
+    const frequency = document.getElementById('modalFrequency').value;
+    const email = document.getElementById('modalEmail').value;
+
+    closeScheduleModal();
+    showToast(`Programado: ${report} ${frequency} a ${email}`, 'success');
+}
+
+function saveTemplate() {
+    showToast('Plantilla guardada exitosamente', 'success');
+}
+
+function savePermissions() {
+    showToast('Permisos actualizados', 'success');
+}
+
+// === TOAST NOTIFICATIONS ===
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.add('hidden'); });
+});
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

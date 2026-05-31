@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Gestión de Usuarios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.animate-shake { animation: shake 0.3s ease; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+
+
+/* User Table Styles */
+.user-row { transition: background 0.15s ease; cursor: pointer; }
+.user-row:hover { background: var(--slate-50/40); }
+.user-row.selected { background: var(--blue-50); }
+.user-avatar {
+    width: 2.5rem; height: 2.5rem; border-radius: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
+    background: var(--slate-100); color: var(--slate-500);
+}
+.user-info-name { font-weight: 700; color: var(--slate-900); font-size: 0.875rem; }
+.user-info-code { font-size: 0.625rem; color: var(--slate-400); font-family: monospace; }
+
+/* Role Badge */
+.role-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.25rem 0.75rem; border-radius: 9999px;
+    font-size: 0.625rem; font-weight: 800; text-transform: uppercase;
+}
+.role-badge.admin { background: var(--slate-900); color: white; }
+.role-badge.encargado { background: var(--blue-600); color: white; }
+.role-badge.cajero { background: var(--slate-500); color: white; }
+.role-badge.audit { background: var(--purple-600); color: white; }
+
+/* Status Toggle */
+.status-toggle {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.25rem 0.625rem; border-radius: 9999px;
+    font-size: 0.625rem; font-weight: 800; cursor: pointer;
+    transition: all 0.15s ease;
+}
+.status-toggle.active { background: var(--emerald-50); color: var(--emerald-700); }
+.status-toggle.inactive { background: var(--slate-100); color: var(--slate-500); }
+
+/* Action Buttons */
+.action-btn {
+    width: 1.75rem; height: 1.75rem; border-radius: 0.375rem;
+    border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease; background: white;
+}
+.action-btn:hover { background: var(--slate-50); border-color: var(--slate-300); }
+.action-btn.edit:hover { color: var(--blue-600); border-color: var(--blue-200); background: var(--blue-50); }
+.action-btn.delete:hover { color: var(--rose-600); border-color: var(--rose-200); background: var(--rose-50); }
+.action-btn.more { color: var(--slate-400); }
+.action-btn.more:hover { color: var(--slate-600); background: var(--slate-100); }
+.action-btn.schedule { color: var(--amber-600); }
+.action-btn.schedule:hover { color: var(--amber-700); border-color: var(--amber-200); background: var(--amber-50); }
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute; top: 100%; right: 0; margin-top: 0.5rem;
+    background: white; border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; box-shadow: var(--shadow-xl);
+    min-width: 14rem; z-index: 50; display: none;
+}
+.dropdown-menu.show { display: block; animation: fadeIn 0.15s ease; }
+.dropdown-item {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 0.75rem; font-size: 0.75rem; cursor: pointer;
+    transition: background 0.15s ease;
+}
+.dropdown-item:hover { background: var(--slate-50); }
+.dropdown-item.danger { color: var(--rose-600); }
+.dropdown-item.danger:hover { background: var(--rose-50); }
+.dropdown-divider { border-top: 1px solid var(--slate-100); margin: 0.25rem 0; }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/20); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; visibility: hidden; transition: all 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 40rem;
+    box-shadow: var(--shadow-xl); transform: translateY(10px); transition: transform 0.2s ease;
+    max-height: 90vh; overflow-y: auto;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+/* Form Input */
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-input.error { border-color: var(--rose-500); background: var(--rose-50); }
+.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
+.form-error { font-size: 0.75rem; color: var(--rose-600); font-weight: 600; display: none; margin-top: 0.25rem; }
+.form-error.show { display: block; animation: fadeIn 0.2s ease; }
+
+/* Filter Bar */
+.filter-bar {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+    padding: 1rem; background: var(--slate-50); border-radius: 0.75rem; margin-bottom: 1rem;
+}
+.filter-bar .form-input { min-width: 140px; }
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    display: none; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; background: var(--blue-50);
+    border: 1px solid var(--blue-200); border-radius: 0.75rem;
+    margin-bottom: 1rem;
+}
+.bulk-actions-bar.show { display: flex; }
+.bulk-count { font-weight: 700; color: var(--blue-700); }
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+
+/* Empty State */
+.empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--slate-400);
+}
+.empty-state i { width: 3rem; height: 3rem; margin: 0 auto 1rem; opacity: 0.5; }
+.empty-state p { font-size: 0.875rem; }
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative; display: inline-block; width: 44px; height: 24px;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--slate-200); transition: .3s; border-radius: 24px;
+}
+.toggle-slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s; border-radius: 50%;
+}
+input:checked + .toggle-slider { background-color: var(--emerald-500); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+/* Activity Log */
+.activity-log { max-height: 200px; overflow-y: auto; }
+.activity-item {
+    display: flex; gap: 0.75rem; padding: 0.5rem 0;
+    border-bottom: 1px solid var(--slate-100); font-size: 0.75rem;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-icon {
+    width: 1.5rem; height: 1.5rem; border-radius: 0.375rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.activity-icon.login { background: var(--emerald-50); color: var(--emerald-600); }
+.activity-icon.logout { background: var(--slate-100); color: var(--slate-600); }
+.activity-icon.edit { background: var(--blue-50); color: var(--blue-600); }
+.activity-icon.danger { background: var(--rose-50); color: var(--rose-600); }
+
+/* Permissions Grid */
+.permissions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+.permission-item {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem; background: var(--slate-50);
+    border-radius: 0.5rem; font-size: 0.75rem;
+}
+.permission-item input { width: 1rem; height: 1rem; }
+
+/* Checkbox Custom */
+.checkbox-custom {
+    width: 1.25rem; height: 1.25rem; border: 2px solid var(--slate-300);
+    border-radius: 0.25rem; display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s ease;
+}
+.checkbox-custom.checked { background: var(--slate-900); border-color: var(--slate-900); color: white; }
+.checkbox-custom input { display: none; }
+
+/* Day Checkbox */
+.day-checkbox {
+    display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+    padding: 0.5rem; border: 1px solid var(--slate-200); border-radius: 0.5rem;
+    cursor: pointer; transition: all 0.15s ease; min-width: 3rem;
+}
+.day-checkbox:hover { border-color: var(--slate-300); background: var(--slate-50); }
+.day-checkbox.checked { border-color: var(--emerald-500); background: var(--emerald-50); }
+.day-checkbox input { display: none; }
+.day-checkbox .day-name { font-size: 0.625rem; font-weight: 700; color: var(--slate-600); }
+.day-checkbox.checked .day-name { color: var(--emerald-700); }
+.day-checkbox .day-check {
+    width: 1.25rem; height: 1.25rem; border-radius: 50%;
+    border: 2px solid var(--slate-300); display: flex; align-items: center; justify-content: center;
+}
+.day-checkbox.checked .day-check { background: var(--emerald-500); border-color: var(--emerald-500); color: white; }
+
+/* Schedule Preview Card */
+.schedule-preview {
+    background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 1rem;
+}
+.schedule-day {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.5rem 0; border-bottom: 1px dashed var(--slate-200);
+}
+.schedule-day:last-child { border-bottom: none; }
+.schedule-day-name { font-weight: 600; color: var(--slate-700); font-size: 0.875rem; }
+.schedule-day-time { font-size: 0.75rem; color: var(--slate-500); font-family: monospace; }
+.schedule-day-time.has-break { color: var(--amber-600); }
+
+/* Shift Type Selector */
+.shift-type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+.shift-type-option {
+    padding: 0.75rem; border: 2px solid var(--slate-200); border-radius: 0.75rem;
+    cursor: pointer; transition: all 0.15s ease; text-align: center;
+}
+.shift-type-option:hover { border-color: var(--slate-300); background: var(--slate-50); }
+.shift-type-option.selected { border-color: var(--blue-500); background: var(--blue-50); }
+.shift-type-name { font-weight: 700; color: var(--slate-900); font-size: 0.75rem; }
+.shift-type-hours { font-size: 0.625rem; color: var(--slate-500); margin-top: 0.25rem; }
+
+/* Tabs for modal */
+.tab-btn {
+    flex: 1; text-align: center; padding: 0.5rem;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent; transition: all 0.15s ease; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 0.25rem;
+}
+.tab-btn.active { color: var(--slate-900); border-bottom-color: var(--slate-900); }
+.tab-btn:not(.active) { color: var(--slate-400); }
+.tab-btn:not(.active):hover { color: var(--slate-600); }
+
+/* Schedule Table in Preview */
+.schedule-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.schedule-table th { text-align: left; padding: 0.5rem; background: var(--slate-100); font-weight: 700; color: var(--slate-600); }
+.schedule-table td { padding: 0.5rem; border-bottom: 1px solid var(--slate-100); }
+.schedule-table .day-cell { font-weight: 600; color: var(--slate-700); }
+.schedule-table .time-cell { font-family: monospace; color: var(--slate-500); }
+.schedule-table .break-cell { color: var(--amber-600); }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-12 space-y-8">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-3">
+                        <i data-lucide="users" class="w-7 h-7 text-slate-400"></i>
+                        Gestión de Usuarios
+                    </h1>
+                    <p class="text-slate-500 mt-1 text-sm">Administra empleados, roles, permisos y horarios</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="exportUsers()" class="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Exportar</span>
+                    </button>
+                    <button onclick="openUserModal()" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>Nuevo Empleado</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="relative flex-1 md:w-64">
+                    <input id="searchInput" type="text" placeholder="Buscar empleado..." class="form-input py-2 pl-9 pr-3 text-sm w-full" onkeyup="filterUsers()">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                </div>
+                <select id="filterRole" class="form-input py-2 px-3 text-xs cursor-pointer" onchange="filterUsers()">
+                    <option value="">Todos los roles</option>
+                    <option value="Admin">Administrador</option>
+                    <option value="Encargado">Encargado</option>
+                    <option value="Cajero">Cajero</option>
+                    <option value="Audit">Auditor</option>
+                </select>
+                <select id="filterBranch" class="form-input py-2 px-3 text-xs cursor-pointer" onchange="filterUsers()">
+                    <option value="">Todas las sucursales</option>
+                    <option value="Central">Central</option>
+                    <option value="Suc. Norte">Suc. Norte</option>
+                    <option value="Suc. Sur">Suc. Sur</option>
+                </select>
+                <button onclick="resetFilters()" class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    <i data-lucide="refresh-ccw" class="w-3.5 h-3.5"></i>Limpiar
+                </button>
+            </div>
+
+            <!-- Bulk Actions Bar -->
+            <div id="bulkActionsBar" class="bulk-actions-bar">
+                <span class="bulk-count" id="bulkCount">0 seleccionados</span>
+                <div class="h-4 w-px bg-blue-200"></div>
+                <button onclick="bulkActivate()" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>Activar
+                </button>
+                <button onclick="bulkDeactivate()" class="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1">
+                    <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i>Desactivar
+                </button>
+                <button onclick="bulkDelete()" class="text-xs font-bold text-rose-700 hover:text-rose-800 flex items-center gap-1">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Eliminar
+                </button>
+                <button onclick="cancelBulk()" class="ml-auto text-xs font-bold text-slate-500 hover:text-slate-700">
+                    Cancelar
+                </button>
+            </div>
+
+            <!-- Users Table -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
+                                <th class="p-4 pl-6 w-10">
+                                    <label class="checkbox-custom" id="selectAllCheckbox" onclick="toggleSelectAll()">
+                                        <input type="checkbox">
+                                        <i data-lucide="check" class="w-3 h-3"></i>
+                                    </label>
+                                </th>
+                                <th class="p-4">Empleado</th>
+                                <th class="p-4">Correo</th>
+                                <th class="p-4">Rol</th>
+                                <th class="p-4">Sucursal</th>
+                                <th class="p-4">Último Acceso</th>
+                                <th class="p-4">Estado</th>
+                                <th class="p-4 text-center pr-6">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="hidden empty-state">
+                    <i data-lucide="users" class="w-12 h-12 mx-auto mb-3"></i>
+                    <p>No se encontraron usuarios con los filtros aplicados</p>
+                </div>
+            </div>
+
+            <!-- Stats Footer -->
+            <div class="flex items-center justify-between text-sm text-slate-500">
+                <p id="resultsCount">Mostrando 0 resultados</p>
+                <p class="flex items-center gap-1">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                    <span>Los cambios se guardan automáticamente</span>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- User Modal (CRUD) -->
+    <div id="userModal" class="modal-overlay hidden fixed inset-0 bg-slate-950/20 backdrop-blur-xs flex items-center justify-center z-[100]">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900" id="modalTitle">Nuevo Empleado</h3>
+                <button onclick="closeUserModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <input type="hidden" id="modalUserId">
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <label class="form-label" for="modalName"><i data-lucide="user" class="w-3 h-3 inline mr-1"></i>Nombre Completo *</label>
+                    <input type="text" id="modalName" class="form-input" placeholder="Ej: Juan Pérez García">
+                    <p id="nameError" class="form-error flex items-center gap-1"><i data-lucide="circle-alert" class="w-3 h-3"></i><span>El nombre es requerido</span></p>
+                </div>
+                <div class="space-y-1">
+                    <label class="form-label" for="modalEmail"><i data-lucide="mail" class="w-3 h-3 inline mr-1"></i>Correo Electrónico *</label>
+                    <input type="email" id="modalEmail" class="form-input" placeholder="juan@nexpos.mx">
+                    <p id="emailError" class="form-error flex items-center gap-1"><i data-lucide="circle-alert" class="w-3 h-3"></i><span>Ingresa un correo válido</span></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="form-label" for="modalRole"><i data-lucide="shield" class="w-3 h-3 inline mr-1"></i>Rol *</label>
+                        <select id="modalRole" class="form-input cursor-pointer">
+                            <option value="Cajero">Cajero</option>
+                            <option value="Encargado">Encargado</option>
+                            <option value="Admin">Administrador</option>
+                            <option value="Audit">Auditor</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="form-label" for="modalBranch"><i data-lucide="store" class="w-3 h-3 inline mr-1"></i>Sucursal *</label>
+                        <select id="modalBranch" class="form-input cursor-pointer">
+                            <option value="Central">Central</option>
+                            <option value="Suc. Norte">Suc. Norte</option>
+                            <option value="Suc. Sur">Suc. Sur</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                    <div><p class="font-bold text-slate-900 text-sm">Estado de Cuenta</p><p class="text-xs text-slate-500">Activar o desactivar acceso</p></div>
+                    <label class="toggle-switch"><input type="checkbox" id="modalActive" checked><span class="toggle-slider"></span></label>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeUserModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="saveUser()" id="saveUserBtn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <span class="btn-text">Guardar Empleado</span><span class="spinner"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Modal (NEW - Functional for Demo) -->
+    <div id="scheduleModal" class="modal-overlay hidden fixed inset-0 bg-slate-950/20 backdrop-blur-xs flex items-center justify-center z-[100]">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-4xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900" id="scheduleModalTitle">Generar Horario</h3>
+                    <p class="text-xs text-slate-500 mt-1" id="scheduleModalUser">Para: Diego Mendoza</p>
+                </div>
+                <button onclick="closeScheduleModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="scheduleUserId">
+
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-100 mb-4">
+                <button class="tab-btn active" data-tab="generate" onclick="switchScheduleTab('generate', this)">
+                    <i data-lucide="calendar" class="w-4 h-4"></i>Generar
+                </button>
+                <button class="tab-btn" data-tab="preview" onclick="switchScheduleTab('preview', this)">
+                    <i data-lucide="eye" class="w-4 h-4"></i>Vista Previa
+                </button>
+                <button class="tab-btn" data-tab="history" onclick="switchScheduleTab('history', this)">
+                    <i data-lucide="clock" class="w-4 h-4"></i>Historial
+                </button>
+            </div>
+
+            <!-- Generate Tab -->
+            <div id="schedule-tab-generate" class="schedule-tab space-y-6">
+
+                <!-- Shift Type Presets -->
+                <div>
+                    <label class="form-label">Tipo de Turno</label>
+                    <div class="shift-type-grid">
+                        <div class="shift-type-option selected" onclick="selectShiftPreset('morning', this)">
+                            <p class="shift-type-name">🌅 Matutino</p>
+                            <p class="shift-type-hours">08:00 - 16:00</p>
+                        </div>
+                        <div class="shift-type-option" onclick="selectShiftPreset('afternoon', this)">
+                            <p class="shift-type-name">🌞 Vespertino</p>
+                            <p class="shift-type-hours">14:00 - 22:00</p>
+                        </div>
+                        <div class="shift-type-option" onclick="selectShiftPreset('night', this)">
+                            <p class="shift-type-name">🌙 Nocturno</p>
+                            <p class="shift-type-hours">22:00 - 06:00</p>
+                        </div>
+                        <div class="shift-type-option" onclick="selectShiftPreset('custom', this)">
+                            <p class="shift-type-name">⚙️ Personalizado</p>
+                            <p class="shift-type-hours">Configurar manualmente</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Time Inputs (hidden by default) -->
+                <div id="customTimeInputs" class="hidden grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl">
+                    <div class="space-y-1">
+                        <label class="form-label">Hora de Entrada</label>
+                        <input type="time" id="customStartTime" value="08:00" class="form-input">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="form-label">Hora de Salida</label>
+                        <input type="time" id="customEndTime" value="16:00" class="form-input">
+                    </div>
+                    <div class="space-y-1 col-span-2">
+                        <label class="form-label">Descanso (opcional)</label>
+                        <div class="flex gap-2">
+                            <input type="time" id="breakStart" class="form-input" placeholder="Inicio">
+                            <span class="flex items-center text-slate-400">-</span>
+                            <input type="time" id="breakEnd" class="form-input" placeholder="Fin">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day Selection -->
+                <div>
+                    <label class="form-label mb-2 block">Días de la Semana</label>
+                    <div class="flex flex-wrap gap-2" id="daySelector">
+                        <label class="day-checkbox checked" onclick="toggleDay('mon', this)">
+                            <input type="checkbox" value="mon" checked>
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Lun</span>
+                        </label>
+                        <label class="day-checkbox checked" onclick="toggleDay('tue', this)">
+                            <input type="checkbox" value="tue" checked>
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Mar</span>
+                        </label>
+                        <label class="day-checkbox checked" onclick="toggleDay('wed', this)">
+                            <input type="checkbox" value="wed" checked>
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Mié</span>
+                        </label>
+                        <label class="day-checkbox checked" onclick="toggleDay('thu', this)">
+                            <input type="checkbox" value="thu" checked>
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Jue</span>
+                        </label>
+                        <label class="day-checkbox checked" onclick="toggleDay('fri', this)">
+                            <input type="checkbox" value="fri" checked>
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Vie</span>
+                        </label>
+                        <label class="day-checkbox" onclick="toggleDay('sat', this)">
+                            <input type="checkbox" value="sat">
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Sáb</span>
+                        </label>
+                        <label class="day-checkbox" onclick="toggleDay('sun', this)">
+                            <input type="checkbox" value="sun">
+                            <span class="day-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="day-name">Dom</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Recurring Option -->
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                    <div>
+                        <p class="font-bold text-slate-900 text-sm">Horario Recurrente</p>
+                        <p class="text-xs text-slate-500">Aplicar esta configuración cada semana</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="recurringSchedule" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Preview Mini -->
+                <div class="schedule-preview">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Vista Rápida</p>
+                    <div id="scheduleMiniPreview" class="space-y-1"></div>
+                </div>
+
+            </div>
+
+            <!-- Preview Tab -->
+            <div id="schedule-tab-preview" class="schedule-tab hidden">
+                <div class="schedule-preview">
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="font-bold text-slate-900">Horario Semanal</p>
+                        <span class="text-xs text-slate-500" id="previewDateRange">28 May - 03 Jun 2026</span>
+                    </div>
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                                <th>Descanso</th>
+                                <th>Horas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedulePreviewBody"></tbody>
+                    </table>
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-xs text-blue-700 flex items-start gap-2">
+                            <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                            <span>Este horario se aplicará a partir de la próxima semana. Los cambios se sincronizarán con el sistema de punto de venta.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="schedule-tab-history" class="schedule-tab hidden">
+                <div id="scheduleHistory" class="space-y-3"></div>
+                <p id="noHistory" class="text-center text-slate-400 text-sm py-4 hidden">No hay historial de horarios para este usuario</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 mt-6 pt-4 border-t border-slate-100">
+                <button onclick="closeScheduleModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="saveSchedule()" id="saveScheduleBtn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <span class="btn-text">Guardar Horario</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+
+    getUsers() {
+        let users = this._get('users', null);
+        if (!users) {
+            users = [
+                { id: 1, name: 'Diego Mendoza', code: 'CAJ-0042', email: 'diego@nexpos.mx', role: 'Admin', branch: 'Central', active: true, lastLogin: '2026-05-28 14:30', permissions: ['pos', 'sales_view', 'sales_edit', 'inventory_view', 'inventory_edit', 'cash', 'reports', 'export'] },
+                { id: 2, name: 'María López', code: 'CAJ-0043', email: 'maria@nexpos.mx', role: 'Encargado', branch: 'Central', active: true, lastLogin: '2026-05-28 11:45', permissions: ['pos', 'sales_view', 'inventory_view', 'cash', 'reports'] },
+                { id: 3, name: 'Carlos Ruiz', code: 'CAJ-0044', email: 'carlos@nexpos.mx', role: 'Cajero', branch: 'Suc. Norte', active: false, lastLogin: '2026-05-27 18:05', permissions: ['pos', 'sales_view'] },
+            ];
+            this._set('users', users);
+        }
+        return users;
+    },
+    setUsers(u) { this._set('users', u); },
+
+    getSchedules() {
+        let schedules = this._get('schedules', null);
+        if (!schedules) {
+            schedules = [
+                { id: 1, userId: 1, startDate: '2026-05-26', endDate: '2026-06-01', recurring: true, shifts: [
+                    { day: 'mon', start: '08:00', end: '16:00', break: null },
+                    { day: 'tue', start: '08:00', end: '16:00', break: null },
+                    { day: 'wed', start: '08:00', end: '16:00', break: null },
+                    { day: 'thu', start: '08:00', end: '16:00', break: null },
+                    { day: 'fri', start: '08:00', end: '16:00', break: null },
+                ]},
+                { id: 2, userId: 2, startDate: '2026-05-26', endDate: '2026-06-01', recurring: true, shifts: [
+                    { day: 'mon', start: '14:00', end: '22:00', break: '18:00-19:00' },
+                    { day: 'tue', start: '14:00', end: '22:00', break: '18:00-19:00' },
+                    { day: 'wed', start: '14:00', end: '22:00', break: '18:00-19:00' },
+                    { day: 'thu', start: '14:00', end: '22:00', break: '18:00-19:00' },
+                    { day: 'fri', start: '14:00', end: '22:00', break: '18:00-19:00' },
+                    { day: 'sat', start: '10:00', end: '18:00', break: '14:00-15:00' },
+                ]},
+            ];
+            this._set('schedules', schedules);
+        }
+        return schedules;
+    },
+    setSchedules(s) { this._set('schedules', s); },
+
+    addSchedule(schedule) {
+        const schedules = this.getSchedules();
+        schedules.unshift(schedule);
+        this.setSchedules(schedules);
+        return schedule;
+    },
+
+    getUserSchedules(userId) {
+        return this.getSchedules().filter(s => s.userId == userId);
+    },
+
+    getActivityLog(userId) {
+        return this._get(`activity_${userId}`, [
+            { time: '2026-05-28 14:30', action: 'login', device: 'POS Central', ip: '192.168.1.100' },
+            { time: '2026-05-28 14:25', action: 'sale_completed', details: 'Ticket #00432 - $188.04', device: 'POS Central' },
+            { time: '2026-05-28 13:10', action: 'inventory_updated', details: 'Paracetamol 500mg - Stock: 42', device: 'POS Central' },
+            { time: '2026-05-28 09:00', action: 'login', device: 'POS Central', ip: '192.168.1.100' },
+        ]);
+    },
+    addActivity(userId, action, details = '') {
+        const log = this.getActivityLog(userId);
+        log.unshift({ time: new Date().toLocaleString('es-MX'), action, details, device: 'POS Central', ip: '192.168.1.100' });
+        this._set(`activity_${userId}`, log.slice(0, 50));
+    }
+};
+
+let users = [];
+let nextId = 4;
+let selectedUsers = new Set();
+let currentActionUserId = null;
+let currentScheduleUserId = null;
+let selectedDays = ['mon', 'tue', 'wed', 'thu', 'fri'];
+let currentShiftPreset = 'morning';
+let customStartTime = '08:00';
+let customEndTime = '16:00';
+let breakStart = '';
+let breakEnd = '';
+
+const dayLabels = { mon: 'Lunes', tue: 'Martes', wed: 'Miércoles', thu: 'Jueves', fri: 'Viernes', sat: 'Sábado', sun: 'Domingo' };
+const shiftPresets = {
+    morning: { start: '08:00', end: '16:00', label: 'Matutino' },
+    afternoon: { start: '14:00', end: '22:00', label: 'Vespertino' },
+    night: { start: '22:00', end: '06:00', label: 'Nocturno' },
+    custom: { start: '08:00', end: '16:00', label: 'Personalizado' }
+};
+
+function init() {
+    users = DB.getUsers();
+    renderTable();
+    lucide.createIcons();
+}
+
+function generateUserCode() { return 'CAJ-' + String(nextId + 1000).slice(-4); }
+function getInitials(name) { return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
+function roleClass(role) { const c = { 'Admin': 'admin', 'Encargado': 'encargado', 'Cajero': 'cajero', 'Audit': 'audit' }; return c[role] || 'cajero'; }
+function roleIcon(role) { const i = { 'Admin': 'shield-check', 'Encargado': 'briefcase', 'Cajero': 'user', 'Audit': 'eye' }; return i[role] || 'user'; }
+
+function formatLastLogin(timestamp) {
+    if (!timestamp) return 'Nunca';
+    const date = new Date(timestamp.replace(' ', 'T')), now = new Date(), diff = now - date;
+    const minutes = Math.floor(diff / 60000), hours = Math.floor(diff / 3600000), days = Math.floor(diff / 86400000);
+    if (minutes < 1) return 'Ahora';
+    if (minutes < 60) return `Hace ${minutes}m`;
+    if (hours < 24) return `Hace ${hours}h`;
+    if (days < 7) return `Hace ${days}d`;
+    return date.toLocaleDateString('es-MX');
+}
+
+function renderTable() {
+    const tbody = document.getElementById('usersTableBody'), emptyState = document.getElementById('emptyState');
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const roleFilter = document.getElementById('filterRole').value;
+    const branchFilter = document.getElementById('filterBranch').value;
+
+    let filtered = users.filter(u => {
+        const matchSearch = !searchTerm || u.name.toLowerCase().includes(searchTerm) || u.email.toLowerCase().includes(searchTerm) || u.code.toLowerCase().includes(searchTerm);
+        const matchRole = !roleFilter || u.role === roleFilter;
+        const matchBranch = !branchFilter || u.branch === branchFilter;
+        return matchSearch && matchRole && matchBranch;
+    });
+
+    document.getElementById('resultsCount').innerText = `Mostrando ${filtered.length} de ${users.length} resultados`;
+
+    if (filtered.length === 0) { tbody.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
+    emptyState.classList.add('hidden');
+
+    tbody.innerHTML = filtered.map(u => {
+        const initials = getInitials(u.name), roleBadgeClass = roleClass(u.role), isSelected = selectedUsers.has(u.id);
+        return `
+        <tr class="user-row ${isSelected ? 'selected' : ''}" onclick="toggleUserSelection(${u.id}, event)">
+            <td class="p-4 pl-6" onclick="event.stopPropagation()"><label class="checkbox-custom ${isSelected ? 'checked' : ''}" onclick="toggleUserSelection(${u.id})"><input type="checkbox" ${isSelected ? 'checked' : ''}><i data-lucide="check" class="w-3 h-3"></i></label></td>
+            <td class="p-4"><div class="flex items-center gap-3"><div class="user-avatar">${initials}</div><div><p class="user-info-name">${u.name}</p><p class="user-info-code">${u.code}</p></div></div></td>
+            <td class="p-4 text-slate-500">${u.email}</td>
+            <td class="p-4"><span class="role-badge ${roleBadgeClass}"><i data-lucide="${roleIcon(u.role)}" class="w-3 h-3"></i>${u.role}</span></td>
+            <td class="p-4 text-slate-500 flex items-center gap-1"><i data-lucide="store" class="w-3 h-3"></i>${u.branch}</td>
+            <td class="p-4 text-slate-500 text-xs">${formatLastLogin(u.lastLogin)}</td>
+            <td class="p-4"><span class="status-toggle ${u.active ? 'active' : 'inactive'}" onclick="toggleStatus(${u.id}, event)">${u.active ? 'Activo' : 'Inactivo'}</span></td>
+            <td class="p-4 text-center pr-6" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-center gap-1 relative">
+                    <button class="action-btn edit" onclick="editUser(${u.id})" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                    <button class="action-btn delete" onclick="deleteUser(${u.id})" title="Eliminar"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                    <button class="action-btn schedule" onclick="openScheduleModal(${u.id})" title="Generar Horario"><i data-lucide="calendar" class="w-3.5 h-3.5"></i></button>
+                    <button class="action-btn more" onclick="toggleDropdown(${u.id}, event)" title="Más acciones"><i data-lucide="more-vertical" class="w-3.5 h-3.5"></i></button>
+                    <div id="dropdown-${u.id}" class="dropdown-menu">
+                        <div class="dropdown-item" onclick="openActionsModal(${u.id})"><i data-lucide="settings" class="w-3.5 h-3.5"></i><span>Configurar Usuario</span></div>
+                        <div class="dropdown-item" onclick="resetPassword(${u.id})"><i data-lucide="key" class="w-3.5 h-3.5"></i><span>Reset Contraseña</span></div>
+                        <div class="dropdown-item" onclick="impersonateUser(${u.id})"><i data-lucide="log-in" class="w-3.5 h-3.5"></i><span>Entrar como...</span></div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item danger" onclick="deleteUser(${u.id})"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Eliminar</span></div>
+                    </div>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+    lucide.createIcons();
+}
+
+// === SELECTION & BULK ACTIONS ===
+function toggleUserSelection(userId, event) { if (event) event.stopPropagation(); selectedUsers.has(userId) ? selectedUsers.delete(userId) : selectedUsers.add(userId); updateBulkActionsBar(); renderTable(); }
+function toggleSelectAll() { const checkbox = document.getElementById('selectAllCheckbox'), isChecked = checkbox.classList.contains('checked'); isChecked ? selectedUsers.clear() : users.forEach(u => selectedUsers.add(u.id)); checkbox.classList.toggle('checked', !isChecked); updateBulkActionsBar(); renderTable(); }
+function updateBulkActionsBar() { const bar = document.getElementById('bulkActionsBar'), count = document.getElementById('bulkCount'); if (selectedUsers.size > 0) { bar.classList.add('show'); count.innerText = `${selectedUsers.size} seleccionado${selectedUsers.size > 1 ? 's' : ''}`; } else { bar.classList.remove('show'); document.getElementById('selectAllCheckbox').classList.remove('checked'); } }
+function cancelBulk() { selectedUsers.clear(); updateBulkActionsBar(); renderTable(); }
+function bulkActivate() { if (!confirm(`¿Activar ${selectedUsers.size} usuario${selectedUsers.size > 1 ? 's' : ''}?`)) return; selectedUsers.forEach(id => { const user = users.find(u => u.id === id); if (user) user.active = true; }); DB.setUsers(users); showToast(`${selectedUsers.size} usuario${selectedUsers.size > 1 ? 's activados' : ' activado'}`, 'success'); selectedUsers.clear(); updateBulkActionsBar(); renderTable(); }
+function bulkDeactivate() { if (!confirm(`¿Desactivar ${selectedUsers.size} usuario${selectedUsers.size > 1 ? 's' : ''}?`)) return; selectedUsers.forEach(id => { const user = users.find(u => u.id === id); if (user && user.id !== 1) user.active = false; }); DB.setUsers(users); showToast(`${selectedUsers.size} usuario${selectedUsers.size > 1 ? 's desactivados' : ' desactivado'}`, 'success'); selectedUsers.clear(); updateBulkActionsBar(); renderTable(); }
+function bulkDelete() { if (selectedUsers.has(1)) { showToast('No se puede eliminar el administrador principal', 'error'); return; } if (!confirm(`¿Eliminar ${selectedUsers.size} usuario${selectedUsers.size > 1 ? 's' : ''}?`)) return; users = users.filter(u => !selectedUsers.has(u.id)); DB.setUsers(users); showToast(`${selectedUsers.size} usuario${selectedUsers.size > 1 ? 's eliminados' : ' eliminado'}`, 'success'); selectedUsers.clear(); updateBulkActionsBar(); renderTable(); }
+
+// === FILTERS ===
+function filterUsers() { renderTable(); }
+function resetFilters() { document.getElementById('searchInput').value = ''; document.getElementById('filterRole').value = ''; document.getElementById('filterBranch').value = ''; renderTable(); showToast('Filtros restablecidos', 'success'); }
+
+// === USER CRUD ===
+function openUserModal(userId = null) {
+    const modal = document.getElementById('userModal'), title = document.getElementById('modalTitle');
+    document.querySelectorAll('.form-input').forEach(input => input.classList.remove('error'));
+    document.querySelectorAll('.form-error').forEach(error => error.classList.remove('show'));
+    if (userId) { const user = users.find(u => u.id === userId); if (!user) return; title.innerText = 'Editar Empleado'; document.getElementById('modalUserId').value = user.id; document.getElementById('modalName').value = user.name; document.getElementById('modalEmail').value = user.email; document.getElementById('modalRole').value = user.role; document.getElementById('modalBranch').value = user.branch; document.getElementById('modalActive').checked = user.active; }
+    else { title.innerText = 'Nuevo Empleado'; document.getElementById('modalUserId').value = ''; document.getElementById('modalName').value = ''; document.getElementById('modalEmail').value = ''; document.getElementById('modalRole').value = 'Cajero'; document.getElementById('modalBranch').value = 'Central'; document.getElementById('modalActive').checked = true; }
+    modal.classList.add('active'); setTimeout(() => document.getElementById('modalName').focus(), 100);
+}
+function closeUserModal() { document.getElementById('userModal').classList.remove('active'); }
+function validateForm() { let valid = true; const name = document.getElementById('modalName').value.trim(), email = document.getElementById('modalEmail').value.trim(); if (!name) { document.getElementById('modalName').classList.add('error'); document.getElementById('nameError').classList.add('show'); valid = false; } else { document.getElementById('modalName').classList.remove('error'); document.getElementById('nameError').classList.remove('show'); } const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; if (!email || !emailRegex.test(email)) { document.getElementById('modalEmail').classList.add('error'); document.getElementById('emailError').classList.add('show'); valid = false; } else { document.getElementById('modalEmail').classList.remove('error'); document.getElementById('emailError').classList.remove('show'); } return valid; }
+function saveUser() { if (!validateForm()) { showToast('Completa los campos requeridos', 'error'); return; } const userId = document.getElementById('modalUserId').value, name = document.getElementById('modalName').value.trim(), email = document.getElementById('modalEmail').value.trim(), role = document.getElementById('modalRole').value, branch = document.getElementById('modalBranch').value, active = document.getElementById('modalActive').checked, btn = document.getElementById('saveUserBtn'); btn.disabled = true; btn.classList.add('btn-loading'); setTimeout(() => { if (userId) { const idx = users.findIndex(u => u.id == userId); if (idx >= 0) { const oldName = users[idx].name; users[idx] = { ...users[idx], name, email, role, branch, active }; DB.addActivity(userId, 'profile_updated', `Nombre: ${oldName} → ${name}`); showToast('Empleado actualizado', 'success'); } } else { const code = generateUserCode(), newUser = { id: nextId++, name, code, email, role, branch, active, lastLogin: null, permissions: role === 'Admin' ? ['pos', 'sales_view', 'sales_edit', 'inventory_view', 'inventory_edit', 'cash', 'reports', 'export'] : role === 'Encargado' ? ['pos', 'sales_view', 'inventory_view', 'cash', 'reports'] : ['pos', 'sales_view'] }; users.push(newUser); DB.addActivity(newUser.id, 'account_created', 'Cuenta creada por administrador'); showToast('Empleado agregado', 'success'); } DB.setUsers(users); closeUserModal(); renderTable(); btn.disabled = false; btn.classList.remove('btn-loading'); }, 800); }
+function editUser(id) { openUserModal(id); }
+function deleteUser(id) { if (id === 1) { showToast('No se puede eliminar el administrador principal', 'error'); return; } if (!confirm('¿Eliminar este empleado?')) return; users = users.filter(u => u.id !== id); DB.setUsers(users); renderTable(); showToast('Empleado eliminado', 'success'); }
+function toggleStatus(id, event) { if (event) event.stopPropagation(); const user = users.find(u => u.id === id); if (user) { user.active = !user.active; DB.setUsers(users); DB.addActivity(id, user.active ? 'account_activated' : 'account_deactivated'); renderTable(); showToast(`Empleado ${user.active ? 'activado' : 'desactivado'}`, 'success'); } }
+
+// === DROPDOWN ===
+function toggleDropdown(userId, event) { event.stopPropagation(); document.querySelectorAll('.dropdown-menu').forEach(d => { if (d.id !== `dropdown-${userId}`) d.classList.remove('show'); }); const dropdown = document.getElementById(`dropdown-${userId}`); dropdown.classList.toggle('show'); setTimeout(() => { document.addEventListener('click', function closeDropdown(e) { if (!dropdown.contains(e.target) && !e.target.closest(`[onclick*="toggleDropdown(${userId})"]`)) { dropdown.classList.remove('show'); document.removeEventListener('click', closeDropdown); } }); }, 0); }
+
+// === ACTIONS MODAL ===
+function openActionsModal(userId) { currentActionUserId = userId; const user = users.find(u => u.id === userId); if (!user) return; document.getElementById('actionsModalTitle').innerText = `Configurar: ${user.name}`; document.getElementById('actionsUserId').value = user.id; document.getElementById('actionsAvatar').innerText = getInitials(user.name); document.getElementById('actionsUserName').innerText = user.name; document.getElementById('actionsUserCode').innerText = user.code; const permissions = user.permissions || []; document.querySelectorAll('.permission-item input').forEach(cb => { const perm = cb.closest('.permission-item').querySelector('span').innerText.toLowerCase().replace(/\s+/g, '_'); cb.checked = permissions.includes(perm); cb.parentElement.classList.toggle('checked', cb.checked); }); renderSessions(user); renderActivityLog(user); switchActionTab('permissions', document.querySelector('[onclick*="permissions"]')); document.getElementById('actionsModal').classList.add('active'); lucide.createIcons(); }
+function closeActionsModal() { document.getElementById('actionsModal').classList.remove('active'); currentActionUserId = null; }
+function switchActionTab(tab, btn) { document.querySelectorAll('.action-tab').forEach(t => t.classList.add('hidden')); document.getElementById(`tab-${tab}`).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active', 'text-slate-900', 'border-b-2', 'border-slate-900'); b.classList.add('text-slate-400'); }); btn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-900'); btn.classList.remove('text-slate-400'); lucide.createIcons(); }
+function renderSessions(user) { const container = document.getElementById('sessionsList'); const sessions = [{ id: 1, device: 'POS Central', ip: '192.168.1.100', login: '2026-05-28 14:30', active: true }, { id: 2, device: 'Móvil - Android', ip: '192.168.1.105', login: '2026-05-28 12:15', active: false }]; container.innerHTML = sessions.map(s => `<div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><div class="flex items-center gap-3"><i data-lucide="${s.active ? 'monitor' : 'smartphone'}" class="w-4 h-4 text-slate-400"></i><div><p class="font-bold text-slate-900 text-sm">${s.device}</p><p class="text-xs text-slate-500">${s.ip} · ${formatLastLogin(s.login)}</p></div></div>${s.active ? '<span class="text-xs font-bold text-emerald-600">● Activa</span>' : ''}</div>`).join(''); lucide.createIcons(); }
+function renderActivityLog(user) { const container = document.getElementById('activityLog'), log = DB.getActivityLog(user.id); const actionLabels = { 'login': { icon: 'log-in', class: 'login', text: 'Inició sesión' }, 'logout': { icon: 'log-out', class: 'logout', text: 'Cerró sesión' }, 'sale_completed': { icon: 'shopping-cart', class: 'edit', text: 'Venta completada' }, 'inventory_updated': { icon: 'package', class: 'edit', text: 'Inventario actualizado' }, 'profile_updated': { icon: 'user', class: 'edit', text: 'Perfil actualizado' }, 'account_created': { icon: 'user-plus', class: 'edit', text: 'Cuenta creada' }, 'account_activated': { icon: 'check-circle', class: 'login', text: 'Cuenta activada' }, 'account_deactivated': { icon: 'x-circle', class: 'danger', text: 'Cuenta desactivada' } }; container.innerHTML = log.map(entry => { const action = actionLabels[entry.action] || { icon: 'circle', class: 'edit', text: entry.action }; return `<div class="activity-item"><div class="activity-icon ${action.class}"><i data-lucide="${action.icon}" class="w-3 h-3"></i></div><div class="flex-1"><p class="font-bold text-slate-900">${action.text}${entry.details ? `: ${entry.details}` : ''}</p><p class="text-slate-400">${entry.time} · ${entry.device}</p></div></div>`; }).join(''); lucide.createIcons(); }
+function saveUserActions() { const btn = document.querySelector('#actionsModal .btn-loading'); if (btn) { btn.disabled = true; btn.classList.add('btn-loading'); } setTimeout(() => { const user = users.find(u => u.id == currentActionUserId); if (user) { const newPermissions = []; document.querySelectorAll('.permission-item input:checked').forEach(cb => { const perm = cb.closest('.permission-item').querySelector('span').innerText.toLowerCase().replace(/\s+/g, '_'); newPermissions.push(perm); }); user.permissions = newPermissions; DB.addActivity(user.id, 'permissions_updated', 'Permisos actualizados'); DB.setUsers(users); } closeActionsModal(); if (btn) { btn.disabled = false; btn.classList.remove('btn-loading'); } showToast('Configuración guardada', 'success'); }, 800); }
+
+// === SIMULATED FUNCTIONS ===
+function resetPassword(userId) { const user = users.find(u => u.id === (userId || currentActionUserId)); if (!user) return; if (!confirm(`¿Resetear contraseña para ${user.name}?\n\nSe enviará un enlace de recuperación a:\n${user.email}`)) return; const btn = event?.target?.closest('button'); if (btn) { btn.disabled = true; btn.classList.add('btn-loading'); } setTimeout(() => { DB.addActivity(user.id, 'password_reset', 'Contraseña reseteada por administrador'); showToast(`Enlace de recuperación enviado a ${user.email}`, 'success'); if (btn) { btn.disabled = false; btn.classList.remove('btn-loading'); } closeActionsModal(); }, 1000); }
+function impersonateUser(userId) { const user = users.find(u => u.id === (userId || currentActionUserId)); if (!user) return; if (!confirm(`¿Entrar como ${user.name}?\n\nEsta es una función de prueba para simular la vista del usuario.`)) return; showToast(`Simulando sesión como ${user.name}...`, 'success'); setTimeout(() => { showToast(`Ahora ves la interfaz como ${user.role}: ${user.name}`, 'success'); }, 1500); closeActionsModal(); }
+function sendWelcomeEmail(userId) { const user = users.find(u => u.id === (userId || currentActionUserId)); if (!user) return; showToast(`Enviando correo de bienvenida a ${user.email}...`, 'success'); setTimeout(() => { DB.addActivity(user.id, 'welcome_email_sent', 'Correo de bienvenida enviado'); showToast('Correo enviado exitosamente', 'success'); closeActionsModal(); }, 1200); }
+function viewAuditTrail(userId) { const user = users.find(u => u.id === (userId || currentActionUserId)); if (!user) return; showToast(`Generando reporte de auditoría para ${user.name}...`, 'success'); setTimeout(() => { const blob = new Blob([`AUDIT TRAIL - ${user.name}\n${user.code}\n\n${JSON.stringify(DB.getActivityLog(user.id), null, 2)}`], { type: 'text/plain' }), link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `audit_${user.code}_${new Date().toISOString().slice(0,10)}.txt`; link.click(); DB.addActivity(user.id, 'audit_exported', 'Reporte de auditoría exportado'); showToast('Reporte descargado', 'success'); }, 1000); }
+function forceLogout(userId) { const user = users.find(u => u.id === (userId || currentActionUserId)); if (!user) return; if (!confirm(`¿Cerrar todas las sesiones activas de ${user.name}?`)) return; showToast(`Cerrando sesiones de ${user.name}...`, 'success'); setTimeout(() => { DB.addActivity(user.id, 'sessions_terminated', 'Todas las sesiones cerradas por administrador'); showToast('Sesiones cerradas exitosamente', 'success'); renderSessions(user); }, 1000); }
+function exportUsers() { showToast('Generando archivo CSV...', 'success'); setTimeout(() => { const data = [['ID', 'Código', 'Nombre', 'Email', 'Rol', 'Sucursal', 'Estado', 'Último Acceso'], ...users.map(u => [u.id, u.code, u.name, u.email, u.role, u.branch, u.active ? 'Activo' : 'Inactivo', u.lastLogin || 'Nunca'])], csv = data.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n'), blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }), link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `NexPoS_Usuarios_${new Date().toISOString().slice(0,10)}.csv`; link.click(); showToast('Usuarios exportados a CSV', 'success'); }, 1000); }
+
+// === SCHEDULE MODAL (NEW - Functional for Demo) ===
+function openScheduleModal(userId) {
+    currentScheduleUserId = userId;
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    document.getElementById('scheduleModalUser').innerText = `Para: ${user.name}`;
+    document.getElementById('scheduleUserId').value = userId;
+
+    // Reset form to defaults
+    selectedDays = ['mon', 'tue', 'wed', 'thu', 'fri'];
+    currentShiftPreset = 'morning';
+    customStartTime = '08:00';
+    customEndTime = '16:00';
+    breakStart = '';
+    breakEnd = '';
+
+    // Update UI
+    document.querySelectorAll('.day-checkbox').forEach(cb => {
+        const day = cb.querySelector('input').value;
+        cb.classList.toggle('checked', selectedDays.includes(day));
+        cb.querySelector('input').checked = selectedDays.includes(day);
+    });
+
+    selectShiftPreset('morning', document.querySelector('.shift-type-option:first-child'));
+    updateMiniPreview();
+
+    // Load history
+    renderScheduleHistory(userId);
+
+    // Show generate tab
+    switchScheduleTab('generate', document.querySelector('[data-tab="generate"]'));
+
+    document.getElementById('scheduleModal').classList.add('active');
+    lucide.createIcons();
+}
+
+function closeScheduleModal() {
+    document.getElementById('scheduleModal').classList.remove('active');
+    currentScheduleUserId = null;
+}
+
+function switchScheduleTab(tab, btn) {
+    document.querySelectorAll('.schedule-tab').forEach(t => t.classList.add('hidden'));
+    document.getElementById(`schedule-tab-${tab}`).classList.remove('hidden');
+
+    document.querySelectorAll('#scheduleModal .tab-btn').forEach(b => {
+        b.classList.remove('active', 'text-slate-900', 'border-b-2', 'border-slate-900');
+        b.classList.add('text-slate-400');
+    });
+    btn.classList.add('active', 'text-slate-900', 'border-b-2', 'border-slate-900');
+    btn.classList.remove('text-slate-400');
+
+    if (tab === 'preview') renderSchedulePreview();
+    if (tab === 'history') renderScheduleHistory(currentScheduleUserId);
+
+    lucide.createIcons();
+}
+
+function toggleDay(day, element) {
+    const input = element.querySelector('input');
+    input.checked = !input.checked;
+    element.classList.toggle('checked', input.checked);
+
+    if (input.checked) {
+        if (!selectedDays.includes(day)) selectedDays.push(day);
+    } else {
+        selectedDays = selectedDays.filter(d => d !== day);
+    }
+
+    updateMiniPreview();
+}
+
+function selectShiftPreset(preset, element) {
+    currentShiftPreset = preset;
+
+    document.querySelectorAll('.shift-type-option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+
+    const presetData = shiftPresets[preset];
+
+    if (preset === 'custom') {
+        document.getElementById('customTimeInputs').classList.remove('hidden');
+    } else {
+        document.getElementById('customTimeInputs').classList.add('hidden');
+        customStartTime = presetData.start;
+        customEndTime = presetData.end;
+        document.getElementById('customStartTime').value = presetData.start;
+        document.getElementById('customEndTime').value = presetData.end;
+    }
+
+    updateMiniPreview();
+}
+
+function updateMiniPreview() {
+    const container = document.getElementById('scheduleMiniPreview');
+    const preset = shiftPresets[currentShiftPreset];
+    const startTime = currentShiftPreset === 'custom' ? document.getElementById('customStartTime').value : preset.start;
+    const endTime = currentShiftPreset === 'custom' ? document.getElementById('customEndTime').value : preset.end;
+    const hasBreak = breakStart && breakEnd;
+
+    container.innerHTML = selectedDays.map(day => `
+        <div class="schedule-day">
+            <span class="schedule-day-name">${dayLabels[day]}</span>
+            <span class="schedule-day-time ${hasBreak ? 'has-break' : ''}">
+                ${startTime} - ${endTime}${hasBreak ? ` <span class="text-amber-600">● Desc: ${breakStart}-${breakEnd}</span>` : ''}
+            </span>
+        </div>
+    `).join('');
+}
+
+function renderSchedulePreview() {
+    const tbody = document.getElementById('schedulePreviewBody');
+    const user = users.find(u => u.id == currentScheduleUserId);
+    if (!user) return;
+
+    const preset = shiftPresets[currentShiftPreset];
+    const startTime = currentShiftPreset === 'custom' ? document.getElementById('customStartTime').value : preset.start;
+    const endTime = currentShiftPreset === 'custom' ? document.getElementById('customEndTime').value : preset.end;
+    const hasBreak = breakStart && breakEnd;
+
+    // Calculate hours
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+    let hours = endH - startH + (endM - startM) / 60;
+    if (hours < 0) hours += 24; // Handle overnight shifts
+    if (hasBreak) {
+        const [bsH, bsM] = breakStart.split(':').map(Number);
+        const [beH, beM] = breakEnd.split(':').map(Number);
+        hours -= (beH - bsH + (beM - bsM) / 60);
+    }
+
+    tbody.innerHTML = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => {
+        const isWorking = selectedDays.includes(day);
+        return `
+        <tr ${!isWorking ? 'class="opacity-40"' : ''}>
+            <td class="day-cell">${dayLabels[day]}</td>
+            <td class="time-cell">${isWorking ? startTime : '-'}</td>
+            <td class="time-cell">${isWorking ? endTime : '-'}</td>
+            <td class="${hasBreak ? 'break-cell' : ''}">${isWorking && hasBreak ? `${breakStart}-${breakEnd}` : '-'}</td>
+            <td class="time-cell">${isWorking ? `${hours.toFixed(1)}h` : '-'}</td>
+        </tr>`;
+    }).join('');
+
+    // Update date range
+    const today = new Date();
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + (7 - today.getDay() + 1) % 7);
+    const nextSunday = new Date(nextMonday);
+    nextSunday.setDate(nextMonday.getDate() + 6);
+    const dateRange = `${nextMonday.toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })} - ${nextSunday.toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })} ${nextSunday.getFullYear()}`;
+    document.getElementById('previewDateRange').innerText = dateRange;
+}
+
+function renderScheduleHistory(userId) {
+    const container = document.getElementById('scheduleHistory');
+    const noHistory = document.getElementById('noHistory');
+    const schedules = DB.getUserSchedules(userId);
+
+    if (schedules.length === 0) {
+        container.innerHTML = '';
+        noHistory.classList.remove('hidden');
+        return;
+    }
+    noHistory.classList.add('hidden');
+
+    container.innerHTML = schedules.slice(0, 5).map(s => {
+        const user = users.find(u => u.id == s.userId);
+        const shiftCount = s.shifts.length;
+        const totalHours = s.shifts.reduce((sum, sh) => {
+            const [sh, sm] = sh.start.split(':').map(Number);
+            const [eh, em] = sh.end.split(':').map(Number);
+            let h = eh - sh + (em - sm) / 60;
+            if (h < 0) h += 24;
+            return sum + h;
+        }, 0).toFixed(1);
+
+        return `
+        <div class="p-4 bg-slate-50 rounded-xl">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <p class="font-bold text-slate-900 text-sm">${s.recurring ? '🔄 Recurrente' : '📅 Una vez'}</p>
+                    <p class="text-xs text-slate-500">${s.startDate} - ${s.endDate}</p>
+                </div>
+                <span class="text-xs font-bold text-slate-600">${shiftCount} días · ${totalHours}h</span>
+            </div>
+            <div class="flex flex-wrap gap-1">
+                ${s.shifts.map(sh => `<span class="text-xs px-2 py-0.5 bg-slate-200 rounded">${dayLabels[sh.day].slice(0,3)} ${sh.start}-${sh.end}</span>`).join('')}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function saveSchedule() {
+    const user = users.find(u => u.id == currentScheduleUserId);
+    if (!user) return;
+
+    const preset = shiftPresets[currentShiftPreset];
+    const startTime = currentShiftPreset === 'custom' ? document.getElementById('customStartTime').value : preset.start;
+    const endTime = currentShiftPreset === 'custom' ? document.getElementById('customEndTime').value : preset.end;
+    const recurring = document.getElementById('recurringSchedule').checked;
+
+    if (selectedDays.length === 0) {
+        showToast('Selecciona al menos un día', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('saveScheduleBtn');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        // Create schedule object
+        const shifts = selectedDays.map(day => ({
+            day,
+            start: startTime,
+            end: endTime,
+            break: breakStart && breakEnd ? `${breakStart}-${breakEnd}` : null
+        }));
+
+        const today = new Date();
+        const nextMonday = new Date(today);
+        nextMonday.setDate(today.getDate() + (7 - today.getDay() + 1) % 7);
+        const nextSunday = new Date(nextMonday);
+        nextSunday.setDate(nextMonday.getDate() + 6);
+
+        const newSchedule = {
+            id: Date.now(),
+            userId: currentScheduleUserId,
+            startDate: nextMonday.toISOString().split('T')[0],
+            endDate: nextSunday.toISOString().split('T')[0],
+            recurring,
+            shifts
+        };
+
+        DB.addSchedule(newSchedule);
+        DB.addActivity(currentScheduleUserId, 'schedule_created', `Horario ${recurring ? 'recurrente' : 'único'} generado: ${selectedDays.length} días`);
+
+        closeScheduleModal();
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+
+        showToast(`Horario guardado para ${user.name}`, 'success');
+    }, 1000);
+}
+
+// Listen for custom time changes
+document.addEventListener('change', (e) => {
+    if (e.target.id === 'customStartTime') customStartTime = e.target.value;
+    if (e.target.id === 'customEndTime') customEndTime = e.target.value;
+    if (e.target.id === 'breakStart') breakStart = e.target.value;
+    if (e.target.id === 'breakEnd') breakEnd = e.target.value;
+    if (['customStartTime', 'customEndTime', 'breakStart', 'breakEnd'].includes(e.target.id)) {
+        updateMiniPreview();
+    }
+});
+
+// === TOAST ===
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals and dropdowns
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.classList.remove('active'); currentActionUserId = null; currentScheduleUserId = null; } });
+});
+document.addEventListener('click', (e) => { if (!e.target.closest('.dropdown-menu') && !e.target.closest('.action-btn.more')) { document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show')); } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeUserModal(); closeActionsModal(); closeScheduleModal(); } });
+document.addEventListener('change', (e) => { if (e.target.closest('.checkbox-custom')) { const checkbox = e.target.closest('.checkbox-custom'); checkbox.classList.toggle('checked'); } });
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

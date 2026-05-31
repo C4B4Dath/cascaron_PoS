@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Roles y Permisos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+
+
+/* Role Card */
+.role-card {
+    border: 1px solid var(--slate-100); border-radius: 1rem; padding: 1.25rem;
+    background: white; transition: all 0.15s ease; cursor: pointer;
+}
+.role-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.role-card.selected { border-color: var(--slate-900); background: var(--slate-50); }
+.role-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.role-icon {
+    width: 2.5rem; height: 2.5rem; border-radius: 0.75rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.role-icon.admin { background: var(--slate-900); color: white; }
+.role-icon.manager { background: var(--blue-500); color: white; }
+.role-icon.cashier { background: var(--emerald-500); color: white; }
+.role-icon.warehouse { background: var(--amber-500); color: white; }
+.role-icon.auditor { background: var(--purple-500); color: white; }
+.role-name { font-weight: 700; color: var(--slate-900); }
+.role-desc { font-size: 0.75rem; color: var(--slate-500); }
+.role-users { font-size: 0.625rem; color: var(--slate-400); margin-top: 0.25rem; }
+
+/* Permission Matrix - CLEAN TABLE LAYOUT */
+.matrix-container { overflow-x: auto; }
+.matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 800px; }
+.matrix-table th {
+    background: var(--slate-50); border-bottom: 2px solid var(--slate-200);
+    padding: 1rem 0.75rem; font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--slate-600); text-align: center;
+    position: sticky; top: 0; z-index: 10;
+}
+.matrix-table th:first-child {
+    text-align: left; padding-left: 1.5rem; background: var(--slate-50);
+    border-top-left-radius: 0.75rem;
+}
+.matrix-table th:last-child { border-top-right-radius: 0.75rem; }
+.matrix-table td {
+    padding: 0.875rem 0.75rem; border-bottom: 1px solid var(--slate-100);
+    text-align: center; vertical-align: middle;
+}
+.matrix-table td:first-child {
+    text-align: left; padding-left: 1.5rem; font-weight: 600;
+    color: var(--slate-700); font-size: 0.875rem; background: white;
+}
+.matrix-table tr:hover td { background: var(--slate-50/50); }
+.matrix-table tr:hover td:first-child { background: var(--slate-50); }
+
+/* Category headers in matrix */
+.category-row td {
+    background: var(--slate-100); font-weight: 800; font-size: 0.625rem;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-600);
+    padding: 0.75rem 0.75rem; border-bottom: 2px solid var(--slate-200);
+}
+.category-row td:first-child {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding-left: 1.5rem; border-left: none;
+}
+
+/* Permission Toggle Checkbox */
+.perm-checkbox {
+    width: 2.25rem; height: 2.25rem; border-radius: 0.5rem;
+    border: 2px solid var(--slate-200); background: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s ease;
+    margin: 0 auto;
+}
+.perm-checkbox:hover { border-color: var(--slate-300); transform: scale(1.05); }
+.perm-checkbox:active { transform: scale(0.95); }
+.perm-checkbox.enabled {
+    background: var(--emerald-500); border-color: var(--emerald-600);
+    color: white;
+}
+.perm-checkbox.enabled:hover { background: var(--emerald-600); }
+.perm-checkbox i { width: 1.25rem; height: 1.25rem; }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/20); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; visibility: hidden; transition: all 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem;
+    box-shadow: var(--shadow-xl); transform: translateY(10px); transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+/* Form Input Styles */
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-12 space-y-8">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-3">
+                        <i data-lucide="shield" class="w-7 h-7 text-slate-400"></i>
+                        Roles y Permisos
+                    </h1>
+                    <p class="text-slate-500 mt-1 text-sm">Define los permisos para cada rol del sistema</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="exportPermissions()" class="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Exportar</span>
+                    </button>
+                    <button onclick="openRoleModal()" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nuevo Rol</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Roles Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="rolesGrid"></div>
+
+            <!-- Permissions Matrix - CLEAN TABLE LAYOUT -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="list-checks" class="w-4 h-4 text-slate-400"></i>
+                        Matriz de Permisos
+                    </h3>
+                    <button onclick="savePermissions()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Guardar Cambios</span>
+                    </button>
+                </div>
+                <div class="matrix-container custom-scrollbar">
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Permiso</th>
+                                <th>Administrador</th>
+                                <th>Encargado</th>
+                                <th>Cajero</th>
+                                <th>Bodeguero</th>
+                                <th>Auditor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrixBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Role Descriptions -->
+            <div class="bg-slate-50 rounded-2xl p-6 space-y-4">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
+                    Descripción de Roles
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-xl p-4 border border-slate-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="role-icon admin"><i data-lucide="crown" class="w-4 h-4"></i></div>
+                            <span class="font-bold text-slate-900">Administrador</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Acceso completo al sistema. Gestiona usuarios, configuración global, reportes fiscales y permisos.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-slate-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="role-icon manager"><i data-lucide="store" class="w-4 h-4"></i></div>
+                            <span class="font-bold text-slate-900">Encargado de Tienda</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Opera la tienda diaria: ventas, caja, inventario local y reportes operativos. Sin acceso a configuración global.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-slate-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="role-icon cashier"><i data-lucide="cash" class="w-4 h-4"></i></div>
+                            <span class="font-bold text-slate-900">Cajero</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Solo punto de venta: registrar ventas, cobrar, emitir tickets. Sin acceso a inventario o reportes.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-slate-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="role-icon warehouse"><i data-lucide="package" class="w-4 h-4"></i></div>
+                            <span class="font-bold text-slate-900">Bodeguero</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Gestión de inventario: entradas, salidas, ajustes de stock y traspasos. Sin acceso a ventas o caja.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-slate-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="role-icon auditor"><i data-lucide="search" class="w-4 h-4"></i></div>
+                            <span class="font-bold text-slate-900">Auditor</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Solo lectura: puede ver todos los reportes y logs de auditoría, pero no modificar nada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Modal -->
+    <div id="roleModal" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900" id="modalTitle">Nuevo Rol</h3>
+                <button onclick="closeRoleModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <input type="hidden" id="modalRoleId">
+                <div>
+                    <label class="form-label">Nombre del Rol <span class="text-rose-500">*</span></label>
+                    <input type="text" id="modalRoleName" placeholder="Ej: Supervisor de Turno" class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Descripción</label>
+                    <textarea id="modalRoleDesc" placeholder="Describe las responsabilidades de este rol..." class="form-input min-h-[80px] resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="form-label">Color del Rol</label>
+                    <select id="modalRoleColor" class="form-input cursor-pointer">
+                        <option value="slate">Gris (Genérico)</option>
+                        <option value="blue">Azul (Operativo)</option>
+                        <option value="emerald">Verde (Ventas)</option>
+                        <option value="amber">Ámbar (Inventario)</option>
+                        <option value="purple">Morado (Auditoría)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeRoleModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="saveRole()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <span class="btn-text">Guardar Rol</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+
+    getRoles() {
+        let roles = this._get('roles', null);
+        if (!roles) {
+            roles = [
+                { id: 0, name: 'Administrador', desc: 'Acceso completo al sistema', color: 'slate', users: 2 },
+                { id: 1, name: 'Encargado de Tienda', desc: 'Opera la tienda diaria', color: 'blue', users: 5 },
+                { id: 2, name: 'Cajero', desc: 'Solo punto de venta', color: 'emerald', users: 12 },
+                { id: 3, name: 'Bodeguero', desc: 'Gestión de inventario', color: 'amber', users: 3 },
+                { id: 4, name: 'Auditor', desc: 'Solo lectura de reportes', color: 'purple', users: 1 },
+            ];
+            this._set('roles', roles);
+        }
+        return roles;
+    },
+    setRoles(r) { this._set('roles', r); },
+
+    getPermissions() {
+        let perms = this._get('permissions', null);
+        if (!perms) {
+            perms = {
+                0: { 0:true,1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:true,10:true,11:true,12:true,13:true,14:true,15:true },
+                1: { 0:true,1:true,2:true,3:true,4:true,5:true,6:false,7:false,8:true,9:true,10:true,11:false,12:false,13:false,14:false,15:false },
+                2: { 0:false,1:true,2:false,3:false,4:false,5:false,6:false,7:false,8:false,9:true,10:false,11:false,12:false,13:false,14:false,15:false },
+                3: { 0:true,1:false,2:false,3:false,4:false,5:false,6:false,7:true,8:false,9:false,10:true,11:true,12:false,13:false,14:false,15:false },
+                4: { 0:false,1:false,2:false,3:false,4:true,5:true,6:false,7:false,8:true,9:false,10:false,11:false,12:false,13:false,14:true,15:true },
+            };
+            this._set('permissions', perms);
+        }
+        return perms;
+    },
+    setPermissions(p) { this._set('permissions', p); }
+};
+
+let selectedRoleId = null;
+
+let permissionCategories = [
+    {
+        title: 'Ventas',
+        icon: 'shopping-cart',
+        color: 'emerald',
+        perms: [
+            { id: 0, name: 'Realizar Ventas', icon: 'shopping-bag' },
+            { id: 1, name: 'Cancelar Ventas', icon: 'circle-x' },
+            { id: 2, name: 'Aplicar Descuentos', icon: 'percent' },
+            { id: 3, name: 'Emitir CFDI', icon: 'file-check' },
+        ]
+    },
+    {
+        title: 'Inventario',
+        icon: 'package',
+        color: 'amber',
+        perms: [
+            { id: 4, name: 'Ver Stock', icon: 'eye' },
+            { id: 5, name: 'Ajustar Inventario', icon: 'sliders-horizontal' },
+            { id: 6, name: 'Registrar Entradas', icon: 'package-plus' },
+            { id: 7, name: 'Registrar Salidas', icon: 'package-minus' },
+        ]
+    },
+    {
+        title: 'Caja',
+        icon: 'cash',
+        color: 'blue',
+        perms: [
+            { id: 8, name: 'Abrir/Cerrar Caja', icon: 'lock' },
+            { id: 9, name: 'Ver Cortes', icon: 'clipboard-list' },
+            { id: 10, name: 'Registrar Movimientos', icon: 'arrow-right-left' },
+        ]
+    },
+    {
+        title: 'Administración',
+        icon: 'settings',
+        color: 'slate',
+        perms: [
+            { id: 11, name: 'Gestionar Usuarios', icon: 'users' },
+            { id: 12, name: 'Crear Roles', icon: 'user-plus' },
+            { id: 13, name: 'Configurar Sistema', icon: 'settings' },
+            { id: 14, name: 'Ver Reportes Fiscales', icon: 'shield-check' },
+            { id: 15, name: 'Exportar Datos', icon: 'download' },
+        ]
+    }
+];
+
+function init() {
+    renderRolesGrid();
+    renderMatrix();
+    lucide.createIcons();
+}
+
+function renderRolesGrid() {
+    const roles = DB.getRoles();
+    const grid = document.getElementById('rolesGrid');
+
+    grid.innerHTML = roles.map(role => {
+        const icons = { slate: 'crown', blue: 'store', emerald: 'cash', amber: 'package', purple: 'search' };
+        const isSelected = selectedRoleId === role.id;
+        return `
+        <div class="role-card ${isSelected ? 'selected' : ''}" onclick="selectRole(${role.id})">
+            <div class="role-header">
+                <div class="role-icon ${role.color}">
+                    <i data-lucide="${icons[role.color]}" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <div class="role-name">${role.name}</div>
+                    <div class="role-desc">${role.desc}</div>
+                    <div class="role-users"><i data-lucide="users" class="w-3 h-3 inline mr-1"></i>${role.users} usuarios</div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="event.stopPropagation(); editRole(${role.id})" class="flex-1 text-[10px] font-bold px-2 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="pencil" class="w-3 h-3"></i>Editar
+                </button>
+                ${role.id > 2 ? `<button onclick="event.stopPropagation(); deleteRole(${role.id})" class="text-[10px] font-bold px-2 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition-all flex items-center justify-center gap-1">
+                    <i data-lucide="trash-2" class="w-3 h-3"></i>Eliminar
+                </button>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+
+    lucide.createIcons();
+}
+
+function selectRole(roleId) {
+    selectedRoleId = roleId;
+    renderRolesGrid();
+}
+
+function renderMatrix() {
+    const roles = DB.getRoles();
+    const perms = DB.getPermissions();
+    const tbody = document.getElementById('matrixBody');
+
+    let html = '';
+
+    permissionCategories.forEach(cat => {
+        // Category header row with icon and color
+        html += `
+        <tr class="category-row">
+            <td colspan="${roles.length + 1}">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="${cat.icon}" class="w-4 h-4 text-${cat.color}-600"></i>
+                    ${cat.title}
+                </div>
+            </td>
+        </tr>`;
+
+        // Permission rows with icons
+        cat.perms.forEach(p => {
+            html += `
+            <tr>
+                <td class="flex items-center gap-2">
+                    <i data-lucide="${p.icon}" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>
+                    <span>${p.name}</span>
+                </td>
+                ${roles.map(r => `
+                    <td>
+                        <div class="perm-checkbox ${perms[r.id]?.[p.id] ? 'enabled' : ''}"
+                             onclick="togglePerm(${r.id}, ${p.id})"
+                             title="${r.name}: ${perms[r.id]?.[p.id] ? 'Permitido' : 'Denegado'}">
+                            ${perms[r.id]?.[p.id] ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
+                        </div>
+                    </td>
+                `).join('')}
+            </tr>`;
+        });
+    });
+
+    tbody.innerHTML = html;
+    lucide.createIcons();
+}
+
+function togglePerm(roleId, permId) {
+    const perms = DB.getPermissions();
+    if (!perms[roleId]) perms[roleId] = {};
+    perms[roleId][permId] = !perms[roleId][permId];
+    DB.setPermissions(perms);
+    renderMatrix();
+    showToast('Permiso actualizado', 'success');
+}
+
+function openRoleModal(roleId = null) {
+    const modal = document.getElementById('roleModal');
+    const title = document.getElementById('modalTitle');
+
+    if (roleId) {
+        const role = DB.getRoles().find(r => r.id === roleId);
+        if (!role) return;
+        title.innerText = 'Editar Rol';
+        document.getElementById('modalRoleId').value = role.id;
+        document.getElementById('modalRoleName').value = role.name;
+        document.getElementById('modalRoleDesc').value = role.desc;
+        document.getElementById('modalRoleColor').value = role.color;
+    } else {
+        title.innerText = 'Nuevo Rol';
+        document.getElementById('modalRoleId').value = '';
+        document.getElementById('modalRoleName').value = '';
+        document.getElementById('modalRoleDesc').value = '';
+        document.getElementById('modalRoleColor').value = 'slate';
+    }
+
+    modal.classList.add('active');
+    setTimeout(() => document.getElementById('modalRoleName').focus(), 100);
+}
+
+function closeRoleModal() {
+    document.getElementById('roleModal').classList.remove('active');
+}
+
+function saveRole() {
+    const id = document.getElementById('modalRoleId').value;
+    const name = document.getElementById('modalRoleName').value.trim();
+    const desc = document.getElementById('modalRoleDesc').value.trim();
+    const color = document.getElementById('modalRoleColor').value;
+
+    if (!name) { showToast('Ingresa el nombre del rol', 'error'); return; }
+
+    const roles = DB.getRoles();
+
+    if (id) {
+        // Edit existing
+        const idx = roles.findIndex(r => r.id == id);
+        if (idx >= 0) {
+            roles[idx] = { ...roles[idx], name, desc, color };
+            showToast('Rol actualizado', 'success');
+        }
+    } else {
+        // Create new
+        const newId = Math.max(...roles.map(r => r.id)) + 1;
+        roles.push({ id: newId, name, desc, color, users: 0 });
+        // Initialize permissions (all disabled by default)
+        const perms = DB.getPermissions();
+        perms[newId] = {};
+        permissionCategories.forEach(cat => cat.perms.forEach(p => { perms[newId][p.id] = false; }));
+        DB.setPermissions(perms);
+        showToast('Rol creado', 'success');
+    }
+
+    DB.setRoles(roles);
+    closeRoleModal();
+    renderRolesGrid();
+    renderMatrix();
+}
+
+function editRole(id) { openRoleModal(id); }
+
+function deleteRole(id) {
+    if (id <= 2) { showToast('No se pueden eliminar roles del sistema', 'error'); return; }
+    if (confirm('¿Eliminar este rol? Los usuarios asignados perderán sus permisos.')) {
+        const roles = DB.getRoles().filter(r => r.id !== id);
+        DB.setRoles(roles);
+        const perms = DB.getPermissions();
+        delete perms[id];
+        DB.setPermissions(perms);
+        if (selectedRoleId === id) selectedRoleId = 0;
+        renderRolesGrid();
+        renderMatrix();
+        showToast('Rol eliminado', 'success');
+    }
+}
+
+function savePermissions() {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        showToast('Permisos guardados exitosamente', 'success');
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 800);
+}
+
+function exportPermissions() {
+    const roles = DB.getRoles();
+    const perms = DB.getPermissions();
+
+    let csv = 'Rol,Categoría,Permiso,Permitido\n';
+    roles.forEach(role => {
+        permissionCategories.forEach(cat => {
+            cat.perms.forEach(p => {
+                const allowed = perms[role.id]?.[p.id] ? 'Sí' : 'No';
+                csv += `"${role.name}","${cat.title}","${p.name}","${allowed}"\n`;
+            });
+        });
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `NexPoS_Permisos_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+
+    showToast('Permisos exportados a CSV', 'success');
+}
+
+// Toast Notifications
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+});
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

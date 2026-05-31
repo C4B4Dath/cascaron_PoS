@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Detalle de Venta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- jsPDF for PDF receipt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.animate-shake { animation: shake 0.3s ease; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+
+
+/* Sale Item Row */
+.sale-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem; transition: background 0.15s ease;
+}
+.sale-item:hover { background: var(--slate-50/40); }
+.sale-item-img {
+    width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
+    object-fit: cover; border: 1px solid var(--slate-200);
+}
+.sale-item-info { flex: 1; margin-left: 1rem; }
+.sale-item-name { font-weight: 700; color: var(--slate-900); font-size: 0.875rem; }
+.sale-item-sku { font-size: 0.625rem; color: var(--slate-400); font-family: monospace; }
+.sale-item-qty {
+    background: var(--slate-100); color: var(--slate-700);
+    padding: 0.25rem 0.5rem; border-radius: 0.375rem;
+    font-size: 0.625rem; font-weight: 800; font-family: monospace;
+}
+.sale-item-total { font-weight: 700; font-family: monospace; color: var(--slate-900); }
+
+/* Status Badge */
+.status-badge {
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 800; text-transform: uppercase;
+}
+.status-badge.completada { background: var(--emerald-50); color: var(--emerald-700); }
+.status-badge.cancelada { background: var(--rose-50); color: var(--rose-700); }
+.status-badge.pendiente { background: var(--amber-50); color: var(--amber-700); }
+
+/* Summary Row */
+.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+.summary-row.total {
+    border-top: 2px solid var(--slate-200); padding-top: 1rem; margin-top: 0.5rem;
+}
+.summary-label { font-size: 0.875rem; color: var(--slate-500); }
+.summary-value { font-family: monospace; font-weight: 700; color: var(--slate-900); }
+.summary-value.total { font-size: 1.25rem; color: var(--slate-900); }
+
+/* Audit Info Card */
+.audit-card {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+    padding: 1rem; background: var(--slate-50); border-radius: 0.75rem;
+}
+.audit-item label {
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--slate-400); display: block;
+}
+.audit-item span {
+    font-weight: 700; color: var(--slate-900); font-size: 0.875rem;
+    margin-top: 0.25rem; display: block;
+}
+
+/* Action Buttons */
+.action-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.625rem 1.25rem; border-radius: 0.75rem;
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+    transition: all 0.15s ease; cursor: pointer;
+}
+.action-btn.primary {
+    background: var(--slate-900); color: white; border: 1px solid var(--slate-900);
+}
+.action-btn.primary:hover { background: var(--slate-800); }
+.action-btn.danger {
+    background: var(--rose-50); color: var(--rose-700);
+    border: 1px solid var(--rose-200);
+}
+.action-btn.danger:hover { background: var(--rose-100); }
+.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/20); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; visibility: hidden; transition: all 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem;
+    box-shadow: var(--shadow-xl); transform: translateY(10px); transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+
+/* Empty State */
+.empty-state {
+    text-align: center; padding: 4rem 2rem;
+    background: white; border: 1px dashed var(--slate-200);
+    border-radius: 1rem; margin: 2rem 0;
+}
+.empty-state i { width: 4rem; height: 4rem; margin: 0 auto 1rem; color: var(--slate-300); }
+.empty-state h3 { font-weight: 700; color: var(--slate-700); margin-bottom: 0.5rem; }
+.empty-state p { color: var(--slate-500); font-size: 0.875rem; margin-bottom: 1.5rem; }
+
+/* Print Styles */
+@media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea {
+        position: absolute; left: 0; top: 0; width: 100%;
+        font-family: monospace; font-size: 12px; padding: 1rem;
+    }
+}
+#printArea { display: none; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-8 space-y-6">
+
+            <!-- Back Link -->
+            <a href="sales.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-bold">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Volver al historial</span>
+            </a>
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-3">
+                    <i data-lucide="receipt" class="w-7 h-7 text-slate-400"></i>
+                    Detalle de Venta
+                </h1>
+                <div class="flex gap-3" id="actionButtons">
+                    <button id="btnReimprimir" onclick="printReceipt()" class="action-btn primary">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span class="btn-text">Reimprimir</span>
+                        <span class="spinner"></span>
+                    </button>
+                    <button id="btnCancelar" onclick="openCancelModal()" class="action-btn danger">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i>
+                        <span class="btn-text">Cancelar Venta</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div id="saleContent" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <!-- Content will be rendered here by JS -->
+            </div>
+
+            <!-- Empty State (shown when sale not found) -->
+            <div id="emptyState" class="hidden">
+                <div class="empty-state">
+                    <i data-lucide="receipt" class="w-16 h-16 mx-auto mb-4"></i>
+                    <h3>Venta no encontrada</h3>
+                    <p>El ticket <strong id="notFoundTicket"></strong> no existe en el sistema o ha sido eliminado.</p>
+                    <div class="flex justify-center gap-3">
+                        <a href="sales.html" class="action-btn primary">
+                            <i data-lucide="list" class="w-4 h-4"></i>
+                            <span>Ver historial de ventas</span>
+                        </a>
+                        <button onclick="window.history.back()" class="action-btn primary bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            <span>Atrás</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancelModal" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">¿Cancelar Venta?</h3>
+                    <p class="text-sm text-slate-500">Esta acción no se puede deshacer. El inventario se revertirá automáticamente.</p>
+                </div>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p class="text-xs text-amber-800 font-bold flex items-start gap-2">
+                    <i data-lucide="info" class="w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                    <span>Se registrará un movimiento de tipo "Cancelación" en el historial de auditoría.</span>
+                </p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeCancelModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">No, mantener</button>
+                <button onclick="confirmCancel()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <span class="btn-text">Sí, cancelar</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <!-- Hidden Print Area -->
+    <div id="printArea"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+
+    getSales() { return this._get('sales', []); },
+    setSales(s) { this._set('sales', s); },
+
+    getInventory() {
+        let inv = this._get('inventory', []);
+        if (inv.length === 0) {
+            inv = [
+                { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://placehold.co/80x80/10b981/ffffff?text=PARA' },
+                { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://placehold.co/80x80/dc2626/ffffff?text=COCA' },
+                { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00, img: 'https://placehold.co/80x80/f59e0b/ffffff?text=SABR' },
+                { id: 4, sku: 'SKU-00004', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00, img: 'https://placehold.co/80x80/f97316/ffffff?text=CONCHA' },
+            ];
+            this._set('inventory', inv);
+        }
+        return inv;
+    },
+
+    seedDemoData() {
+        if (this.getSales().length === 0) {
+            this.setSales([
+                { ticket: 'TKT-00432', date: '28/05/2026', time: '14:30', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 162.10, iva: 25.94, total: 188.04, received: 200.00, change: 11.96, items: [
+                    { name: 'Paracetamol 500mg', sku: 'SKU-48291', quantity: 2, price: 45.00, img: 'https://placehold.co/80x80/10b981/ffffff?text=PARA' },
+                    { name: 'Coca-Cola Original 600ml', sku: 'SKU-10293', quantity: 1, price: 18.50, img: 'https://placehold.co/80x80/dc2626/ffffff?text=COCA' },
+                    { name: 'Sabritas Original 45g', sku: 'SKU-77123', quantity: 3, price: 22.00, img: 'https://placehold.co/80x80/f59e0b/ffffff?text=SABR' },
+                    { name: 'Pan Dulce Concha Vainilla', sku: 'SKU-00004', quantity: 1, price: 12.00, img: 'https://placehold.co/80x80/f97316/ffffff?text=CONCHA' },
+                ]},
+                { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, received: 2450.00, change: 0, items: [] },
+                { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, received: 1300.00, change: 20.00, items: [] },
+            ]);
+        }
+    }
+};
+
+let currentSale = null;
+
+function init() {
+    // Primero cargar datos de demo
+    DB.seedDemoData();
+
+    // Pequeña pausa para asegurar que los datos estén listos
+    setTimeout(() => {
+        // Get ticket from URL
+        const params = new URLSearchParams(window.location.search);
+        let ticketId = params.get('ticket');
+
+        // Find sale
+        currentSale = DB.getSales().find(s => s.ticket === ticketId);
+
+        // Si no encuentra la venta del URL, usar la primera disponible
+        if (!currentSale && DB.getSales().length > 0) {
+            currentSale = DB.getSales()[0];
+            // Actualizar URL para reflejar la venta que se muestra
+            window.history.replaceState({}, '', `?ticket=${currentSale.ticket}`);
+            console.log('Usando venta de demo:', currentSale.ticket);
+        }
+
+        if (currentSale) {
+            // Show content, hide empty state
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('saleContent').classList.remove('hidden');
+            document.getElementById('actionButtons').classList.remove('hidden');
+
+            renderSaleDetails();
+        } else {
+            // Show empty state, hide content
+            document.getElementById('saleContent').classList.add('hidden');
+            document.getElementById('actionButtons').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('notFoundTicket').innerText = ticketId || 'N/A';
+
+            setTimeout(() => {
+                showToast('No hay ventas disponibles', 'error');
+            }, 500);
+        }
+
+        lucide.createIcons();
+    }, 150); // Aumentar un poco el delay
+}
+
+function renderSaleDetails() {
+    const container = document.getElementById('saleContent');
+
+    container.innerHTML = `
+        <!-- Left Column: Items + Audit -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Items Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl shadow-xs overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                            <i data-lucide="ticket" class="w-5 h-5 text-slate-400"></i>
+                            <span id="ticketNumber">${currentSale.ticket}</span>
+                        </h2>
+                        <span class="text-xs text-slate-400 font-mono flex items-center gap-1">
+                            <i data-lucide="calendar" class="w-3 h-3"></i>
+                            <span id="ticketDate">${currentSale.date} ${currentSale.time}</span>
+                        </span>
+                    </div>
+                    <span id="statusBadge" class="status-badge ${currentSale.status === 'Completada' ? 'completada' : 'cancelada'}">${currentSale.status}</span>
+                </div>
+                <div id="itemsList" class="divide-y divide-slate-100"></div>
+            </div>
+
+            <!-- Audit Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl shadow-xs p-6 space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    Auditoría
+                </h3>
+                <div class="audit-card">
+                    <div class="audit-item">
+                        <label><i data-lucide="user" class="w-3 h-3 inline mr-1"></i>Cajero</label>
+                        <span id="auditCashier">${currentSale.cashier}</span>
+                    </div>
+                    <div class="audit-item">
+                        <label><i data-lucide="credit-card" class="w-3 h-3 inline mr-1"></i>Caja</label>
+                        <span id="auditRegister">Caja #1 — Central</span>
+                    </div>
+                    <div class="audit-item">
+                        <label><i data-lucide="wallet" class="w-3 h-3 inline mr-1"></i>Método</label>
+                        <span id="auditMethod" class="flex items-center gap-1">
+                            <i data-lucide="${currentSale.method === 'Efectivo' ? 'banknote' : 'credit-card'}" class="w-3 h-3 ${currentSale.method === 'Efectivo' ? 'text-emerald-600' : 'text-blue-600'}"></i>
+                            ${currentSale.method}
+                        </span>
+                    </div>
+                    <div class="audit-item">
+                        <label><i data-lucide="circle-check" class="w-3 h-3 inline mr-1"></i>Estado</label>
+                        <span id="auditStatus" class="${currentSale.status === 'Completada' ? 'text-emerald-600' : 'text-rose-600'}">${currentSale.status}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Summary + Payment -->
+        <div class="space-y-6 lg:col-span-1">
+
+            <!-- Summary Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl shadow-xs p-6 space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    Resumen
+                </h3>
+                <div class="space-y-2">
+                    <div class="summary-row">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value" id="summarySubtotal">$${currentSale.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">IVA (16%)</span>
+                        <span class="summary-value" id="summaryIva">$${currentSale.iva.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Descuento</span>
+                        <span class="summary-value text-rose-500" id="summaryDiscount">-$${((currentSale.subtotal + currentSale.iva - currentSale.total) || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="summary-label font-black">Total</span>
+                        <span class="summary-value total" id="summaryTotal">$${currentSale.total.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Card (only for cash) -->
+            <div id="paymentCard" class="bg-white border border-slate-100 rounded-2xl shadow-xs p-6 space-y-4" style="display: ${currentSale.method === 'Efectivo' ? 'block' : 'none'}">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="cash" class="w-4 h-4"></i>
+                    Efectivo / Cambio
+                </h3>
+                <div class="space-y-2">
+                    <div class="summary-row">
+                        <span class="summary-label">Recibido</span>
+                        <span class="summary-value" id="paymentReceived">$${(currentSale.received || currentSale.total).toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Cambio</span>
+                        <span class="summary-value text-emerald-600" id="paymentChange">$${(currentSale.change || 0).toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl shadow-xs p-6 space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    Compartir
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="exportPDF()" class="action-btn primary bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>PDF</span>
+                    </button>
+                    <button onclick="copyLink()" class="action-btn primary bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100">
+                        <i data-lucide="link" class="w-4 h-4"></i>
+                        <span>Enlace</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    `;
+
+    // Render items
+    const itemsList = document.getElementById('itemsList');
+    if (currentSale.items && currentSale.items.length > 0) {
+        itemsList.innerHTML = currentSale.items.map(item => `
+            <div class="sale-item">
+                <div class="flex items-center">
+                    <img src="${item.img || 'https://placehold.co/80x80/94a3b8/ffffff?text=IMG'}" class="sale-item-img" alt="">
+                    <div class="sale-item-info">
+                        <div class="sale-item-name">${item.name}</div>
+                        <div class="sale-item-sku">${item.sku}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="sale-item-qty">${item.quantity}x</span>
+                    <span class="sale-item-total">$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        itemsList.innerHTML = `<div class="p-6 text-center text-slate-400 text-sm">Sin items en esta venta</div>`;
+    }
+
+    // Disable cancel button if already cancelled
+    const cancelBtn = document.getElementById('btnCancelar');
+    if (currentSale.status !== 'Completada') {
+        cancelBtn.disabled = true;
+        cancelBtn.classList.add('opacity-40', 'cursor-not-allowed');
+    }
+
+    lucide.createIcons();
+}
+
+// === PRINT / EXPORT FUNCTIONS ===
+function printReceipt() {
+    if (!currentSale) return;
+
+    const btn = document.getElementById('btnReimprimir');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        generatePrintContent();
+        window.print();
+
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+        showToast('Ticket enviado a impresora', 'success');
+    }, 800);
+}
+
+function generatePrintContent() {
+    const printArea = document.getElementById('printArea');
+    const items = currentSale.items.map(i =>
+        `${i.quantity}x ${i.name.padEnd(25)} $${(i.price * i.quantity).toFixed(2)}`
+    ).join('\n');
+
+    printArea.innerHTML = `
+<pre style="font-family: monospace; font-size: 12px; line-height: 1.4;">
+═══════════════════════════════
+         NEXPOS - TICKET
+═══════════════════════════════
+Ticket: ${currentSale.ticket}
+Fecha:  ${currentSale.date} ${currentSale.time}
+Cajero: ${currentSale.cashier}
+Caja:   Caja #1 — Central
+───────────────────────────────
+${items}
+───────────────────────────────
+Subtotal:    $${currentSale.subtotal.toFixed(2).padStart(10)}
+IVA (16%):   $${currentSale.iva.toFixed(2).padStart(10)}
+───────────────────────────────
+TOTAL:       $${currentSale.total.toFixed(2).padStart(10)}
+───────────────────────────────
+Método: ${currentSale.method}${currentSale.method === 'Efectivo' ? `
+Recibido:  $${(currentSale.received || currentSale.total).toFixed(2).padStart(10)}
+Cambio:    $${(currentSale.change || 0).toFixed(2).padStart(10)}` : ''}
+═══════════════════════════════
+     Gracias por su compra
+═══════════════════════════════
+</pre>`;
+    printArea.style.display = 'block';
+}
+
+function exportPDF() {
+    if (!currentSale) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ format: [80, 200] }); // Thermal receipt size
+
+    // Header
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('NEXPOS', 40, 10, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Ticket de Venta', 40, 15, { align: 'center' });
+
+    // Info
+    doc.setFontSize(7);
+    doc.text(`Ticket: ${currentSale.ticket}`, 5, 25);
+    doc.text(`Fecha: ${currentSale.date} ${currentSale.time}`, 5, 30);
+    doc.text(`Cajero: ${currentSale.cashier}`, 5, 35);
+
+    // Items
+    let y = 45;
+    doc.line(5, y, 75, y);
+    y += 5;
+
+    currentSale.items.forEach(item => {
+        doc.text(`${item.quantity}x ${item.name}`, 5, y);
+        doc.text(`$${(item.price * item.quantity).toFixed(2)}`, 75, y, { align: 'right' });
+        y += 5;
+    });
+
+    // Totals
+    doc.line(5, y, 75, y);
+    y += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Subtotal: $${currentSale.subtotal.toFixed(2)}`, 5, y);
+    y += 4;
+    doc.text(`IVA: $${currentSale.iva.toFixed(2)}`, 5, y);
+    y += 5;
+    doc.setFontSize(9);
+    doc.text(`TOTAL: $${currentSale.total.toFixed(2)}`, 5, y);
+
+    // Footer
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Gracias por su compra', 40, y + 15, { align: 'center' });
+
+    doc.save(`${currentSale.ticket}.pdf`);
+    showToast('PDF descargado', 'success');
+}
+
+function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('Enlace copiado al portapapeles', 'success');
+    }).catch(() => {
+        showToast('Error al copiar enlace', 'error');
+    });
+}
+
+// === CANCEL MODAL ===
+function openCancelModal() {
+    if (!currentSale || currentSale.status !== 'Completada') {
+        showToast('Esta venta ya fue cancelada o no existe', 'error');
+        return;
+    }
+    document.getElementById('cancelModal').classList.add('active');
+    lucide.createIcons();
+}
+
+function closeCancelModal() {
+    document.getElementById('cancelModal').classList.remove('active');
+}
+
+function confirmCancel() {
+    if (!currentSale) return;
+
+    const btn = document.querySelector('#cancelModal button:last-child');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        // Update sale status
+        const sales = DB.getSales();
+        const sale = sales.find(s => s.ticket === currentSale.ticket);
+        if (sale) {
+            sale.status = 'Cancelada';
+            DB.setSales(sales);
+
+            // Update UI
+            document.getElementById('statusBadge').className = 'status-badge cancelada';
+            document.getElementById('statusBadge').innerText = 'Cancelada';
+            document.getElementById('auditStatus').className = 'text-rose-600';
+            document.getElementById('auditStatus').innerText = 'Cancelada';
+
+            // Disable cancel button
+            const cancelBtn = document.getElementById('btnCancelar');
+            cancelBtn.disabled = true;
+            cancelBtn.classList.add('opacity-40', 'cursor-not-allowed');
+
+            closeCancelModal();
+            showToast('Venta cancelada exitosamente', 'success');
+
+            // Restore button
+            btn.disabled = false;
+            btn.classList.remove('btn-loading');
+        }
+    }, 1000);
+}
+
+// === TOAST NOTIFICATIONS ===
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeCancelModal();
+    }
+    if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault();
+        printReceipt();
+    }
+});
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

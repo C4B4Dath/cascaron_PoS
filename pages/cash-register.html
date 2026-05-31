@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Control de Caja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+
+
+/* Form Input Styles */
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-input.mono { font-family: monospace; font-weight: 700; }
+.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
+
+/* Status & Type Badges */
+.status-badge { padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.625rem; font-weight: 800; text-transform: uppercase; }
+.status-badge.apertura { background: var(--emerald-50); color: var(--emerald-700); }
+.status-badge.ingreso { background: var(--blue-50); color: var(--blue-600); }
+.status-badge.retiro { background: var(--rose-50); color: var(--rose-600); }
+.status-badge.cierre { background: var(--purple-50); color: var(--purple-600); }
+
+/* Action Buttons */
+.action-btn {
+    width: 1.75rem; height: 1.75rem; border-radius: 0.375rem;
+    border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease;
+}
+.action-btn:hover { background: var(--slate-50); }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/20); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; visibility: hidden; transition: all 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem;
+    box-shadow: var(--shadow-xl); transform: translateY(10px); transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+/* Cash Summary Card */
+.cash-summary {
+    background: linear-gradient(135deg, var(--slate-900), var(--slate-700));
+    border-radius: 1rem; padding: 1.5rem; color: white;
+}
+.cash-summary .label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; }
+.cash-summary .value { font-size: 1.5rem; font-weight: 900; font-family: monospace; }
+.cash-summary .detail { display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem; }
+
+/* Filter Bar */
+.filter-bar {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+    padding: 1rem; background: var(--slate-50); border-radius: 0.75rem; margin-bottom: 1rem;
+}
+.filter-bar .form-input { min-width: 140px; }
+.filter-bar select { min-width: 150px; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Control de Caja</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Administrador</p>
+                </div>
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-8 space-y-8">
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">Control de Caja</h1>
+                    <p class="text-slate-500 mt-1 text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="circle" class="w-3 h-3 text-emerald-500 fill-emerald-500"></i>
+                        Caja #1 — Turno Activo
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <button id="btnAbrirCaja" class="bg-emerald-600 hover:bg-emerald-700 text-white active:scale-98 font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i data-lucide="play" class="w-4 h-4"></i><span>Abrir Caja</span>
+                    </button>
+                    <button id="btnCerrarTurno" class="bg-rose-600 hover:bg-rose-700 text-white active:scale-98 font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="square" class="w-4 h-4"></i><span>Cerrar Turno</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>Fondo Inicial
+                    </span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiInitial">$1,500.00</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Monto asignado al inicio del turno</p>
+                </div>
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="coins" class="w-4 h-4"></i>Efectivo en Caja
+                    </span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-emerald-600 tracking-tight font-mono" id="kpiCurrent">$6,842.50</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Saldo actual disponible</p>
+                </div>
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="history" class="w-4 h-4"></i>Corte Anterior
+                    </span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiPrevious">$5,342.50</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Total del turno previo</p>
+                </div>
+            </div>
+
+            <!-- Cash Summary Card (Demo Info) -->
+            <div class="cash-summary">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="label">Saldo en Tiempo Real</p>
+                        <p class="value" id="summaryCurrent">$6,842.50</p>
+                    </div>
+                    <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded">Actualizado: <span id="summaryTime">14:30</span></span>
+                </div>
+                <div class="space-y-2">
+                    <div class="detail"><span>Ingresos del turno</span><span class="font-mono">+$5,918.04</span></div>
+                    <div class="detail"><span>Retiros del turno</span><span class="font-mono text-rose-300">-$575.54</span></div>
+                    <div class="detail"><span>Ventas en efectivo</span><span class="font-mono">3 transacciones</span></div>
+                </div>
+            </div>
+
+            <!-- Movements Table with Filters -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                <div class="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <h2 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="list" class="w-4 h-4"></i>Movimientos del Turno
+                    </h2>
+                    <button id="btnRegistrarMovimiento" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i><span>Registrar Movimiento</span>
+                    </button>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar px-6 py-3 border-b border-slate-100">
+                    <div class="relative flex-1 min-w-[200px]">
+                        <input type="text" id="filterSearch" placeholder="Buscar concepto..." class="form-input py-2 pl-9 pr-3 text-xs w-full" oninput="filterMovements()">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+                    <select id="filterType" class="form-input py-2 px-3 text-xs cursor-pointer" onchange="filterMovements()">
+                        <option value="">Todos los tipos</option>
+                        <option value="Apertura">Apertura</option>
+                        <option value="Ingreso">Ingreso</option>
+                        <option value="Retiro">Retiro</option>
+                        <option value="Cierre">Cierre</option>
+                    </select>
+                    <input type="time" id="filterTimeFrom" class="form-input py-2 px-3 text-xs" title="Hora desde" onchange="filterMovements()">
+                    <input type="time" id="filterTimeTo" class="form-input py-2 px-3 text-xs" title="Hora hasta" onchange="filterMovements()">
+                    <button onclick="clearFilters()" class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>Limpiar
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
+                                <th class="p-4 pl-6">Hora</th>
+                                <th class="p-4">Tipo</th>
+                                <th class="p-4">Concepto</th>
+                                <th class="p-4 text-right">Monto</th>
+                                <th class="p-4 text-right pr-6">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movimientosBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movement Registration Modal -->
+    <div id="movementModal" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900">Registrar Movimiento</h3>
+                <button onclick="closeMovementModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="form-label">Tipo de Movimiento</label>
+                    <select id="modalType" class="form-input cursor-pointer" onchange="updateAmountPlaceholder()">
+                        <option value="Ingreso">Ingreso (+)</option>
+                        <option value="Retiro">Retiro (-)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Concepto</label>
+                    <input type="text" id="modalConcept" placeholder="Ej: Pago a proveedor, Venta manual..." class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Monto</label>
+                    <input type="number" id="modalAmount" placeholder="0.00" step="0.01" min="0" class="form-input mono">
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeMovementModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="saveMovement()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Shift Modal -->
+    <div id="closeShiftModal" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900">Cerrar Turno</h3>
+                <button onclick="closeCloseShiftModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <p class="text-sm text-slate-600">¿Estás seguro de cerrar el turno actual? Se generará un reporte de corte.</p>
+                <div class="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-500">Fondo inicial</span><span class="font-mono font-bold">$1,500.00</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Ingresos</span><span class="font-mono font-bold text-emerald-600">+$5,918.04</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Retiros</span><span class="font-mono font-bold text-rose-600">-$575.54</span></div>
+                    <hr class="border-slate-200">
+                    <div class="flex justify-between text-base"><span class="font-bold">Saldo final</span><span class="font-mono font-black text-emerald-600">$6,842.50</span></div>
+                </div>
+                <div>
+                    <label class="form-label">Observaciones (opcional)</label>
+                    <textarea id="closeShiftNotes" placeholder="Notas del cierre..." class="form-input min-h-[80px] resize-none"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeCloseShiftModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="confirmCloseShift()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Confirmar Cierre</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+    getSales() { return this._get('sales', []); },
+    setSales(s) { this._set('sales', s); },
+    getCashBalance() { return this._get('cash_balance', { initial: 1500, current: 1500, isOpen: true }); },
+    setCashBalance(b) { this._set('cash_balance', b); },
+    getCashMovements() { return this._get('cash_movements', []); },
+    setCashMovements(m) { this._set('cash_movements', m); },
+
+    seedDemoData() {
+        if (this.getCashMovements().length === 0) {
+            this.setCashMovements([
+                { id: 1, time: '09:00', type: 'Apertura', concept: 'Fondo inicial de caja', amount: 1500, balance: 1500 },
+                { id: 2, time: '10:23', type: 'Ingreso', concept: 'Venta ticket TKT-00430', amount: 1280, balance: 2780 },
+                { id: 3, time: '11:45', type: 'Ingreso', concept: 'Venta ticket TKT-00431', amount: 2450, balance: 5230 },
+                { id: 4, time: '13:10', type: 'Retiro', concept: 'Pago a proveedor', amount: -800, balance: 4430 },
+                { id: 5, time: '14:30', type: 'Ingreso', concept: 'Venta ticket TKT-00432', amount: 188.04, balance: 4618.04 },
+            ]);
+            this.setCashBalance({ initial: 1500, current: 4618.04, isOpen: true });
+        }
+    }
+};
+
+function init() {
+    DB.seedDemoData();
+    renderMovements();
+    updateKPIs();
+    lucide.createIcons();
+}
+
+function updateKPIs() {
+    const b = DB.getCashBalance();
+    document.getElementById('kpiInitial').innerText = `$${b.initial.toFixed(2)}`;
+    document.getElementById('kpiCurrent').innerText = `$${b.current.toFixed(2)}`;
+    document.getElementById('summaryCurrent').innerText = `$${b.current.toFixed(2)}`;
+    document.getElementById('summaryTime').innerText = new Date().toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
+}
+
+function renderMovements() {
+    const movs = DB.getCashMovements();
+    const tbody = document.getElementById('movimientosBody');
+
+    if (movs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Sin movimientos registrados</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = movs.map(m => {
+        const isPositive = m.amount >= 0;
+        const typeClass = m.type.toLowerCase();
+        return `
+        <tr class="hover:bg-slate-50/40 transition-colors">
+            <td class="p-4 pl-6 font-mono text-xs text-slate-500">${m.time}</td>
+            <td class="p-4"><span class="status-badge ${typeClass}">${m.type}</span></td>
+            <td class="p-4">${m.concept}</td>
+            <td class="p-4 text-right font-mono font-bold" style="color: ${isPositive ? 'var(--emerald-600)' : 'var(--rose-600)'}">${isPositive ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}</td>
+            <td class="p-4 text-right pr-6 font-mono font-bold">$${m.balance.toFixed(2)}</td>
+        </tr>`;
+    }).join('');
+    lucide.createIcons();
+}
+
+function filterMovements() {
+    const query = document.getElementById('filterSearch').value.toLowerCase();
+    const type = document.getElementById('filterType').value;
+    const from = document.getElementById('filterTimeFrom').value;
+    const to = document.getElementById('filterTimeTo').value;
+
+    const movs = DB.getCashMovements().filter(m => {
+        const matchText = !query || m.concept.toLowerCase().includes(query);
+        const matchType = !type || m.type === type;
+        let matchTime = true;
+        if (from || to) {
+            if (from && m.time < from) matchTime = false;
+            if (to && m.time > to) matchTime = false;
+        }
+        return matchText && matchType && matchTime;
+    });
+
+    const tbody = document.getElementById('movimientosBody');
+    tbody.innerHTML = movs.length === 0 ? `<tr><td colspan="5" class="p-8 text-center text-slate-400">Sin resultados</td></tr>` :
+        movs.map(m => {
+            const isPositive = m.amount >= 0;
+            const typeClass = m.type.toLowerCase();
+            return `
+            <tr class="hover:bg-slate-50/40 transition-colors">
+                <td class="p-4 pl-6 font-mono text-xs text-slate-500">${m.time}</td>
+                <td class="p-4"><span class="status-badge ${typeClass}">${m.type}</span></td>
+                <td class="p-4">${m.concept}</td>
+                <td class="p-4 text-right font-mono font-bold" style="color: ${isPositive ? 'var(--emerald-600)' : 'var(--rose-600)'}">${isPositive ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}</td>
+                <td class="p-4 text-right pr-6 font-mono font-bold">$${m.balance.toFixed(2)}</td>
+            </tr>`;
+        }).join('');
+}
+
+function clearFilters() {
+    document.getElementById('filterSearch').value = '';
+    document.getElementById('filterType').value = '';
+    document.getElementById('filterTimeFrom').value = '';
+    document.getElementById('filterTimeTo').value = '';
+    filterMovements();
+}
+
+// Modal Functions
+function openMovementModal() {
+    document.getElementById('movementModal').classList.add('active');
+    document.getElementById('modalConcept').value = '';
+    document.getElementById('modalAmount').value = '';
+    document.getElementById('modalType').value = 'Ingreso';
+    updateAmountPlaceholder();
+    setTimeout(() => document.getElementById('modalConcept').focus(), 100);
+}
+
+function closeMovementModal() {
+    document.getElementById('movementModal').classList.remove('active');
+}
+
+function updateAmountPlaceholder() {
+    const type = document.getElementById('modalType').value;
+    document.getElementById('modalAmount').placeholder = type === 'Ingreso' ? '0.00' : '0.00';
+}
+
+function saveMovement() {
+    const type = document.getElementById('modalType').value;
+    const concept = document.getElementById('modalConcept').value.trim();
+    const amount = parseFloat(document.getElementById('modalAmount').value);
+
+    if (!concept) { showToast('Ingresa un concepto', 'error'); return; }
+    if (isNaN(amount) || amount <= 0) { showToast('Ingresa un monto válido', 'error'); return; }
+
+    const balance = DB.getCashBalance();
+    const movs = DB.getCashMovements();
+    const now = new Date();
+    const time = now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
+    const signedAmount = type === 'Retiro' ? -amount : amount;
+    const prevBalance = movs.length > 0 ? movs[0].balance : balance.initial;
+
+    movs.unshift({
+        id: Date.now(), time, type, concept,
+        amount: signedAmount, balance: prevBalance + signedAmount
+    });
+
+    balance.current += signedAmount;
+    DB.setCashMovements(movs);
+    DB.setCashBalance(balance);
+
+    renderMovements();
+    updateKPIs();
+    closeMovementModal();
+    showToast(`Movimiento registrado: ${concept}`, 'success');
+}
+
+function openCloseShiftModal() {
+    document.getElementById('closeShiftModal').classList.add('active');
+}
+
+function closeCloseShiftModal() {
+    document.getElementById('closeShiftModal').classList.remove('active');
+}
+
+function confirmCloseShift() {
+    const balance = DB.getCashBalance();
+    const movs = DB.getCashMovements();
+    const ingresos = movs.filter(m => m.type === 'Ingreso').reduce((s, m) => s + m.amount, 0);
+    const egresos = movs.filter(m => m.type === 'Retiro').reduce((s, m) => s + Math.abs(m.amount), 0);
+    const notes = document.getElementById('closeShiftNotes').value;
+
+    const now = new Date();
+    const time = now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
+    movs.unshift({
+        id: Date.now(), time, type: 'Cierre',
+        concept: `Cierre de turno${notes ? ' - ' + notes : ''}`,
+        amount: 0, balance: balance.current
+    });
+
+    DB.setCashMovements(movs);
+    DB.setCashBalance({ initial: 0, current: 0, isOpen: false });
+
+    renderMovements();
+    updateKPIs();
+    closeCloseShiftModal();
+
+    showToast(`Turno cerrado. Saldo final: $${balance.current.toFixed(2)}`, 'success');
+
+    setTimeout(() => {
+        showToast('Reporte de corte generado', 'success');
+    }, 1500);
+}
+
+// Button Handlers
+document.getElementById('btnAbrirCaja').addEventListener('click', function() {
+    const balance = DB.getCashBalance();
+    if (balance.isOpen) { showToast('La caja ya está abierta', 'error'); return; }
+
+    const now = new Date();
+    const time = now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
+    const movs = DB.getCashMovements();
+    movs.unshift({ id: Date.now(), time, type: 'Apertura', concept: 'Fondo inicial de caja', amount: 1500, balance: 1500 });
+
+    DB.setCashBalance({ initial: 1500, current: 1500, isOpen: true });
+    DB.setCashMovements(movs);
+
+    renderMovements();
+    updateKPIs();
+    showToast('Caja #1 abierta con fondo de $1,500.00', 'success');
+});
+
+document.getElementById('btnCerrarTurno').addEventListener('click', openCloseShiftModal);
+document.getElementById('btnRegistrarMovimiento').addEventListener('click', openMovementModal);
+
+// Toast Notifications
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+});
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

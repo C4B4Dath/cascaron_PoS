@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Facturación (CFDI)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+/* Demo Warning Box */
+.demo-warning {
+    background: var(--amber-50); border: 1px dashed var(--amber-500);
+    border-radius: 0.5rem; padding: 0.5rem; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.demo-warning i { color: var(--amber-600); flex-shrink: 0; }
+.demo-warning span { font-size: 0.625rem; font-weight: 700; color: var(--amber-700); line-height: 1.3; }
+
+/* Form Input Styles */
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-input.mono { font-family: monospace; font-weight: 700; text-transform: uppercase; }
+.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
+
+/* Date Input Fix */
+input[type="date"] {
+    appearance: none; -webkit-appearance: none;
+    padding: 0.5rem 0.75rem;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer; opacity: 0.5;
+}
+
+/* Receipt Preview */
+.receipt-preview {
+    background: white; border: 2px dashed var(--slate-200); border-radius: 1rem;
+    padding: 1.5rem; font-family: monospace; font-size: 0.75rem; color: var(--slate-800);
+}
+.receipt-preview .header { text-align: center; margin-bottom: 0.75rem; }
+.receipt-preview .header .title { font-size: 0.875rem; font-weight: 900; color: var(--slate-900); }
+.receipt-preview .header .subtitle { font-size: 0.625rem; color: var(--slate-400); }
+.receipt-preview hr { border: none; border-top: 1px dashed var(--slate-200); margin: 0.75rem 0; }
+.receipt-preview .row { display: flex; justify-content: space-between; margin: 0.25rem 0; }
+.receipt-preview .row.label { color: var(--slate-500); }
+.receipt-preview .row.value { font-weight: 700; color: var(--slate-900); }
+.receipt-preview .row.total { font-size: 0.875rem; font-weight: 900; color: var(--slate-900); border-top: 1px dashed var(--slate-200); padding-top: 0.5rem; margin-top: 0.5rem; }
+
+/* Status & Method Badges */
+.status-badge { padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.625rem; font-weight: 800; text-transform: uppercase; }
+.status-badge.timbrado { background: var(--emerald-50); color: var(--emerald-700); }
+.status-badge.pendiente { background: var(--amber-50); color: var(--amber-700); }
+.status-badge.cancelado { background: var(--rose-50); color: var(--rose-700); }
+
+.method-badge { padding: 0.2rem 0.5rem; border-radius: 0.375rem; font-size: 0.625rem; font-weight: 700; background: var(--slate-100); color: var(--slate-600); }
+
+/* Action Buttons */
+.action-btn {
+    width: 1.75rem; height: 1.75rem; border-radius: 0.375rem;
+    border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease;
+}
+.action-btn:hover { background: var(--slate-50); }
+.action-btn.view:hover { border-color: var(--slate-400); color: var(--slate-700); }
+.action-btn.xml:hover { background: var(--blue-50); border-color: var(--blue-200); color: var(--blue-600); }
+.action-btn.pdf:hover { background: var(--rose-50); border-color: var(--rose-200); color: var(--rose-600); }
+
+/* Ticket Input Group */
+.input-group { display: flex; gap: 0.5rem; align-items: center; }
+.input-group .form-input { flex: 1; }
+.input-group-btn {
+    padding: 0.625rem 1rem; background: var(--slate-900); color: white; border-radius: 0.75rem; font-weight: 700;
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    transition: all 0.15s ease; white-space: nowrap;
+}
+.input-group-btn:hover { background: var(--slate-800); }
+.input-group-btn:active { transform: scale(0.98); }
+
+/* Ticket Result Card */
+.ticket-result { background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 0.75rem; padding: 0.75rem; margin-top: 0.75rem; display: none; }
+.ticket-result.show { display: block; animation: fadeIn 0.2s ease; }
+.ticket-result .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.ticket-result .ticket-title { font-weight: 700; color: var(--slate-900); font-size: 0.875rem; }
+.ticket-result .ticket-badge { background: var(--emerald-50); color: var(--emerald-700); padding: 0.125rem 0.5rem; border-radius: 0.375rem; font-size: 0.625rem; font-weight: 800; }
+.ticket-result .ticket-details { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 0.5rem; font-size: 0.75rem; color: var(--slate-600); }
+.ticket-result .ticket-details .label { color: var(--slate-400); }
+.ticket-result .ticket-details .value { font-weight: 600; color: var(--slate-900); text-align: right; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Facturación CFDI</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Administrador</p>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-12 space-y-10">
+            <section class="border-b border-slate-200 pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">Facturación (CFDI)</h1>
+                    <p class="text-slate-500 mt-1 text-sm">Emisión de comprobantes fiscales digitales</p>
+                </div>
+                <button onclick="nuevaFactura()" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i><span>Nueva Factura</span>
+                </button>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column: Form -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-5">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="user" class="w-4 h-4"></i>Datos del Cliente
+                        </h3>
+                        <div class="demo-warning">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            <span>Vista Demo: En producción se valida RFC con el SAT</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <label class="form-label">RFC <span class="text-rose-500">*</span></label>
+                                <input type="text" id="rfcInput" placeholder="XXXX000101XXX" maxlength="13" class="form-input mono uppercase" oninput="validateRFC(this); updatePreview()">
+                                <p id="rfcError" class="text-[10px] text-rose-600 font-bold hidden">RFC inválido</p>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label">Razón Social <span class="text-rose-500">*</span></label>
+                                <input type="text" id="razonInput" placeholder="Nombre o razón social del cliente" class="form-input" oninput="updatePreview()">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label">Correo para CFDI</label>
+                                <input type="email" id="correoInput" placeholder="cliente@correo.com" class="form-input">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label">Uso del CFDI <span class="text-rose-500">*</span></label>
+                                <select id="usoSelect" class="form-input appearance-none cursor-pointer" onchange="updatePreview()">
+                                    <option value="G01">G01 — Gastos en General</option>
+                                    <option value="G03">G03 — Gastos de Viaje</option>
+                                    <option value="D01">D01 — Honorarios Médicos</option>
+                                    <option value="P01">P01 — Por Definir</option>
+                                    <option value="CP01">CP01 — Compras</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Ticket Entry -->
+                    <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-4">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="receipt" class="w-4 h-4"></i>Vincular Ticket Manualmente
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="input-group">
+                                <input type="text" id="manualTicketInput" placeholder="Ej: TKT-00430" class="form-input mono uppercase" onkeypress="if(event.key==='Enter') buscarTicket()">
+                                <button onclick="buscarTicket()" class="input-group-btn">
+                                    <i data-lucide="search" class="w-4 h-4"></i>Buscar
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400">
+                                <i data-lucide="help-circle" class="w-3 h-3 inline mr-1"></i>
+                                Ingresa el folio del ticket para importar sus datos automáticamente
+                            </p>
+                            <div id="ticketResult" class="ticket-result">
+                                <div class="ticket-header">
+                                    <span class="ticket-title" id="resultTicketId">TKT-00430</span>
+                                    <span class="ticket-badge">Vinculado</span>
+                                </div>
+                                <div class="ticket-details">
+                                    <span class="label">Fecha:</span><span class="value" id="resultDate">28/05/2026</span>
+                                    <span class="label">Total:</span><span class="value text-emerald-600" id="resultTotal">$1,280.00</span>
+                                    <span class="label">Método:</span><span class="value" id="resultMethod">Efectivo</span>
+                                    <span class="label">Items:</span><span class="value" id="resultItems">3 artículos</span>
+                                </div>
+                                <button onclick="usarTicket()" class="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                                    <i data-lucide="check" class="w-4 h-4"></i>Usar este ticket
+                                </button>
+                            </div>
+                            <p id="ticketError" class="text-[10px] text-rose-600 font-bold hidden flex items-center gap-1">
+                                <i data-lucide="circle-alert" class="w-3 h-3"></i>Ticket no encontrado
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Preview & Actions -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-5">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i>Vista Previa del Comprobante
+                        </h3>
+                        <div id="previewReceipt" class="receipt-preview">
+                            <div class="header"><p class="title">NexPoS</p><p class="subtitle">RFC: NEXP-240101-XXX</p></div>
+                            <hr>
+                            <div class="space-y-1">
+                                <div class="row label"><span>CFDI:</span><span id="previewFolio" class="value">—</span></div>
+                                <div class="row label"><span>Cliente:</span><span id="previewCliente" class="value">—</span></div>
+                                <div class="row label"><span>RFC:</span><span id="previewRfc" class="value">—</span></div>
+                                <div class="row label"><span>Uso:</span><span id="previewUso" class="value">—</span></div>
+                            </div>
+                            <hr>
+                            <div class="space-y-0.5 text-right">
+                                <div class="row label"><span>Subtotal</span><span id="previewSubtotal" class="value">$0.00</span></div>
+                                <div class="row label"><span>IVA (16%)</span><span id="previewIva" class="value">$0.00</span></div>
+                                <hr><div class="row total"><span>TOTAL</span><span id="previewTotal">$0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="emitirCFDI()" id="btnEmitir" class="flex-1 bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i>Emitir CFDI
+                            </button>
+                            <button onclick="downloadPDF()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2">
+                                <i data-lucide="file-text" class="w-4 h-4"></i>PDF
+                            </button>
+                            <button onclick="downloadXML()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2">
+                                <i data-lucide="code" class="w-4 h-4"></i>XML
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoices Table with Filters -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                <div class="p-5 border-b border-slate-100 space-y-4">
+                    <div class="flex justify-between items-center flex-wrap gap-3">
+                        <div>
+                            <h3 class="font-bold text-slate-900">Facturas Emitidas</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Historial de comprobantes fiscales generados</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="relative flex-1 min-w-[200px]">
+                            <input type="text" id="searchInvoices" placeholder="Buscar folio o cliente..." class="form-input py-2 pl-9 pr-3 text-xs w-full" oninput="filterInvoices()">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="date" id="filterDateFrom" class="form-input py-2 px-3 text-xs min-w-[140px]" title="Fecha desde" oninput="filterInvoices()">
+                            <input type="date" id="filterDateTo" class="form-input py-2 px-3 text-xs min-w-[140px]" title="Fecha hasta" oninput="filterInvoices()">
+                        </div>
+                        <select id="filterMethod" class="form-input py-2 px-3 text-xs min-w-[150px] cursor-pointer" oninput="filterInvoices()">
+                            <option value="">Método: Todos</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                            <option value="Mixto">Mixto</option>
+                        </select>
+                        <button onclick="clearFilters()" class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>Limpiar
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
+                                <th class="p-4 pl-6">Folio</th>
+                                <th class="p-4">Cliente</th>
+                                <th class="p-4">RFC</th>
+                                <th class="p-4 text-center">Método</th>
+                                <th class="p-4 text-right">Total</th>
+                                <th class="p-4 text-center">Estado</th>
+                                <th class="p-4 text-center pr-6">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoicesBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+    getSales() { return this._get('sales', []); },
+    setSales(s) { this._set('sales', s); },
+    getInvoices() { return this._get('invoices', []); },
+    setInvoices(inv) { this._set('invoices', inv); },
+    addInvoice(inv) { const invoices = this.getInvoices(); invoices.unshift(inv); this.setInvoices(invoices); return inv; },
+
+    seedDemoData() {
+        if (this.getSales().length === 0) {
+            this.setSales([
+                { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, items: [{ name: 'Paracetamol 500mg', quantity: 5, price: 45.00 }, { name: 'Coca-Cola 600ml', quantity: 12, price: 18.50 }] },
+                { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, items: [{ name: 'Detergente Líquido 1L', quantity: 5, price: 120.00 }] },
+                { ticket: 'TKT-00429', date: '27/05/2026', time: '18:05', cashier: 'María López', method: 'Efectivo', status: 'Cancelada', subtotal: 297.41, iva: 47.59, total: 345.00, items: [{ name: 'Pan Dulce Concha', quantity: 3, price: 12.00 }] },
+            ]);
+        }
+        if (this.getInvoices().length === 0) {
+            this.setInvoices([
+                { folio: 'CFDI-00001', date: '28/05/2026', time: '10:45', client: 'Comercializadora del Valle S.A.', rfc: 'CVAL-850101-ABC', uso: 'G01', method: 'Efectivo', subtotal: 4672.41, iva: 747.59, total: 5420.00, status: 'timbrado', uuid: 'A1B2C3D4-E5F6-7890-ABCD-EF1234567890' },
+                { folio: 'CFDI-00002', date: '28/05/2026', time: '12:30', client: 'Sistemas Integrales S.A. de C.V.', rfc: 'SIN-920201-XYZ', uso: 'G03', method: 'Tarjeta', subtotal: 10500.00, iva: 1680.00, total: 12180.00, status: 'timbrado', uuid: 'B2C3D4E5-F6G7-8901-BCDE-FG2345678901' },
+                { folio: 'CFDI-00003', date: '27/05/2026', time: '16:20', client: 'Farmacia San José', rfc: 'FSAJ-780315-MNO', uso: 'CP01', method: 'Mixto', subtotal: 2150.00, iva: 344.00, total: 2494.00, status: 'pendiente', uuid: null },
+                { folio: 'CFDI-00004', date: '25/05/2026', time: '09:15', client: 'Restaurante El Buen Sabor', rfc: 'REBS-881122-PQR', uso: 'G01', method: 'Efectivo', subtotal: 850.00, iva: 136.00, total: 986.00, status: 'cancelado', uuid: 'C3D4E5F6-G7H8-9012-CDEF-GH3456789012' },
+            ]);
+        }
+    }
+};
+
+let currentTicket = null;
+let currentTotal = 0;
+
+function init() {
+    DB.seedDemoData();
+    filterInvoices();
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('ticket'), v = params.get('total');
+    if (t && v) { currentTicket = t; currentTotal = parseFloat(v); document.getElementById('manualTicketInput').value = t; mostrarResultadoTicket(t); showToast('Ticket vinculado desde Punto de Venta', 'success'); }
+    lucide.createIcons();
+}
+
+function validateRFC(input) {
+    input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    document.getElementById('rfcError').classList.toggle('hidden', /^[A-Z]{3,4}\d{6}[A-Z0-9]{3}$/.test(input.value) || !input.value);
+}
+
+function buscarTicket() {
+    const id = document.getElementById('manualTicketInput').value.toUpperCase().trim();
+    if (!id) { showToast('Ingresa un folio', 'error'); return; }
+    const sale = DB.getSales().find(s => s.ticket === id && s.status === 'Completada');
+    sale ? mostrarResultadoTicket(id, sale) : (ocultarResultadoTicket(), document.getElementById('ticketError').classList.remove('hidden'), showToast('Ticket no encontrado', 'error'));
+}
+
+function mostrarResultadoTicket(id, sale = null) {
+    const d = sale || DB.getSales().find(s => s.ticket === id);
+    if (!d) return;
+    document.getElementById('resultTicketId').innerText = id;
+    document.getElementById('resultDate').innerText = d.date;
+    document.getElementById('resultTotal').innerText = `$${d.total.toFixed(2)}`;
+    document.getElementById('resultMethod').innerText = d.method;
+    document.getElementById('resultItems').innerText = `${d.items.length} artículos`;
+    document.getElementById('ticketResult').classList.add('show');
+    document.getElementById('ticketError').classList.add('hidden');
+}
+
+function ocultarResultadoTicket() { document.getElementById('ticketResult').classList.remove('show'); document.getElementById('ticketError').classList.add('hidden'); }
+
+function usarTicket() {
+    const id = document.getElementById('resultTicketId').innerText;
+    const sale = DB.getSales().find(s => s.ticket === id);
+    if (sale) {
+        currentTicket = id; currentTotal = sale.total;
+        if (!document.getElementById('razonInput').value) document.getElementById('razonInput').value = 'Cliente General';
+        updatePreview(); ocultarResultadoTicket(); showToast(`Ticket ${id} vinculado`, 'success');
+    }
+}
+
+function updatePreview() {
+    const rfc = document.getElementById('rfcInput').value || '—';
+    const razon = document.getElementById('razonInput').value || '—';
+    const uso = document.getElementById('usoSelect').value;
+    document.getElementById('previewRfc').innerText = rfc;
+    document.getElementById('previewCliente').innerText = razon;
+    document.getElementById('previewUso').innerText = uso;
+    if (rfc !== '—' && razon !== '—') document.getElementById('previewFolio').innerText = 'CFDI-' + String(Math.floor(Math.random() * 90000) + 10000);
+    if (currentTotal > 0) {
+        const s = (currentTotal / 1.16).toFixed(2), i = (currentTotal - s).toFixed(2);
+        document.getElementById('previewSubtotal').innerText = `$${s}`;
+        document.getElementById('previewIva').innerText = `$${i}`;
+        document.getElementById('previewTotal').innerText = `$${currentTotal.toFixed(2)}`;
+    }
+}
+
+function emitirCFDI() {
+    const rfc = document.getElementById('rfcInput').value, razon = document.getElementById('razonInput').value, uso = document.getElementById('usoSelect').value;
+    if (!/^[A-Z]{3,4}\d{6}[A-Z0-9]{3}$/.test(rfc)) { showToast('RFC inválido', 'error'); return; }
+    if (!razon) { showToast('Ingresa razón social', 'error'); return; }
+    const folio = 'CFDI-' + String(Math.floor(Math.random() * 90000) + 10000), uuid = generateUUID(), now = new Date();
+    const s = currentTotal > 0 ? (currentTotal / 1.16).toFixed(2) : (Math.random() * 3000 + 500).toFixed(2);
+    const i = (parseFloat(s) * 0.16).toFixed(2), t = (parseFloat(s) + parseFloat(i)).toFixed(2);
+    DB.addInvoice({ folio, uuid, date: now.toLocaleDateString('es-MX'), time: now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'}), client: razon, rfc, uso, method: currentTicket ? (DB.getSales().find(s=>s.ticket===currentTicket)?.method || 'Efectivo') : 'Efectivo', subtotal: parseFloat(s), iva: parseFloat(i), total: parseFloat(t), status: 'timbrado', ticket: currentTicket });
+    document.getElementById('previewFolio').innerText = folio;
+    document.getElementById('previewSubtotal').innerText = `$${s}`;
+    document.getElementById('previewIva').innerText = `$${i}`;
+    document.getElementById('previewTotal').innerText = `$${t}`;
+    filterInvoices(); showToast(`CFDI emitido: ${folio}`, 'success'); setTimeout(nuevaFactura, 2000);
+}
+
+function generateUUID() { return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (c === 'x' ? Math.random()*16|0 : (Math.random()*4|0)+8).toString(16)); }
+
+function downloadPDF() { const f = document.getElementById('previewFolio').innerText; f === '—' ? showToast('Emite CFDI primero', 'error') : showToast(`Descargando ${f}.pdf...`, 'success'); }
+function downloadXML() { const f = document.getElementById('previewFolio').innerText; f === '—' ? showToast('Emite CFDI primero', 'error') : showToast(`Descargando ${f}.xml...`, 'success'); }
+
+function nuevaFactura() {
+    ['rfcInput','razonInput','correoInput','manualTicketInput'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('usoSelect').value = 'G01';
+    ['previewFolio','previewCliente','previewRfc','previewUso'].forEach(id => document.getElementById(id).innerText = '—');
+    ['previewSubtotal','previewIva','previewTotal'].forEach(id => document.getElementById(id).innerText = '$0.00');
+    ocultarResultadoTicket(); currentTicket = null; currentTotal = 0; showToast('Nueva factura lista', 'success');
+}
+
+function clearFilters() {
+    document.getElementById('searchInvoices').value = '';
+    document.getElementById('filterDateFrom').value = '';
+    document.getElementById('filterDateTo').value = '';
+    document.getElementById('filterMethod').value = '';
+    filterInvoices();
+}
+
+function filterInvoices() {
+    const query = document.getElementById('searchInvoices').value.toLowerCase();
+    const from = document.getElementById('filterDateFrom').value;
+    const to = document.getElementById('filterDateTo').value;
+    const method = document.getElementById('filterMethod').value;
+
+    const invoices = DB.getInvoices().filter(inv => {
+        const matchText = !query || inv.folio.toLowerCase().includes(query) || inv.client.toLowerCase().includes(query) || inv.rfc.toLowerCase().includes(query);
+        const matchMethod = !method || inv.method === method;
+        let matchDate = true;
+        if (from || to) {
+            const [d, m, y] = inv.date.split('/').map(Number);
+            const invDate = new Date(y, m - 1, d);
+            if (from && invDate < new Date(from + 'T00:00:00')) matchDate = false;
+            if (to && invDate > new Date(to + 'T23:59:59')) matchDate = false;
+        }
+        return matchText && matchMethod && matchDate;
+    });
+
+    const tbody = document.getElementById('invoicesBody');
+    tbody.innerHTML = invoices.length === 0 ? `<tr><td colspan="7" class="p-8 text-center text-slate-400">Sin facturas coincidentes</td></tr>` :
+        invoices.map(inv => `
+        <tr class="hover:bg-slate-50/40 transition-colors">
+            <td class="p-4 pl-6 font-mono text-xs text-slate-400 font-bold">${inv.folio}</td>
+            <td class="p-4 font-bold text-slate-900 truncate max-w-[200px]">${inv.client}</td>
+            <td class="p-4 font-mono text-xs text-slate-500">${inv.rfc}</td>
+            <td class="p-4 text-center"><span class="method-badge">${inv.method}</span></td>
+            <td class="p-4 text-right font-mono font-bold">$${inv.total.toFixed(2)}</td>
+            <td class="p-4 text-center"><span class="status-badge ${inv.status}">${inv.status}</span></td>
+            <td class="p-4 text-center pr-6">
+                <div class="flex items-center justify-center gap-1.5">
+                    <button onclick="showToast('Visualizando ${inv.folio}', 'success')" class="action-btn view"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="downloadXML('${inv.folio}')" class="action-btn xml"><i data-lucide="code" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="downloadPDF('${inv.folio}')" class="action-btn pdf"><i data-lucide="file-text" class="w-3.5 h-3.5"></i></button>
+                </div>
+            </td>
+        </tr>`).join('');
+    lucide.createIcons();
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast); lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

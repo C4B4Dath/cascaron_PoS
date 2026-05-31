@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Encuestas Rápidas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.animate-shake { animation: shake 0.3s ease; }
+@keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.animate-pop-in { animation: popIn 0.3s ease; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+/* Tab Styles */
+.tab-btn {
+    flex: 1; text-align: center; padding: 0.75rem 1rem;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent; transition: all 0.15s ease; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 0.375rem;
+}
+.tab-btn.active { color: var(--slate-900); border-bottom-color: var(--slate-900); }
+.tab-btn:not(.active) { color: var(--slate-400); }
+.tab-btn:not(.active):hover { color: var(--slate-600); }
+
+/* Question Card (Admin) */
+.question-card {
+    border: 1px solid var(--slate-100); border-radius: 1rem; padding: 1rem;
+    background: white; transition: all 0.15s ease;
+}
+.question-card:hover { box-shadow: var(--shadow-md); }
+.question-card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem; }
+.question-card-title { font-weight: 700; color: var(--slate-900); font-size: 0.875rem; }
+.question-card-actions { display: flex; gap: 0.25rem; }
+.question-card-btn {
+    width: 1.75rem; height: 1.75rem; border-radius: 0.375rem;
+    border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease; background: white;
+}
+.question-card-btn:hover { background: var(--slate-50); border-color: var(--slate-300); }
+.question-card-btn.edit:hover { color: var(--blue-600); border-color: var(--blue-200); background: var(--blue-50); }
+.question-card-btn.delete:hover { color: var(--rose-600); border-color: var(--rose-200); background: var(--rose-50); }
+
+/* Rating Buttons (Client View) */
+.rating-btn {
+    width: 4rem; height: 4rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; transition: all 0.2s ease;
+    border: 3px solid transparent; background: var(--slate-50);
+}
+.rating-btn:hover { transform: scale(1.1); }
+.rating-btn.selected {
+    border-color: currentColor; background: rgba(255,255,255,0.3);
+    transform: scale(1.15); animation: popIn 0.2s ease;
+}
+.rating-btn.very-bad { color: var(--rose-500); }
+.rating-btn.bad { color: var(--amber-500); }
+.rating-btn.neutral { color: var(--slate-500); }
+.rating-btn.good { color: var(--blue-500); }
+.rating-btn.excellent { color: var(--emerald-500); }
+
+/* Client Survey Modal */
+.client-survey-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/80); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; z-index: 200;
+    opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.client-survey-overlay.active { opacity: 1; visibility: visible; }
+.client-survey-modal {
+    background: white; border-radius: 1.5rem; padding: 1.5rem; width: 90%; max-width: 28rem;
+    box-shadow: var(--shadow-2xl); transform: translateY(20px); transition: transform 0.3s ease;
+    text-align: center;
+}
+.client-survey-overlay.active .client-survey-modal { transform: translateY(0); }
+
+.client-survey-title { font-size: 1.25rem; font-weight: 800; color: var(--slate-900); margin-bottom: 0.5rem; }
+.client-survey-subtitle { font-size: 0.875rem; color: var(--slate-500); margin-bottom: 1.5rem; }
+.client-survey-question { font-size: 1rem; font-weight: 700; color: var(--slate-900); margin: 1rem 0; }
+.client-survey-progress { font-size: 0.75rem; color: var(--slate-400); margin-bottom: 1rem; }
+
+.client-survey-ratings { display: flex; justify-content: center; gap: 0.75rem; margin: 1.5rem 0; }
+
+.client-survey-thanks {
+    display: none; padding: 2rem 1rem;
+}
+.client-survey-thanks.active { display: block; animation: fadeIn 0.3s ease; }
+.client-survey-thanks-icon { width: 4rem; height: 4rem; margin: 0 auto 1rem; color: var(--emerald-500); }
+.client-survey-thanks-title { font-size: 1.5rem; font-weight: 800; color: var(--slate-900); margin-bottom: 0.5rem; }
+.client-survey-thanks-text { font-size: 0.875rem; color: var(--slate-500); }
+
+/* Progress Bar */
+.progress-bar { height: 0.5rem; background: var(--slate-100); border-radius: 9999px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 9999px; transition: width 0.5s ease; }
+.progress-fill.excellent { background: var(--emerald-500); }
+.progress-fill.good { background: var(--blue-500); }
+.progress-fill.neutral { background: var(--amber-500); }
+.progress-fill.bad { background: var(--rose-500); }
+
+/* Metric Card */
+.metric-card {
+    border: 1px solid var(--slate-100); border-radius: 1rem; padding: 1rem;
+    background: white; text-align: center;
+}
+.metric-value { font-size: 1.5rem; font-weight: 800; color: var(--slate-900); }
+.metric-label { font-size: 0.75rem; color: var(--slate-400); margin-top: 0.25rem; }
+
+/* Chart Container */
+.chart-container { position: relative; height: 250px; width: 100%; }
+
+/* Empty State */
+.empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--slate-400);
+}
+.empty-state i { width: 3rem; height: 3rem; margin: 0 auto 1rem; opacity: 0.5; }
+.empty-state p { font-size: 0.875rem; }
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative; display: inline-block; width: 44px; height: 24px;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--slate-200); transition: .3s; border-radius: 24px;
+}
+.toggle-slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s; border-radius: 50%;
+}
+input:checked + .toggle-slider { background-color: var(--emerald-500); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/20); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; visibility: hidden; transition: all 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem;
+    box-shadow: var(--shadow-xl); transform: translateY(10px); transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+
+/* Form Input */
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-12 space-y-8">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-3">
+                        <i data-lucide="smile" class="w-7 h-7 text-slate-400"></i>
+                        Encuestas Rápidas
+                    </h1>
+                    <p class="text-slate-500 mt-1 text-sm">Feedback instantáneo de clientes post-venta</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="simulatePostSale()" class="border border-emerald-200 hover:bg-emerald-50 text-emerald-700 text-xs font-black px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all flex items-center gap-2">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        <span>Simular Post-Venta</span>
+                    </button>
+                    <button onclick="openPreviewModal()" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                        <span>Previsualizar</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-100 overflow-x-auto custom-scrollbar">
+                <button class="tab-btn active" data-tab="questions" onclick="switchTab('questions')">
+                    <i data-lucide="list" class="w-4 h-4"></i>
+                    <span>Preguntas</span>
+                </button>
+                <button class="tab-btn" data-tab="preview" onclick="switchTab('preview')">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span>Previsualizar</span>
+                </button>
+                <button class="tab-btn" data-tab="metrics" onclick="switchTab('metrics')">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    <span>Métricas</span>
+                </button>
+            </div>
+
+            <!-- Questions Tab -->
+            <div id="tab-questions" class="tab-panel space-y-6">
+
+                <!-- Add Question Button -->
+                <button onclick="openQuestionModal()" class="w-full border-2 border-dashed border-slate-200 hover:border-slate-400 hover:bg-slate-50 rounded-2xl py-4 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Agregar Nueva Pregunta</span>
+                </button>
+
+                <!-- Questions List -->
+                <div id="questionsList" class="space-y-3"></div>
+
+                <!-- Settings -->
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-4">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        Configuración de Encuesta
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="form-label">Título de la Encuesta</label>
+                            <input type="text" id="surveyTitle" value="¡Gracias por tu compra!" class="form-input">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="form-label">Subtítulo</label>
+                            <input type="text" id="surveySubtitle" value="Evalúa tu experiencia en 30 segundos" class="form-input">
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                            <div>
+                                <p class="font-bold text-slate-900 text-sm">Mostrar después de cada venta</p>
+                                <p class="text-xs text-slate-500">Activar trigger automático</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoTrigger" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                            <div>
+                                <p class="font-bold text-slate-900 text-sm">Tiempo de espera (segundos)</p>
+                                <p class="text-xs text-slate-500">Cuánto esperar antes de mostrar</p>
+                            </div>
+                            <input type="number" id="triggerDelay" value="3" min="0" max="30" class="form-input w-20 text-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Tab -->
+            <div id="tab-preview" class="tab-panel hidden">
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Vista del Cliente</h3>
+                    <div class="max-w-sm mx-auto bg-slate-900 rounded-3xl p-4 shadow-2xl">
+                        <!-- Phone Frame -->
+                        <div class="bg-white rounded-2xl p-4">
+                            <div class="text-center mb-4">
+                                <div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                    <span class="text-white text-sm font-black">N:</span>
+                                </div>
+                                <p class="font-bold text-slate-900" id="previewTitle">¡Gracias por tu compra!</p>
+                                <p class="text-xs text-slate-500" id="previewSubtitle">Evalúa tu experiencia en 30 segundos</p>
+                            </div>
+                            <div id="previewQuestions" class="space-y-4"></div>
+                            <button id="previewSubmitBtn" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase mt-4 disabled:opacity-40" disabled>
+                                Enviar
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-4">Así verá el cliente la encuesta en el dispositivo POS</p>
+                </div>
+            </div>
+
+            <!-- Metrics Tab -->
+            <div id="tab-metrics" class="tab-panel hidden space-y-6">
+
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="metric-card">
+                        <p class="metric-value" id="metricTotal">0</p>
+                        <p class="metric-label">Respuestas Totales</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-value" id="metricAvg">0.0</p>
+                        <p class="metric-label">Calificación Promedio</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-value" id="metricToday">0</p>
+                        <p class="metric-label">Respuestas Hoy</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-value text-emerald-600" id="metricSatisfaction">0%</p>
+                        <p class="metric-label">Satisfacción</p>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Distribución de Respuestas</h3>
+                        <select id="chartPeriod" class="form-input py-1 px-2 text-xs w-auto" onchange="updateChart()">
+                            <option value="today">Hoy</option>
+                            <option value="week" selected>Esta semana</option>
+                            <option value="month">Este mes</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="responsesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Per-Question Metrics -->
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-4">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Desempeño por Pregunta</h3>
+                    <div id="questionMetrics" class="space-y-3"></div>
+                </div>
+
+                <!-- Recent Responses -->
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Respuestas Recientes</h3>
+                        <button onclick="exportMetrics()" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1">
+                            <i data-lucide="download" class="w-3 h-3"></i>
+                            Exportar CSV
+                        </button>
+                    </div>
+                    <div id="recentResponses" class="space-y-2"></div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Question Modal (CRUD) -->
+    <div id="questionModal" class="modal-overlay hidden fixed inset-0 bg-slate-950/20 backdrop-blur-xs flex items-center justify-center z-[100]">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900" id="modalTitle">Nueva Pregunta</h3>
+                <button onclick="closeQuestionModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <input type="hidden" id="modalQuestionId">
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <label class="form-label">Texto de la Pregunta *</label>
+                    <input type="text" id="modalQuestionText" class="form-input" placeholder="Ej: ¿Cómo calificarías la atención?">
+                </div>
+                <div class="space-y-1">
+                    <label class="form-label">Icono</label>
+                    <select id="modalQuestionIcon" class="form-input cursor-pointer">
+                        <option value="users">👥 Atención</option>
+                        <option value="sparkles">✨ Limpieza</option>
+                        <option value="clock">⏰ Tiempo de espera</option>
+                        <option value="package">📦 Productos</option>
+                        <option value="tag">🏷️ Precio</option>
+                        <option value="star">⭐ General</option>
+                        <option value="heart">❤️ Experiencia</option>
+                        <option value="zap">⚡ Rapidez</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="form-label">Color</label>
+                    <select id="modalQuestionColor" class="form-input cursor-pointer">
+                        <option value="blue">🔵 Azul</option>
+                        <option value="emerald">🟢 Verde</option>
+                        <option value="amber">🟡 Ámbar</option>
+                        <option value="purple">🟣 Morado</option>
+                        <option value="rose">🔴 Rojo</option>
+                        <option value="slate">⚪ Gris</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="form-label">Orden de aparición</label>
+                    <input type="number" id="modalQuestionOrder" value="1" min="1" max="10" class="form-input">
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeQuestionModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="saveQuestion()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Survey Overlay (Post-Sale Popup) -->
+    <div id="clientSurveyOverlay" class="client-survey-overlay">
+        <div class="client-survey-modal">
+            <!-- Survey Form -->
+            <div id="clientSurveyForm">
+                <p class="client-survey-title" id="clientTitle">¡Gracias por tu compra!</p>
+                <p class="client-survey-subtitle" id="clientSubtitle">Evalúa tu experiencia en 30 segundos</p>
+
+                <p class="client-survey-progress">Pregunta <span id="currentQuestionNum">1</span> de <span id="totalQuestionsNum">3</span></p>
+                <p class="client-survey-question" id="clientQuestionText">¿Cómo calificarías la atención?</p>
+
+                <div class="client-survey-ratings">
+                    <button class="rating-btn very-bad" data-rating="1" onclick="selectClientRating(1)">
+                        <i data-lucide="frown" class="w-8 h-8"></i>
+                    </button>
+                    <button class="rating-btn bad" data-rating="2" onclick="selectClientRating(2)">
+                        <i data-lucide="meh" class="w-8 h-8"></i>
+                    </button>
+                    <button class="rating-btn neutral" data-rating="3" onclick="selectClientRating(3)">
+                        <i data-lucide="meh" class="w-8 h-8"></i>
+                    </button>
+                    <button class="rating-btn good" data-rating="4" onclick="selectClientRating(4)">
+                        <i data-lucide="smile" class="w-8 h-8"></i>
+                    </button>
+                    <button class="rating-btn excellent" data-rating="5" onclick="selectClientRating(5)">
+                        <i data-lucide="laugh" class="w-8 h-8"></i>
+                    </button>
+                </div>
+
+                <button id="clientNextBtn" onclick="nextQuestion()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase mt-2 hidden">
+                    Siguiente
+                </button>
+                <button id="clientSubmitBtn" onclick="submitClientSurvey()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase mt-2 hidden">
+                    Enviar
+                </button>
+            </div>
+
+            <!-- Thanks Screen -->
+            <div id="clientSurveyThanks" class="client-survey-thanks">
+                <i data-lucide="circle-check" class="client-survey-thanks-icon"></i>
+                <p class="client-survey-thanks-title">¡Gracias!</p>
+                <p class="client-survey-thanks-text">Tu opinión nos ayuda a mejorar</p>
+                <button onclick="closeClientSurvey()" class="mt-4 text-xs font-bold text-slate-400 hover:text-slate-600">
+                    Continuar comprando →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal-overlay hidden fixed inset-0 bg-slate-950/20 backdrop-blur-xs flex items-center justify-center z-[100]">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Previsualización de Encuesta</h3>
+                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="max-w-sm mx-auto bg-slate-900 rounded-3xl p-4 shadow-2xl">
+                <div class="bg-white rounded-2xl p-4">
+                    <div class="text-center mb-4">
+                        <div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-2">
+                            <span class="text-white text-sm font-black">N:</span>
+                        </div>
+                        <p class="font-bold text-slate-900" id="previewModalTitle">¡Gracias por tu compra!</p>
+                        <p class="text-xs text-slate-500" id="previewModalSubtitle">Evalúa tu experiencia en 30 segundos</p>
+                    </div>
+                    <div id="previewModalQuestions" class="space-y-4"></div>
+                    <button class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs uppercase mt-4">
+                        Enviar
+                    </button>
+                </div>
+            </div>
+            <p class="text-center text-xs text-slate-400 mt-4">Esta es la vista exacta que verá el cliente</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+
+    getSurveyConfig() {
+        let config = this._get('survey_config', null);
+        if (!config) {
+            config = {
+                title: '¡Gracias por tu compra!',
+                subtitle: 'Evalúa tu experiencia en 30 segundos',
+                autoTrigger: true,
+                triggerDelay: 3,
+                questions: [
+                    { id: 'q1', text: '¿Cómo calificarías la atención?', icon: 'users', color: 'blue', order: 1 },
+                    { id: 'q2', text: '¿Qué tan limpio estaba el local?', icon: 'sparkles', color: 'emerald', order: 2 },
+                    { id: 'q3', text: '¿El tiempo de espera fue adecuado?', icon: 'clock', color: 'amber', order: 3 }
+                ]
+            };
+            this._set('survey_config', config);
+        }
+        return config;
+    },
+    setSurveyConfig(c) { this._set('survey_config', c); },
+
+    getSurveyResponses() {
+        let responses = this._get('survey_responses', null);
+        if (!responses) {
+            // Demo data
+            responses = [
+                { id: 1, ticket: 'TKT-00432', answers: { q1: 5, q2: 5, q3: 4 }, timestamp: new Date().toISOString() },
+                { id: 2, ticket: 'TKT-00431', answers: { q1: 4, q2: 5, q3: 3 }, timestamp: new Date(Date.now() - 3600000).toISOString() },
+                { id: 3, ticket: 'TKT-00430', answers: { q1: 3, q2: 4, q3: 3 }, timestamp: new Date(Date.now() - 7200000).toISOString() },
+                { id: 4, ticket: 'TKT-00429', answers: { q1: 5, q2: 4, q3: 5 }, timestamp: new Date(Date.now() - 86400000).toISOString() },
+                { id: 5, ticket: 'TKT-00428', answers: { q1: 4, q2: 3, q3: 4 }, timestamp: new Date(Date.now() - 172800000).toISOString() },
+            ];
+            this._set('survey_responses', responses);
+        }
+        return responses;
+    },
+    setSurveyResponses(r) { this._set('survey_responses', r); }
+};
+
+let currentTab = 'questions';
+let config = {};
+let responses = [];
+let currentClientAnswers = {};
+let currentQuestionIndex = 0;
+let responsesChart = null;
+
+// Emoji mapping for ratings
+const ratingEmojis = {
+    1: { icon: 'frown', class: 'very-bad', label: 'Muy mala' },
+    2: { icon: 'meh', class: 'bad', label: 'Mala' },
+    3: { icon: 'meh', class: 'neutral', label: 'Regular' },
+    4: { icon: 'smile', class: 'good', label: 'Buena' },
+    5: { icon: 'laugh', class: 'excellent', label: 'Excelente' }
+};
+
+function init() {
+    config = DB.getSurveyConfig();
+    responses = DB.getSurveyResponses();
+
+    renderQuestions();
+    renderPreview();
+    renderMetrics();
+    initChart();
+
+    // Update preview inputs
+    document.getElementById('surveyTitle').value = config.title;
+    document.getElementById('surveySubtitle').value = config.subtitle;
+    document.getElementById('autoTrigger').checked = config.autoTrigger;
+    document.getElementById('triggerDelay').value = config.triggerDelay;
+
+    lucide.createIcons();
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+
+    if (tab === 'preview') renderPreview();
+    if (tab === 'metrics') renderMetrics();
+
+    lucide.createIcons();
+}
+
+// === QUESTION CRUD ===
+function renderQuestions() {
+    const container = document.getElementById('questionsList');
+
+    if (config.questions.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i data-lucide="list" class="w-12 h-12 mx-auto mb-3"></i><p>No hay preguntas configuradas</p><p class="text-xs text-slate-400 mt-2">Agrega tu primera pregunta para comenzar</p></div>';
+        lucide.createIcons();
+        return;
+    }
+
+    // Sort by order
+    const sorted = [...config.questions].sort((a, b) => a.order - b.order);
+
+    container.innerHTML = sorted.map((q, idx) => `
+        <div class="question-card">
+            <div class="question-card-header">
+                <div class="flex items-center gap-3">
+                    <div class="question-icon ${q.color}" style="background:var(--${q.color}-50);color:var(--${q.color}-600)">
+                        <i data-lucide="${q.icon}" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="question-card-title">${q.text}</p>
+                        <p class="text-xs text-slate-400">Pregunta #${idx + 1}</p>
+                    </div>
+                </div>
+                <div class="question-card-actions">
+                    <button class="question-card-btn edit" onclick="editQuestion('${q.id}')" title="Editar">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button class="question-card-btn delete" onclick="deleteQuestion('${q.id}')" title="Eliminar">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex justify-center gap-1">
+                ${[1,2,3,4,5].map(r => `
+                    <span class="text-lg opacity-40">
+                        <i data-lucide="${ratingEmojis[r].icon}" class="w-5 h-5 ${ratingEmojis[r].class}"></i>
+                    </span>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    lucide.createIcons();
+}
+
+function openQuestionModal(questionId = null) {
+    const modal = document.getElementById('questionModal');
+    const title = document.getElementById('modalTitle');
+
+    if (questionId) {
+        const q = config.questions.find(q => q.id === questionId);
+        if (!q) return;
+        title.innerText = 'Editar Pregunta';
+        document.getElementById('modalQuestionId').value = q.id;
+        document.getElementById('modalQuestionText').value = q.text;
+        document.getElementById('modalQuestionIcon').value = q.icon;
+        document.getElementById('modalQuestionColor').value = q.color;
+        document.getElementById('modalQuestionOrder').value = q.order;
+    } else {
+        title.innerText = 'Nueva Pregunta';
+        document.getElementById('modalQuestionId').value = '';
+        document.getElementById('modalQuestionText').value = '';
+        document.getElementById('modalQuestionIcon').value = 'star';
+        document.getElementById('modalQuestionColor').value = 'blue';
+        document.getElementById('modalQuestionOrder').value = config.questions.length + 1;
+    }
+
+    modal.classList.add('active');
+    setTimeout(() => document.getElementById('modalQuestionText').focus(), 100);
+}
+
+function closeQuestionModal() {
+    document.getElementById('questionModal').classList.remove('active');
+}
+
+function saveQuestion() {
+    const id = document.getElementById('modalQuestionId').value;
+    const text = document.getElementById('modalQuestionText').value.trim();
+    const icon = document.getElementById('modalQuestionIcon').value;
+    const color = document.getElementById('modalQuestionColor').value;
+    const order = parseInt(document.getElementById('modalQuestionOrder').value);
+
+    if (!text) {
+        showToast('El texto de la pregunta es requerido', 'error');
+        return;
+    }
+
+    if (id) {
+        // Edit existing
+        const idx = config.questions.findIndex(q => q.id === id);
+        if (idx >= 0) {
+            config.questions[idx] = { id, text, icon, color, order };
+            showToast('Pregunta actualizada', 'success');
+        }
+    } else {
+        // Create new
+        const newId = 'q' + (config.questions.length + 1);
+        config.questions.push({ id: newId, text, icon, color, order });
+        showToast('Pregunta agregada', 'success');
+    }
+
+    DB.setSurveyConfig(config);
+    closeQuestionModal();
+    renderQuestions();
+    renderPreview();
+    renderMetrics();
+}
+
+function editQuestion(id) { openQuestionModal(id); }
+
+function deleteQuestion(id) {
+    if (confirm('¿Eliminar esta pregunta?')) {
+        config.questions = config.questions.filter(q => q.id !== id);
+        DB.setSurveyConfig(config);
+        renderQuestions();
+        renderPreview();
+        renderMetrics();
+        showToast('Pregunta eliminada', 'success');
+    }
+}
+
+// === PREVIEW ===
+function renderPreview() {
+    const container = document.getElementById('previewQuestions');
+    const modalContainer = document.getElementById('previewModalQuestions');
+
+    // Update titles
+    document.getElementById('previewTitle').innerText = config.title;
+    document.getElementById('previewSubtitle').innerText = config.subtitle;
+    document.getElementById('previewModalTitle').innerText = config.title;
+    document.getElementById('previewModalSubtitle').innerText = config.subtitle;
+
+    // Render questions
+    const sorted = [...config.questions].sort((a, b) => a.order - b.order);
+
+    const html = sorted.map(q => `
+        <div>
+            <p class="text-sm font-bold text-slate-900 mb-2">${q.text}</p>
+            <div class="flex justify-center gap-2">
+                ${[1,2,3,4,5].map(r => `
+                    <button class="rating-btn ${ratingEmojis[r].class}" disabled>
+                        <i data-lucide="${ratingEmojis[r].icon}" class="w-6 h-6"></i>
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    container.innerHTML = html;
+    modalContainer.innerHTML = html;
+
+    lucide.createIcons();
+}
+
+function openPreviewModal() {
+    renderPreview();
+    document.getElementById('previewModal').classList.add('active');
+    lucide.createIcons();
+}
+
+function closePreviewModal() {
+    document.getElementById('previewModal').classList.remove('active');
+}
+
+// === METRICS ===
+function renderMetrics() {
+    if (responses.length === 0) {
+        document.getElementById('metricTotal').innerText = '0';
+        document.getElementById('metricAvg').innerText = '0.0';
+        document.getElementById('metricToday').innerText = '0';
+        document.getElementById('metricSatisfaction').innerText = '0%';
+        document.getElementById('questionMetrics').innerHTML = '<p class="text-center text-slate-400 text-sm py-4">Sin respuestas aún</p>';
+        document.getElementById('recentResponses').innerHTML = '<p class="text-center text-slate-400 text-sm py-4">Sin respuestas recientes</p>';
+        return;
+    }
+
+    // Total responses
+    document.getElementById('metricTotal').innerText = responses.length;
+
+    // Average rating (across all questions)
+    let totalSum = 0, totalRatings = 0;
+    responses.forEach(r => {
+        Object.values(r.answers).forEach(val => {
+            totalSum += val;
+            totalRatings++;
+        });
+    });
+    const avg = totalSum / totalRatings;
+    document.getElementById('metricAvg').innerText = avg.toFixed(1);
+
+    // Today's responses
+    const today = new Date().toISOString().split('T')[0];
+    const todayCount = responses.filter(r => r.timestamp.startsWith(today)).length;
+    document.getElementById('metricToday').innerText = todayCount;
+
+    // Satisfaction (% of 4-5 ratings)
+    const satisfied = responses.reduce((count, r) => {
+        const goodOnes = Object.values(r.answers).filter(v => v >= 4).length;
+        return count + goodOnes;
+    }, 0);
+    const satisfactionPct = Math.round(satisfied / totalRatings * 100);
+    document.getElementById('metricSatisfaction').innerText = satisfactionPct + '%';
+
+    // Per-question metrics
+    const qMetrics = document.getElementById('questionMetrics');
+    qMetrics.innerHTML = config.questions.map(q => {
+        const vals = responses.map(r => r.answers[q.id]).filter(v => v !== undefined);
+        if (vals.length === 0) return '';
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        let badgeClass = 'bad', badgeText = 'Necesita mejorar';
+        if (avg >= 4.5) { badgeClass = 'excellent'; badgeText = 'Excelente'; }
+        else if (avg >= 3.5) { badgeClass = 'good'; badgeText = 'Bueno'; }
+        else if (avg >= 2.5) { badgeClass = 'neutral'; badgeText = 'Regular'; }
+
+        return `
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+            <div class="flex items-center gap-2">
+                <div class="question-icon ${q.color}" style="background:var(--${q.color}-50);color:var(--${q.color}-600)">
+                    <i data-lucide="${q.icon}" class="w-4 h-4"></i>
+                </div>
+                <span class="text-sm font-bold text-slate-700">${q.text}</span>
+            </div>
+            <span class="category-badge ${badgeClass}">
+                ${avg.toFixed(1)} ★ ${badgeText}
+            </span>
+        </div>`;
+    }).join('');
+
+    // Recent responses
+    const recent = document.getElementById('recentResponses');
+    recent.innerHTML = responses.slice(0, 5).map(r => {
+        const avg = Object.values(r.answers).reduce((a, b) => a + b, 0) / Object.values(r.answers).length;
+        const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+        const time = new Date(r.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        return `
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+            <div>
+                <p class="text-sm font-bold text-slate-900">${r.ticket}</p>
+                <p class="text-xs text-slate-400">${time}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-amber-400 text-sm">${stars}</p>
+                <p class="text-xs font-bold text-slate-600">${avg.toFixed(1)}</p>
+            </div>
+        </div>`;
+    }).join('');
+
+    lucide.createIcons();
+}
+
+function initChart() {
+    const ctx = document.getElementById('responsesChart').getContext('2d');
+
+    const data = {
+        labels: ['1★', '2★', '3★', '4★', '5★'],
+        datasets: [{
+            label: 'Respuestas',
+            data: [2, 5, 18, 45, 57],
+            backgroundColor: ['#f43f5e', '#f97316', '#f59e0b', '#3b82f6', '#10b981'],
+            borderRadius: 6,
+        }]
+    };
+
+    responsesChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { font: { size: 10 } } },
+                x: { ticks: { font: { size: 10 } } }
+            }
+        }
+    });
+}
+
+function updateChart() {
+    if (!responsesChart) return;
+    const period = document.getElementById('chartPeriod').value;
+
+    // Simulate different data based on period
+    let data = [2, 5, 18, 45, 57];
+    if (period === 'today') data = [1, 2, 5, 12, 18];
+    if (period === 'month') data = [8, 15, 52, 134, 189];
+
+    responsesChart.data.datasets[0].data = data;
+    responsesChart.update();
+}
+
+function exportMetrics() {
+    const data = [
+        ['ID', 'Ticket', ...config.questions.map(q => q.text), 'Timestamp'],
+        ...responses.map(r => [
+            r.id,
+            r.ticket,
+            ...config.questions.map(q => r.answers[q.id] || ''),
+            r.timestamp
+        ])
+    ];
+    const csv = data.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `NexPoS_Encuestas_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    showToast('Métricas exportadas a CSV', 'success');
+}
+
+// === CLIENT SURVEY (Post-Sale Popup) ===
+function simulatePostSale() {
+    // Simulate a sale just happened, show survey after delay
+    showToast('Venta completada · Mostrando encuesta...', 'success');
+
+    setTimeout(() => {
+        openClientSurvey();
+    }, config.triggerDelay * 1000);
+}
+
+function openClientSurvey() {
+    currentClientAnswers = {};
+    currentQuestionIndex = 0;
+
+    // Reset UI
+    document.getElementById('clientSurveyForm').style.display = 'block';
+    document.getElementById('clientSurveyThanks').classList.remove('active');
+    document.getElementById('clientNextBtn').classList.add('hidden');
+    document.getElementById('clientSubmitBtn').classList.add('hidden');
+
+    // Update titles
+    document.getElementById('clientTitle').innerText = config.title;
+    document.getElementById('clientSubtitle').innerText = config.subtitle;
+    document.getElementById('totalQuestionsNum').innerText = config.questions.length;
+
+    // Show first question
+    showQuestion(0);
+
+    // Show overlay
+    document.getElementById('clientSurveyOverlay').classList.add('active');
+    lucide.createIcons();
+}
+
+function closeClientSurvey() {
+    document.getElementById('clientSurveyOverlay').classList.remove('active');
+}
+
+function showQuestion(index) {
+    const sorted = [...config.questions].sort((a, b) => a.order - b.order);
+    const q = sorted[index];
+
+    document.getElementById('currentQuestionNum').innerText = index + 1;
+    document.getElementById('clientQuestionText').innerText = q.text;
+
+    // Reset rating buttons
+    document.querySelectorAll('#clientSurveyForm .rating-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+
+    // Show/hide navigation buttons
+    if (index < sorted.length - 1) {
+        document.getElementById('clientNextBtn').classList.remove('hidden');
+        document.getElementById('clientSubmitBtn').classList.add('hidden');
+    } else {
+        document.getElementById('clientNextBtn').classList.add('hidden');
+        document.getElementById('clientSubmitBtn').classList.remove('hidden');
+    }
+
+    lucide.createIcons();
+}
+
+function selectClientRating(rating) {
+    const sorted = [...config.questions].sort((a, b) => a.order - b.order);
+    const q = sorted[currentQuestionIndex];
+
+    // Store answer
+    currentClientAnswers[q.id] = rating;
+
+    // Update UI
+    document.querySelectorAll(`#clientSurveyForm .rating-btn`).forEach(btn => {
+        btn.classList.remove('selected');
+        if (parseInt(btn.dataset.rating) === rating) {
+            btn.classList.add('selected');
+        }
+    });
+
+    // Auto-advance after short delay
+    setTimeout(() => {
+        if (currentQuestionIndex < sorted.length - 1) {
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+        }
+    }, 300);
+}
+
+function nextQuestion() {
+    if (currentQuestionIndex < config.questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion(currentQuestionIndex);
+    }
+}
+
+function submitClientSurvey() {
+    // Validate all answered
+    const sorted = [...config.questions].sort((a, b) => a.order - b.order);
+    const allAnswered = sorted.every(q => currentClientAnswers[q.id]);
+
+    if (!allAnswered) {
+        showToast('Responde todas las preguntas', 'error');
+        return;
+    }
+
+    // Save response
+    const newResponse = {
+        id: Date.now(),
+        ticket: 'TKT-' + String(Math.floor(Math.random() * 90000) + 10000),
+        answers: { ...currentClientAnswers },
+        timestamp: new Date().toISOString()
+    };
+
+    responses.unshift(newResponse);
+    DB.setSurveyResponses(responses);
+
+    // Show thanks screen
+    document.getElementById('clientSurveyForm').style.display = 'none';
+    document.getElementById('clientSurveyThanks').classList.add('active');
+
+    // Update metrics
+    renderMetrics();
+    updateChart();
+
+    // Auto-close after 3 seconds
+    setTimeout(() => {
+        closeClientSurvey();
+        showToast('Encuesta enviada · ¡Gracias!', 'success');
+    }, 3000);
+}
+
+// === SETTINGS ===
+function saveSettings() {
+    config.title = document.getElementById('surveyTitle').value;
+    config.subtitle = document.getElementById('surveySubtitle').value;
+    config.autoTrigger = document.getElementById('autoTrigger').checked;
+    config.triggerDelay = parseInt(document.getElementById('triggerDelay').value);
+
+    DB.setSurveyConfig(config);
+    renderPreview();
+    showToast('Configuración guardada', 'success');
+}
+
+// Event listeners for settings
+document.getElementById('surveyTitle').addEventListener('change', saveSettings);
+document.getElementById('surveySubtitle').addEventListener('change', saveSettings);
+document.getElementById('autoTrigger').addEventListener('change', saveSettings);
+document.getElementById('triggerDelay').addEventListener('change', saveSettings);
+
+// === TOAST NOTIFICATIONS ===
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay, .client-survey-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay && !overlay.classList.contains('client-survey-overlay')) {
+            overlay.classList.remove('active');
+        }
+    });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeQuestionModal();
+        closePreviewModal();
+        // Don't close client survey with Escape - let them finish
+    }
+});
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

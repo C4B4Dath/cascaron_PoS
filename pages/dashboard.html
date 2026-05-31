@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+/* KPI Card Clickable */
+.kpi-card { cursor: pointer; transition: all 0.15s ease; }
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* Chart Bar */
+.chart-bar { cursor: pointer; transition: all 0.15s ease; }
+.chart-bar:hover { filter: brightness(0.9); }
+.chart-bar.active { filter: brightness(0.8); }
+.chart-tooltip {
+    position: absolute; top: -2.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--slate-900); color: white; padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem; font-size: 0.625rem; font-weight: 700; white-space: nowrap;
+    opacity: 0; transition: opacity 0.15s ease; pointer-events: none;
+}
+.chart-bar:hover .chart-tooltip { opacity: 1; }
+
+/* Progress Bar */
+.progress-bar { height: 0.625rem; background: var(--slate-100); border-radius: 9999px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 9999px; transition: width 0.3s ease; }
+
+/* Table Actions */
+.table-action-btn {
+    width: 1.5rem; height: 1.5rem; border-radius: 0.375rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease; color: var(--slate-400);
+}
+.table-action-btn:hover { background: var(--slate-100); color: var(--slate-700); }
+
+/* Filter Bar */
+.filter-bar {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+    padding: 1rem; background: var(--slate-50); border-radius: 0.75rem; margin-bottom: 1rem;
+}
+.filter-bar .form-input { min-width: 140px; }
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-8 space-y-8">
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="relative flex-1 min-w-[200px]">
+                    <input type="text" id="dateFilter" placeholder="Filtrar por fecha..." class="form-input py-2 pl-9 pr-3 text-xs w-full" readonly onclick="showDateRangePicker()">
+                    <i data-lucide="calendar" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                </div>
+                <select id="categoryFilter" class="form-input py-2 px-3 text-xs cursor-pointer" onchange="applyFilters()">
+                    <option value="">Todas las categorías</option>
+                    <option value="Farmacia">Farmacia</option>
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Abarrotes">Abarrotes</option>
+                    <option value="Cuidado Personal">Cuidado Personal</option>
+                </select>
+                <button onclick="resetFilters()" class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    <i data-lucide="refresh-ccw" class="w-3.5 h-3.5"></i>Limpiar
+                </button>
+                <button onclick="refreshData()" class="flex items-center gap-2 px-3 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800 transition-all">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>Actualizar
+                </button>
+            </div>
+
+            <!-- A. KPI CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="kpi-card bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2" onclick="drillDown('ventas')">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>Ventas Totales
+                        </span>
+                        <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-md font-extrabold flex items-center gap-1">
+                            <i data-lucide="arrow-up" class="w-3 h-3"></i>+14.2%
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiVentas">$48,250.00</span>
+                        <span class="text-xs text-slate-400 font-mono font-bold">MXN</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Corte acumulado del turno actual</p>
+                </div>
+                <div class="kpi-card bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2" onclick="drillDown('ganancia')">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="piggy-bank" class="w-4 h-4"></i>Ganancia Neta
+                        </span>
+                        <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-md font-extrabold flex items-center gap-1">
+                            <i data-lucide="arrow-up" class="w-3 h-3"></i>+8.5%
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-emerald-600 tracking-tight font-mono" id="kpiGanancia">$12,410.50</span>
+                        <span class="text-xs text-slate-400 font-mono font-bold">MXN</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Margen promedio <span class="font-bold text-emerald-600">25.7%</span></p>
+                </div>
+                <div class="kpi-card bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2" onclick="drillDown('tickets')">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="receipt" class="w-4 h-4"></i>Tickets Emitidos
+                        </span>
+                        <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-md font-extrabold">Estable</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiTickets">184</span>
+                        <span class="text-xs text-slate-400 font-bold">ventas</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Promedio de $262.20 por cliente</p>
+                </div>
+                <div class="kpi-card bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2" onclick="drillDown('stock')">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black text-rose-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="w-4 h-4"></i>Alertas Stock
+                        </span>
+                        <span class="bg-rose-50 text-rose-700 text-xs px-2.5 py-0.5 rounded-md font-extrabold">Crítico</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-rose-600 tracking-tight font-mono" id="kpiAlertas">3</span>
+                        <span class="text-xs text-slate-400 font-bold">artículos</span>
+                    </div>
+                    <p class="text-xs text-rose-500 font-bold">Requieren reorden inmediata</p>
+                </div>
+            </div>
+
+            <!-- B. CHARTS ROW -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- LEFT: Bar Chart (2/3) -->
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-sm space-y-6 lg:col-span-2">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>Flujo de Ventas Semanal
+                        </h4>
+                        <span class="text-[10px] text-slate-400 font-bold font-mono flex items-center gap-1">
+                            <i data-lucide="calendar-range" class="w-3 h-3"></i>LUN - DOM
+                        </span>
+                    </div>
+                    <div class="h-48 flex items-end justify-between px-2 pt-4 border-b border-slate-100 relative">
+                        <!-- Bars generated by JS -->
+                        <div id="chartBars" class="flex items-end justify-between w-full h-full px-2"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-400 px-4">
+                        <span id="chartMin">$0</span>
+                        <span id="chartMax">$10k</span>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Financial Distribution (1/3) -->
+                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-sm space-y-6 lg:col-span-1">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i>Distribución Financiera
+                    </h4>
+                    <div class="space-y-5 pt-2">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>Costo Proveedores</span>
+                                <span class="font-mono text-slate-900">74.3%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill bg-slate-400" style="width: 74.3%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>Margen Neto</span>
+                                <span class="font-mono text-emerald-600">25.7%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill bg-emerald-500" style="width: 25.7%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>IVA (16%)</span>
+                                <span class="font-mono text-slate-900">16.0%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill bg-slate-900" style="width: 16%"></div></div>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100">
+                        <p class="text-[10px] text-slate-400 text-center">Datos actualizados en tiempo real</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C. TOP PRODUCTS TABLE -->
+            <section class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-slate-900 pl-3 flex items-center gap-2">
+                        <i data-lucide="award" class="w-4 h-4"></i>Productos Más Vendidos
+                    </h2>
+                    <button onclick="viewAllProducts()" class="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1 transition-colors">
+                        Ver todos <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </button>
+                </div>
+                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
+                                    <th class="p-4 pl-6">Producto</th>
+                                    <th class="p-4">Categoría</th>
+                                    <th class="p-4 text-center">Unids. Vendidas</th>
+                                    <th class="p-4 text-right">Total Recaudado</th>
+                                    <th class="p-4 text-center pr-6">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topProductsBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- D. RECENT ACTIVITY -->
+            <section class="space-y-4">
+                <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-slate-900 pl-3 flex items-center gap-2">
+                    <i data-lucide="clock" class="w-4 h-4"></i>Actividad Reciente
+                </h2>
+                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+                    <div id="recentActivity" class="divide-y divide-slate-100">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+// === DATABASE ===
+const DB = {
+    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+    getSales() { return this._get('sales', []); },
+    setSales(s) { this._set('sales', s); },
+    getInventory() {
+        let inv = this._get('inventory', []);
+        if (inv.length === 0) {
+            inv = [
+                { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00 },
+                { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50 },
+                { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00 },
+                { id: 4, sku: 'SKU-00004', name: 'Agua Peñafiel 1L', category: 'Bebidas', stock: 15, price: 15.00 },
+                { id: 5, sku: 'SKU-00005', name: 'Detergente Líquido 1L', category: 'Abarrotes', stock: 1, price: 120.00 },
+                { id: 6, sku: 'SKU-00006', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00 },
+                { id: 7, sku: 'SKU-00007', name: 'Leche Entera Alpura 1L', category: 'Bebidas', stock: 3, price: 28.00 },
+                { id: 8, sku: 'SKU-00008', name: 'Jugo Del Valle Naranja 1L', category: 'Bebidas', stock: 18, price: 25.00 },
+            ];
+            this._set('inventory', inv);
+        }
+        return inv;
+    },
+    seedDemoData() {
+        if (this.getSales().length === 0) {
+            this.setSales([
+                { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, items: [{ name: 'Paracetamol 500mg', sku: 'SKU-48291', quantity: 5, price: 45.00, category: 'Farmacia' }, { name: 'Coca-Cola 600ml', sku: 'SKU-10293', quantity: 12, price: 18.50, category: 'Bebidas' }] },
+                { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, items: [{ name: 'Detergente Líquido 1L', sku: 'SKU-00005', quantity: 5, price: 120.00, category: 'Abarrotes' }] },
+                { ticket: 'TKT-00429', date: '27/05/2026', time: '18:05', cashier: 'María López', method: 'Efectivo', status: 'Cancelada', subtotal: 297.41, iva: 47.59, total: 345.00, items: [{ name: 'Pan Dulce Concha', sku: 'SKU-00006', quantity: 3, price: 12.00, category: 'Abarrotes' }] },
+                { ticket: 'TKT-00428', date: '27/05/2026', time: '16:30', cashier: 'María López', method: 'Tarjeta', status: 'Completada', subtotal: 489.48, iva: 78.32, total: 567.80, items: [{ name: 'Coca-Cola 600ml', sku: 'SKU-10293', quantity: 6, price: 18.50, category: 'Bebidas' }] },
+                { ticket: 'TKT-00427', date: '27/05/2026', time: '14:00', cashier: 'Carlos Ruiz', method: 'Efectivo', status: 'Completada', subtotal: 775.86, iva: 124.14, total: 900.00, items: [{ name: 'Leche Entera 1L', sku: 'SKU-00007', quantity: 10, price: 28.00, category: 'Bebidas' }] },
+            ]);
+        }
+    }
+};
+
+let currentFilters = { dateFrom: null, dateTo: null, category: '' };
+
+function init() {
+    DB.seedDemoData();
+    updateDashboard();
+    renderChart();
+    renderTopProducts();
+    renderRecentActivity();
+    lucide.createIcons();
+}
+
+function updateDashboard() {
+    const sales = DB.getSales().filter(s => s.status === 'Completada');
+    const totalVentas = sales.reduce((sum, s) => sum + s.total, 0);
+    const ganancia = totalVentas * 0.257;
+    const tickets = sales.length;
+    const alertas = DB.getInventory().filter(p => p.stock <= 5).length;
+
+    document.getElementById('kpiVentas').innerText = `$${totalVentas.toFixed(2)}`;
+    document.getElementById('kpiGanancia').innerText = `$${ganancia.toFixed(2)}`;
+    document.getElementById('kpiTickets').innerText = tickets;
+    document.getElementById('kpiAlertas').innerText = alertas;
+}
+
+function renderChart() {
+    const sales = DB.getSales().filter(s => s.status === 'Completada');
+    const days = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+    const values = [0,0,0,0,0,0,0];
+    const today = new Date();
+
+    sales.forEach(s => {
+        const [d, m, y] = s.date.split('/').map(Number);
+        const saleDate = new Date(y, m-1, d);
+        const diff = Math.floor((today - saleDate) / (1000*60*60*24));
+        if (diff >= 0 && diff < 7) {
+            const idx = (today.getDay() - diff + 7) % 7;
+            values[idx] += s.total;
+        }
+    });
+
+    const container = document.getElementById('chartBars');
+    const maxVal = Math.max(...values, 1);
+
+    container.innerHTML = values.map((val, i) => {
+        const height = (val / maxVal) * 100;
+        const isActive = i === today.getDay();
+        return `
+        <div class="chart-bar flex flex-col items-center flex-1 group ${isActive ? 'active' : ''}" onclick="filterByDay(${i})">
+            <div class="chart-tooltip">$${(val/1000).toFixed(1)}k</div>
+            <div class="w-8 rounded-t-lg transition-all relative ${isActive ? 'bg-slate-900' : 'bg-slate-200 group-hover:bg-slate-900'}" style="height: ${Math.max(height, 4)}%"></div>
+            <span class="text-[10px] font-bold mt-2 ${isActive ? 'text-slate-900 font-black' : 'text-slate-400'}">${days[i]}</span>
+        </div>`;
+    }).join('');
+
+    document.getElementById('chartMax').innerText = `$${(maxVal/1000).toFixed(1)}k`;
+    lucide.createIcons();
+}
+
+function renderTopProducts() {
+    const sales = DB.getSales().filter(s => s.status === 'Completada');
+    const productMap = {};
+
+    sales.forEach(s => {
+        (s.items || []).forEach(item => {
+            const key = item.sku || item.name;
+            if (!productMap[key]) {
+                productMap[key] = { name: item.name, qty: 0, total: 0, category: item.category || 'General', sku: item.sku };
+            }
+            productMap[key].qty += item.quantity || 1;
+            productMap[key].total += item.price * (item.quantity || 1);
+        });
+    });
+
+    const sorted = Object.values(productMap).sort((a, b) => b.qty - a.qty).slice(0, 5);
+    const tbody = document.getElementById('topProductsBody');
+
+    if (sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-slate-400">Aún no hay ventas registradas</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = sorted.map(p => `
+        <tr class="hover:bg-slate-50/40 transition-colors">
+            <td class="p-4 pl-6 font-bold text-slate-900">${p.name}</td>
+            <td class="p-4 text-xs font-bold text-slate-500 uppercase">${p.category}</td>
+            <td class="p-4 text-center font-mono font-bold">${p.qty}</td>
+            <td class="p-4 text-right font-mono font-bold text-emerald-600">$${p.total.toFixed(2)}</td>
+            <td class="p-4 text-center pr-6">
+                <div class="flex items-center justify-center gap-1">
+                    <button class="table-action-btn" title="Ver detalles" onclick="viewProduct('${p.sku}')"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
+                    <button class="table-action-btn" title="Editar producto" onclick="editProduct('${p.sku}')"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                </div>
+            </td>
+        </tr>`).join('');
+
+    lucide.createIcons();
+}
+
+function renderRecentActivity() {
+    const sales = DB.getSales().slice(0, 5);
+    const container = document.getElementById('recentActivity');
+
+    if (sales.length === 0) {
+        container.innerHTML = '<div class="p-6 text-center text-slate-400 text-sm">No hay actividad reciente</div>';
+        return;
+    }
+
+    container.innerHTML = sales.map(s => {
+        const isCompleted = s.status === 'Completada';
+        const methodIcon = s.method === 'Efectivo' ? 'receipt' : s.method === 'Tarjeta' ? 'credit-card' : 'layers';
+        const statusColor = isCompleted ? 'text-emerald-600' : s.status === 'Cancelada' ? 'text-rose-600' : 'text-amber-600';
+        const statusBadge = isCompleted ? 'bg-emerald-50 text-emerald-700' : s.status === 'Cancelada' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700';
+
+        return `
+        <div class="p-4 flex items-center gap-4 hover:bg-slate-50/40 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="${methodIcon}" class="w-5 h-5 text-slate-600"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-slate-900 truncate">${s.ticket} — ${s.cashier}</p>
+                <p class="text-xs text-slate-400">${s.date} ${s.time} • ${s.items?.length || 0} artículos</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-bold font-mono text-slate-900">$${s.total.toFixed(2)}</p>
+                <span class="status-badge ${statusBadge} text-[10px] px-2 py-0.5 rounded">${s.status}</span>
+            </div>
+        </div>`;
+    }).join('');
+
+    lucide.createIcons();
+}
+
+// Filter Functions
+function applyFilters() {
+    currentFilters.category = document.getElementById('categoryFilter').value;
+    updateDashboard();
+    renderChart();
+    renderTopProducts();
+    showToast('Filtros aplicados', 'success');
+}
+
+function resetFilters() {
+    document.getElementById('categoryFilter').value = '';
+    currentFilters = { dateFrom: null, dateTo: null, category: '' };
+    updateDashboard();
+    renderChart();
+    renderTopProducts();
+    showToast('Filtros restablecidos', 'success');
+}
+
+function refreshData() {
+    updateDashboard();
+    renderChart();
+    renderTopProducts();
+    renderRecentActivity();
+    showToast('Datos actualizados', 'success');
+}
+
+function filterByDay(dayIndex) {
+    showToast(`Filtrando por ${['Dom','Lun','Mar','Mie','Jue','Vie','Sab'][dayIndex]}`, 'success');
+}
+
+function drillDown(metric) {
+    const messages = {
+        ventas: 'Redirigiendo a reporte de ventas...',
+        ganancia: 'Abriendo análisis de márgenes...',
+        tickets: 'Mostrando historial de tickets...',
+        stock: 'Navegando a alertas de inventario...'
+    };
+    showToast(messages[metric] || 'Navegando...', 'success');
+}
+
+function viewProduct(sku) { showToast(`Viendo detalles de ${sku}`, 'success'); }
+function editProduct(sku) { showToast(`Editando ${sku}`, 'success'); }
+function viewAllProducts() { showToast('Navegando a inventario completo', 'success'); }
+function showDateRangePicker() { showToast('Selector de fechas (simulado)', 'success'); }
+
+// Toast Notifications
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+});
+
+window.onload = init;
+    </script>
+    <script src="shared/navbar.js"></script>
+</body>
+</html>

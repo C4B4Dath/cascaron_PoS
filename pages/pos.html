@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Punto de Venta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; } .w-40 { width: 10rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
+.max-w-md { max-width: 28rem; } .max-w-xs { max-width: 20rem; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.px-11 { padding-left: 2.75rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; }
+.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-11 { padding-left: 2.75rem; }
+.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+
+.mt-0\.5 { margin-top: 0.125rem; } .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; } .ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.-top-6 { top: -1.5rem; } .left-1\/2 { left: 50%; } .-translate-x-1\/2 { transform: translateX(-50%); }
+
+.space-x-1 > * + * { margin-left: 0.25rem; } .space-x-2 > * + * { margin-left: 0.5rem; }
+.space-x-3 > * + * { margin-left: 0.75rem; } .space-x-4 > * + * { margin-left: 1rem; }
+.space-x-6 > * + * { margin-left: 1.5rem; } .space-x-8 > * + * { margin-left: 2rem; }
+.space-y-1 > * + * { margin-top: 0.25rem; } .space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; } .space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; } .space-y-8 > * + * { margin-top: 2rem; }
+.gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
+.leading-snug { line-height: 1.375; } .leading-tight { line-height: 1.25; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.text-white { color: #fff; }
+.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
+.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
+.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
+.text-emerald-700 { color: var(--emerald-700); }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
+.text-purple-600 { color: var(--purple-600); }
+
+.bg-white { background-color: #fff; }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-400 { background-color: var(--slate-400); }
+.bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
+.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
+.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
+.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
+.bg-slate-50\/40 { background-color: rgba(248,250,252,0.4); }
+.bg-slate-50\/50 { background-color: rgba(248,250,252,0.5); }
+.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
+
+.border { border: 1px solid; } .border-0 { border: none; }
+.border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+.border-slate-900 { border-color: var(--slate-900); }
+.border-emerald-500 { border-color: var(--emerald-500); }
+.border-transparent { border-color: transparent; }
+.divide-y > * + * { border-top: 1px solid var(--slate-100); }
+
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+.transition-transform { transition: transform 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.animate-slide-right { animation: slideInRight 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes checkmarkDraw { 0% { stroke-dashoffset: 50; } 100% { stroke-dashoffset: 0; } }
+.checkmark-path { stroke-dasharray: 50; animation: checkmarkDraw 0.4s ease forwards; }
+
+.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
+.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
+.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
+.hover\:text-slate-600:hover { color: var(--slate-600); }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.hover\:text-rose-600:hover { color: var(--rose-600); }
+.hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.hover\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
+.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
+
+.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+
+button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
+.disabled\:opacity-40:disabled { opacity: 0.4; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+.disabled\:bg-slate-100:disabled { background-color: #f1f5f9; }
+.disabled\:text-slate-300:disabled { color: #cbd5e1; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .md\:flex-row { flex-direction: row; }
+    .md\:w-96 { width: 24rem; }
+    .md\:w-auto { width: auto; }
+    .md\:pb-0 { padding-bottom: 0; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 1280px) {
+    .xl\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.cart-transition { transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+.product-img { transition: transform 0.2s ease; }
+.product-card:hover .product-img { transform: scale(1.03); }
+.cart-item-enter { animation: fadeIn 0.2s ease; }
+.ticket-appear { animation: fadeIn 0.4s ease; }
+.quick-cash-btn:active, .keypad-btn:active { transform: scale(0.95); }
+.received-display { font-variant-numeric: tabular-nums; }
+@keyframes pulseSoft { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
+.animate-pulse-soft { animation: pulseSoft 1s ease infinite; }
+
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+.stock-badge {
+    position: absolute; top: 6px; left: 6px;
+    padding: 0.25rem 0.5rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.stock-badge.ok { background: var(--emerald-50); color: var(--emerald-700); }
+.stock-badge.low { background: var(--amber-50); color: var(--amber-700); }
+.stock-badge.critical { background: var(--rose-50); color: var(--rose-700); }
+
+.payment-methods { display: flex; gap: 0.5rem; }
+.payment-method {
+    flex: 1; padding: 0.75rem; border: 2px solid var(--slate-200);
+    border-radius: 0.75rem; text-align: center; cursor: pointer;
+    transition: all 0.15s ease; font-size: 0.75rem; font-weight: 700;
+}
+.payment-method:hover { background: var(--slate-50); border-color: var(--slate-300); }
+.payment-method.active {
+    background: var(--slate-900); border-color: var(--slate-900);
+    color: white;
+}
+.payment-method i { display: block; margin: 0 auto 0.25rem; width: 1.25rem; height: 1.25rem; }
+
+.cash-panel {
+    background: white; border: 1px solid var(--slate-100);
+    border-radius: 1rem; padding: 1rem; margin-bottom: 1rem;
+    position: relative; overflow: hidden;
+}
+.cash-panel::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; background: linear-gradient(90deg, var(--amber-500), var(--purple-500));
+}
+.cash-panel .label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); }
+.cash-panel .value { font-size: 1.125rem; font-weight: 900; color: var(--slate-900); font-family: monospace; }
+.cash-panel .recent { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--slate-200); }
+.cash-panel .recent-item { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 0.25rem 0; }
+.cash-panel .recent-item .ticket { font-weight: 600; color: var(--slate-700); }
+.cash-panel .recent-item .amount { font-family: monospace; font-weight: 700; }
+.demo-warning {
+    background: var(--amber-50); border: 1px dashed var(--amber-500);
+    border-radius: 0.5rem; padding: 0.5rem; margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.demo-warning i { color: var(--amber-600); flex-shrink: 0; }
+.demo-warning span { font-size: 0.625rem; font-weight: 700; color: var(--amber-700); line-height: 1.3; }
+
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+    </style>
+</head>
+<body class="h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
+
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between flex-shrink-0 z-40 shadow-xs">
+        <div class="flex items-center space-x-4">
+            <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                <span class="text-white text-sm font-black tracking-tighter">N:</span>
+            </div>
+            <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+            <span class="text-[10px] font-black bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md uppercase tracking-widest">Modo Cajero</span>
+        </div>
+        <div class="flex items-center space-x-6">
+            <div class="text-right">
+                <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Cajero</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex overflow-hidden relative bg-slate-50/40" style="height: calc(100vh - 5rem);">
+
+        <main id="mainCatalog" class="flex-1 flex flex-col p-8 overflow-y-auto space-y-8 custom-scrollbar">
+
+            <div class="flex flex-col md:flex-row gap-6 items-center justify-between flex-shrink-0">
+                <div class="relative w-full md:w-96">
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)"
+                        placeholder="Buscar producto por nombre..."
+                        class="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all shadow-xs">
+                    <span class="absolute left-4 top-3.5 text-sm text-slate-400">🔍</span>
+                </div>
+                <div id="categoryContainer" class="flex space-x-8 overflow-x-auto w-full md:w-auto pb-1 md:pb-0"></div>
+            </div>
+
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+        </main>
+
+        <aside id="cartSidebar" class="w-[480px] bg-white border-l border-slate-100 flex flex-col h-full shadow-2xl flex-shrink-0 overflow-hidden hidden cart-transition transform translate-x-full lg:translate-x-0">
+
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 flex-shrink-0">
+                <h2 class="font-bold text-sm uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    <span>Artículos en Carrito</span>
+                    <span id="cartCount" class="bg-slate-900 text-white text-xs px-3 py-1 rounded-full font-black">0</span>
+                </h2>
+                <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-700 font-bold tracking-wide uppercase transition-colors flex items-center gap-1">
+                    <i data-lucide="trash-2" class="w-3 h-3"></i> Vaciar
+                </button>
+            </div>
+
+            <div id="cartItems" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 bg-white"></div>
+
+            <div class="p-6 border-t border-slate-100 bg-white space-y-4 shadow-md flex-shrink-0">
+
+                <div class="cash-panel">
+                    <div class="demo-warning">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span>Vista Demo: En producción el cajero NO ve estos datos de caja</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="label">Saldo Caja</span>
+                        <span id="cashBalance" class="value">$1,500.00</span>
+                    </div>
+                    <div class="recent">
+                        <span class="label block mb-1">Últimas Ventas</span>
+                        <div id="recentSales" class="space-y-1"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-sm text-slate-500 font-normal">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span id="txtSubtotal" class="text-slate-800 font-semibold">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>IVA Trasladado (16%)</span>
+                        <span id="txtIva" class="text-slate-800 font-semibold">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-slate-900 pt-4 border-t border-slate-100 font-black">
+                        <span class="text-lg">Total General</span>
+                        <span id="txtTotal" class="text-3xl text-emerald-600 font-black tracking-tight">$0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="openCheckout()" id="btnCheckout"
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    disabled>
+                    <i data-lucide="credit-card" class="w-4 h-4"></i>
+                    Proceder al Pago
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <div id="checkoutModal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-xs z-50 flex justify-end hidden">
+        <div class="w-full max-w-md bg-white h-full flex flex-col shadow-2xl relative border-l border-slate-100 animate-slide-right">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div class="w-20"></div>
+                <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400">Módulo de Cobro</h3>
+                <div class="w-20"></div>
+            </div>
+            <div id="checkoutContent" class="flex-1 flex flex-col justify-between p-6 bg-white"></div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <script>
+const DB = {
+    _get(key, def) {
+        try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; }
+        catch { return def; }
+    },
+    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+
+    getSales() { return this._get('sales', []); },
+    setSales(s) { this._set('sales', s); },
+
+    addSale(sale) {
+        const sales = this.getSales();
+        sales.unshift(sale);
+        this.setSales(sales);
+        this._updateCashRegister(sale);
+        this._updateInventory(sale);
+        return sale;
+    },
+
+    _updateCashRegister(sale) {
+        if (sale.method !== 'Efectivo') return;
+        const movs = this._get('cash_movements', []);
+        const balance = this.getCashBalance();
+        movs.unshift({
+            id: Date.now(), time: sale.time, type: 'Ingreso',
+            concept: 'Venta ' + sale.ticket, amount: sale.total,
+            balance: balance.current + sale.total
+        });
+        this._set('cash_movements', movs);
+        this.setCashBalance({ ...balance, current: balance.current + sale.total });
+    },
+
+    _updateInventory(sale) {
+        const inv = this.getInventory();
+        sale.items.forEach(item => {
+            const prod = inv.find(p => p.sku === item.sku);
+            if (prod) prod.stock = Math.max(0, prod.stock - item.quantity);
+        });
+        this.setInventory(inv);
+    },
+
+getInventory() {
+    let inv = this._get('inventory', []);
+    if (inv.length === 0) {
+        inv = [
+            { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://imgs.search.brave.com/8TIFUms6kgXxAthMLqRDiLHH83_F6e5q5wm-9ZMEdTU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA0Lzc5Lzg0LzA0/LzM2MF9GXzQ3OTg0/MDQ2OV9ranJCQTAx/UkRvSTFzNFFVZDdj/dzFWM1hoVE1zOTJC/aC5qcGc' },
+            { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00, img: 'https://imgs.search.brave.com/4D8vvNEfBM_dmvLfI6Xt04T1gdb0bkH_x4kYroPatW8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/MDU1MjYtTUxVNzU2/NTA2ODg2MThfMDQy/MDI0LU8ud2VicA' },
+            { id: 4, sku: 'SKU-00004', name: 'Agua Peñafiel 1L', category: 'Bebidas', stock: 15, price: 15.00, img: 'https://imgs.search.brave.com/05Tr0smjXPhvOU7-UE6rnym4p3bg5xVol_OyKB33F2Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy85/Lzk4L0VucmlxdWVf/UGVuYV9OaWV0by5q/cGc' },
+            { id: 5, sku: 'SKU-00005', name: 'Detergente Líquido 1L', category: 'Abarrotes', stock: 1, price: 120.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR92kReb_jtSR7hCQ5oxX6-KHiZx5n-YdMkrA&s' },
+            { id: 6, sku: 'SKU-00006', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTct9vil0XxoL4JiRRRzDZ-b4_7razl6gysVg&s' },
+            { id: 7, sku: 'SKU-00007', name: 'Leche Entera Alpura 1L', category: 'Bebidas', stock: 3, price: 28.00, img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 8, sku: 'SKU-00008', name: 'Jugo Del Valle Naranja 1L', category: 'Bebidas', stock: 18, price: 25.00, img: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 9, sku: 'SKU-00009', name: 'Galletas Marías 400g', category: 'Abarrotes', stock: 12, price: 32.00, img: 'https://www.mayoreototal.mx/cdn/shop/files/Captura_de_pantalla_2025-06-22_a_la_s_8.45.25_a.m._530x@2x.png?v=1750603541' },
+            { id: 10, sku: 'SKU-00010', name: 'Atún en Agua 140g', category: 'Abarrotes', stock: 6, price: 24.00, img: 'https://i5.walmartimages.com/asr/9338ef18-9b9d-4d0b-bf09-eb5340a28300.49fba045f9ff726eafd93ac1a4e8001e.jpeg' },
+            { id: 11, sku: 'SKU-00011', name: 'Arroz Blanco 1kg', category: 'Abarrotes', stock: 20, price: 28.00, img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 12, sku: 'SKU-00012', name: 'Frijoles Negros 400g', category: 'Abarrotes', stock: 15, price: 22.00, img: 'https://www.laranitadelapaz.com.mx/images/thumbs/0006982_frijol-negro-fresno-bolsa-de-1-kg_625.jpeg' },
+            { id: 13, sku: 'SKU-00013', name: 'Aceite Vegetal 1L', category: 'Abarrotes', stock: 8, price: 45.00, img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 14, sku: 'SKU-00014', name: 'Azúcar Blanca 1kg', category: 'Abarrotes', stock: 10, price: 24.00, img: 'https://www.costco.com.mx/medias/sys_master/products/h9a/h4f/82432991035422.jpg' },
+            { id: 15, sku: 'SKU-00015', name: 'Café Molido 250g', category: 'Abarrotes', stock: 5, price: 65.00, img: 'https://http2.mlstatic.com/D_NQ_NP_794704-MLC83515200994_042025-O.webp' },
+            { id: 16, sku: 'SKU-00016', name: 'Shampoo Head 400ml', category: 'Cuidado Personal', stock: 7, price: 85.00, img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 17, sku: 'SKU-00017', name: 'Jabón de Baño Zote 150g', category: 'Cuidado Personal', stock: 30, price: 18.00, img: 'https://images.unsplash.com/photo-1605264964528-06403738d6dc?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 18, sku: 'SKU-00018', name: 'Pasta Dental Colgate 75ml', category: 'Cuidado Personal', stock: 14, price: 35.00, img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop&auto=format&q=80' },
+            { id: 19, sku: 'SKU-00019', name: 'Papel Higiénico 4 rollos', category: 'Abarrotes', stock: 9, price: 42.00, img: 'https://i5.walmartimages.com/asr/f9fd017f-8a55-49ce-b7fd-7cd4b1af1dac.a6e7698cd162d0c880134ee26951d878.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF' },
+            { id: 20, sku: 'SKU-00020', name: 'Cloro 1L', category: 'Abarrotes', stock: 4, price: 28.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuRAs_-MnH50LME9eia5sd4YzVrXLWtwdNLw&s' },
+        ];
+        this._set('inventory', inv);
+    }
+    return inv;
+},
+    setInventory(inv) { this._set('inventory', inv); },
+
+    getCashBalance() { return this._get('cash_balance', { initial: 1500, current: 1500 }); },
+    setCashBalance(b) { this._set('cash_balance', b); },
+    getCashMovements() { return this._get('cash_movements', []); },
+    setCashMovements(m) { this._set('cash_movements', m); },
+
+    seedDemoData() {
+        if (this.getSales().length > 0) return;
+
+        const demoSales = [
+            { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, received: 1300.00, change: 20.00, items: [{ name: 'Paracetamol 500mg', sku: 'SKU-48291', quantity: 5, price: 45.00 }, { name: 'Coca-Cola 600ml', sku: 'SKU-10293', quantity: 12, price: 18.50 }] },
+            { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, received: 2450.00, change: 0.00, items: [{ name: 'Detergente Líquido 1L', sku: 'SKU-00005', quantity: 5, price: 120.00 }] },
+            { ticket: 'TKT-00429', date: '27/05/2026', time: '18:05', cashier: 'María López', method: 'Efectivo', status: 'Cancelada', subtotal: 297.41, iva: 47.59, total: 345.00, received: 0, change: 0, items: [{ name: 'Pan Dulce Concha', sku: 'SKU-00006', quantity: 3, price: 12.00 }] },
+        ];
+        this.setSales(demoSales);
+
+        const movs = [
+            { id: 1, time: '09:00', type: 'Apertura', concept: 'Fondo inicial', amount: 1500, balance: 1500 },
+            { id: 2, time: '10:23', type: 'Ingreso', concept: 'Venta TKT-00430', amount: 1280, balance: 2780 },
+            { id: 3, time: '11:45', type: 'Ingreso', concept: 'Venta TKT-00431', amount: 0, balance: 2780 },
+        ];
+        this.setCashMovements(movs);
+    }
+};
+
+const PRODUCTS = DB.getInventory();
+const CATEGORIES = ['Todos', 'Farmacia', 'Bebidas', 'Abarrotes', 'Cuidado Personal'];
+let cart = [];
+let currentCategory = 'Todos';
+let searchQuery = '';
+let amountReceived = '';
+let paymentMethod = 'Efectivo';
+let currentTicketId = '';
+
+function init() {
+    DB.seedDemoData();
+    renderCategories();
+    renderProducts();
+    renderCart();
+    renderCashPanel();
+    lucide.createIcons();
+}
+
+function renderCategories() {
+    const container = document.getElementById('categoryContainer');
+    container.innerHTML = CATEGORIES.map(cat => `
+        <button onclick="setCategory('${cat}')" class="text-sm font-bold tracking-wide pb-2 transition-all border-b-2 whitespace-nowrap ${currentCategory === cat ? 'border-slate-900 text-slate-900 font-black' : 'border-transparent text-slate-400 hover:text-slate-600'}">
+            ${cat}
+        </button>
+    `).join('');
+}
+
+function setCategory(cat) {
+    currentCategory = cat;
+    renderCategories();
+    renderProducts();
+}
+
+function handleSearch(val) {
+    searchQuery = val;
+    renderProducts();
+}
+
+function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    const filtered = PRODUCTS.filter(p => {
+        const matchCat = currentCategory === 'Todos' || p.category === currentCategory;
+        const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchCat && matchSearch && p.stock > 0;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <span class="text-5xl text-slate-200 mb-4">🔍</span>
+                <p class="text-lg font-bold text-slate-300">Sin resultados</p>
+                <p class="text-sm text-slate-300 mt-1">Intenta con otros términos o categoría</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(p => {
+        const stockClass = p.stock <= 2 ? 'critical' : p.stock <= 5 ? 'low' : 'ok';
+        const stockText = p.stock <= 2 ? '¡Últimas!' : p.stock <= 5 ? 'Pocas' : `${p.stock} pzas`;
+
+        return `
+        <div onclick="${p.stock > 0 ? `addToCart(${p.id})` : ''}"
+            class="product-card bg-white rounded-2xl border border-slate-100 p-6 flex flex-col justify-between relative cursor-pointer group shadow-md hover:shadow-xl hover:border-slate-300 transition-all duration-200 ${p.stock <= 2 ? 'ring-2 ring-rose-200' : ''}">
+
+            <span class="stock-badge ${stockClass}">${stockText}</span>
+            <span class="absolute top-6 right-6 text-base font-black text-slate-900 bg-white/90 backdrop-blur-xs px-3 py-1 rounded-lg border border-slate-100 shadow-xs">$${p.price.toFixed(2)}</span>
+
+            <div class="w-full aspect-square bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center p-2 mb-6">
+                <img src="${p.img}" alt="${p.name}" loading="lazy" class="product-img w-full h-full object-cover rounded-lg">
+            </div>
+
+            <div class="text-center space-y-1">
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-black">${p.category}</p>
+                <h3 class="font-bold text-slate-800 text-sm tracking-tight leading-snug truncate">${p.name}</h3>
+                ${p.stock <= 2 ? `<p class="text-[10px] text-rose-600 font-bold uppercase tracking-wider">⚠️ Stock crítico</p>` : ''}
+            </div>
+        </div>
+    `}).join('');
+}
+
+function renderCart() {
+    const sidebar = document.getElementById('cartSidebar');
+    const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+    document.getElementById('cartCount').innerText = count;
+    const container = document.getElementById('cartItems');
+
+    if (cart.length === 0) {
+        sidebar.classList.add('hidden', 'translate-x-full');
+        document.getElementById('btnCheckout').disabled = true;
+        document.getElementById('txtSubtotal').innerText = '$0.00';
+        document.getElementById('txtIva').innerText = '$0.00';
+        document.getElementById('txtTotal').innerText = '$0.00';
+        return;
+    }
+
+    sidebar.classList.remove('hidden', 'translate-x-full');
+
+    container.innerHTML = cart.map(item => {
+        const product = PRODUCTS.find(p => p.id === item.id);
+        const stockLeft = product ? product.stock : 0;
+
+        return `
+        <div class="cart-item border border-slate-100 rounded-2xl bg-slate-50/50 flex space-x-4 items-center relative flex-shrink-0 p-4 cart-item-enter">
+            <img src="${item.img}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl bg-white border border-slate-200 shadow-sm flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start">
+                    <h4 class="font-bold text-slate-900 text-sm leading-tight pr-6 truncate">${item.name}</h4>
+                    <button onclick="removeFromCart(${item.id})" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 text-sm transition-colors">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <p class="text-xs font-semibold text-slate-400 mt-0.5">$${item.price.toFixed(2)} c/u</p>
+                <div class="flex items-center justify-between mt-3">
+                    <div class="flex items-center space-x-1 bg-white border border-slate-200 rounded-xl p-0.5 shadow-xs">
+                        <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-black text-lg transition-all rounded-lg active:scale-90">−</button>
+                        <span class="font-mono text-slate-900 font-black text-sm w-7 text-center">${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-black text-lg transition-all rounded-lg active:scale-90">+</button>
+                    </div>
+                    <span class="font-black text-slate-900 text-base tracking-tight">$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+                ${stockLeft <= 3 ? `<p class="text-[10px] text-amber-600 font-bold mt-1">⚠️ Solo quedan ${stockLeft} en inventario</p>` : ''}
+            </div>
+        </div>
+    `}).join('');
+
+    const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    const iva = subtotal * 0.16;
+    const total = subtotal + iva;
+
+    document.getElementById('txtSubtotal').innerText = `$${subtotal.toFixed(2)}`;
+    document.getElementById('txtIva').innerText = `$${iva.toFixed(2)}`;
+    document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
+    document.getElementById('btnCheckout').disabled = false;
+
+    lucide.createIcons();
+}
+
+function addToCart(id) {
+    const product = PRODUCTS.find(p => p.id === id);
+    if (!product || product.stock <= 0) {
+        showToast('Producto agotado', 'error');
+        return;
+    }
+
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        if (existing.quantity >= product.stock) {
+            showToast('Stock máximo alcanzado', 'error');
+            return;
+        }
+        existing.quantity += 1;
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+
+    renderCart();
+    renderProducts();
+    showToast(`${product.name} agregado`, 'success');
+}
+
+function updateQuantity(id, delta) {
+    const item = cart.find(item => item.id === id);
+    const product = PRODUCTS.find(p => p.id === id);
+    if (item && product) {
+        const newQty = item.quantity + delta;
+        if (newQty <= 0) {
+            cart = cart.filter(i => i.id !== id);
+        } else if (newQty <= product.stock) {
+            item.quantity = newQty;
+        } else {
+            showToast('No hay suficiente stock', 'error');
+            return;
+        }
+    }
+    renderCart();
+    renderProducts();
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(i => i.id !== id);
+    renderCart();
+    renderProducts();
+}
+
+function clearCart() {
+    if (cart.length === 0) return;
+    cart = [];
+    renderCart();
+    renderProducts();
+    showToast('Carrito vaciado', 'success');
+}
+
+function getTotals() {
+    const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    const iva = subtotal * 0.16;
+    const total = subtotal + iva;
+    const received = parseFloat(amountReceived) || 0;
+    const change = received >= total ? received - total : 0;
+    return { subtotal, iva, total, change, received };
+}
+
+function openCheckout() {
+    if (cart.length === 0) return;
+    amountReceived = '';
+    paymentMethod = 'Efectivo';
+    document.getElementById('checkoutModal').classList.remove('hidden');
+    renderCheckoutForm();
+}
+
+function closeCheckout() {
+    document.getElementById('checkoutModal').classList.add('hidden');
+}
+
+function renderCheckoutForm() {
+    const { total, change, received } = getTotals();
+    const content = document.getElementById('checkoutContent');
+    const canPay = paymentMethod === 'Efectivo' ? (received >= total && received > 0) : true;
+
+    content.innerHTML = `
+        <div class="space-y-6">
+            <div>
+                <label class="text-xs text-slate-400 font-black uppercase tracking-wider block mb-2">Método de Pago</label>
+                <div class="payment-methods">
+                    <div class="payment-method ${paymentMethod === 'Efectivo' ? 'active' : ''}" onclick="setPaymentMethod('Efectivo')">
+                        <i data-lucide="banknote" class="w-5 h-5 mx-auto"></i>
+                        Efectivo
+                    </div>
+                    <div class="payment-method ${paymentMethod === 'Tarjeta' ? 'active' : ''}" onclick="setPaymentMethod('Tarjeta')">
+                        <i data-lucide="credit-card" class="w-5 h-5 mx-auto"></i>
+                        Tarjeta
+                    </div>
+                    <div class="payment-method ${paymentMethod === 'Mixto' ? 'active' : ''}" onclick="setPaymentMethod('Mixto')">
+                        <i data-lucide="layers" class="w-5 h-5 mx-auto"></i>
+                        Mixto
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center py-4 border-b border-slate-100">
+                <span class="text-xs text-slate-400 uppercase tracking-widest block mb-1 font-black">Monto de la Venta</span>
+                <span class="text-4xl font-black text-slate-900 tracking-tight">$${total.toFixed(2)}</span>
+            </div>
+
+            ${paymentMethod !== 'Tarjeta' ? `
+            <div>
+                <label class="text-xs text-slate-400 font-black uppercase tracking-wider block mb-2">Efectivo Entregado</label>
+                <input type="text" readonly id="receivedInput" placeholder="$0.00"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 font-mono text-2xl text-right font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 received-display"
+                    value="${amountReceived ? '$' + parseFloat(amountReceived).toFixed(2) : ''}">
+            </div>
+            <div class="flex justify-between items-center py-3 px-1 bg-emerald-50 rounded-xl ${change > 0 ? '' : 'opacity-40'}">
+                <span class="text-slate-400 uppercase tracking-wider text-xs font-black flex items-center gap-1">
+                    <i data-lucide="arrow-left-right" class="w-3 h-3"></i> Cambio a devolver
+                </span>
+                <span class="font-mono font-black text-xl ${change > 0 ? 'text-emerald-600' : 'text-slate-400'}">$${change.toFixed(2)}</span>
+            </div>
+            ` : `
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                <i data-lucide="credit-card" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
+                <p class="text-sm font-bold text-slate-700">Pago con tarjeta</p>
+                <p class="text-xs text-slate-400 mt-1">Conecta el terminal para procesar</p>
+            </div>
+            `}
+        </div>
+
+        <div class="space-y-3">
+            ${paymentMethod === 'Efectivo' ? `
+            <div class="grid grid-cols-4 gap-2">
+                ${[50, 100, 200, 500].map(bill => `
+                    <button onclick="quickCash(${bill})" class="quick-cash-btn bg-slate-50 border border-slate-200 hover:bg-slate-100 py-3 rounded-xl font-mono text-xs font-bold text-slate-700 transition-all active:scale-95">$${bill}</button>
+                `).join('')}
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                ${['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => `
+                    <button onclick="pressKey('${k}')" class="keypad-btn bg-white hover:bg-slate-50 py-4 rounded-xl text-slate-800 border border-slate-200 font-black text-base active:scale-95 transition-all">${k === '⌫' ? '⌫' : k}</button>
+                `).join('')}
+            </div>
+            ` : ''}
+
+            <button id="btnProcessPayment" ${canPay ? '' : 'disabled'} onclick="processPayment()"
+                class="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl text-center text-sm tracking-wider uppercase transition-all active:scale-98 flex items-center justify-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                Pagar $${total.toFixed(2)}
+            </button>
+            <button onclick="cancelCheckout()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                Cancelar Venta
+            </button>
+        </div>
+    `;
+    lucide.createIcons();
+}
+
+function setPaymentMethod(method) {
+    paymentMethod = method;
+    if (method !== 'Efectivo') amountReceived = '';
+    renderCheckoutForm();
+}
+
+function pressKey(key) {
+    if (key === '⌫') {
+        amountReceived = amountReceived.slice(0, -1);
+    } else if (key === '.' && !amountReceived.includes('.')) {
+        amountReceived += '.';
+    } else if (!isNaN(key)) {
+        amountReceived += key;
+    }
+    renderCheckoutForm();
+}
+
+function quickCash(amount) {
+    const curr = parseFloat(amountReceived) || 0;
+    amountReceived = (curr + amount).toFixed(2);
+    renderCheckoutForm();
+}
+
+function processPayment() {
+    const { subtotal, iva, total, change, received } = getTotals();
+    if (paymentMethod === 'Efectivo' && received < total) return;
+
+    const ticketId = 'TKT-' + String(Math.floor(Math.random() * 90000) + 10000);
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+    const sale = {
+        ticket: ticketId, date: dateStr, time: timeStr,
+        cashier: 'Diego Mendoza', method: paymentMethod, status: 'Completada',
+        subtotal, iva, total, received: paymentMethod === 'Efectivo' ? received : total, change,
+        items: cart.map(i => ({ name: i.name, sku: i.sku, quantity: i.quantity, price: i.price }))
+    };
+
+    DB.addSale(sale);
+    currentTicketId = ticketId;
+
+    const content = document.getElementById('checkoutContent');
+    content.innerHTML = `
+        <div class="flex-1 flex flex-col items-center justify-center text-center space-y-6">
+            <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse-soft shadow-lg">
+                <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight">Pago Exitoso</h3>
+                <p class="text-sm text-slate-400 mt-1 font-medium">Transacción #${ticketId} completada</p>
+            </div>
+        </div>
+    `;
+    setTimeout(() => renderTicket(), 1200);
+}
+
+function cancelCheckout() {
+    if (confirm('¿Estás seguro de cancelar esta venta? Se perderán todos los artículos del carrito.')) {
+        closeCheckout();
+        cart = [];
+        renderCart();
+        renderProducts();
+        showToast('Venta cancelada', 'error');
+    }
+}
+
+function renderTicket() {
+    const content = document.getElementById('checkoutContent');
+    const { subtotal, iva, total, change, received } = getTotals();
+    const ticketId = currentTicketId || 'TKT-' + String(Math.floor(Math.random() * 90000) + 10000);
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    content.innerHTML = `
+        <div class="flex-1 flex flex-col items-center space-y-6 overflow-y-auto p-2 ticket-appear">
+            <div class="bg-white border border-slate-200 p-6 w-full text-slate-800 font-mono text-xs space-y-2 rounded-xl shadow-xs">
+                <div class="text-center">
+                    <p class="text-base font-black tracking-tight text-slate-900">NexPoS</p>
+                    <p class="text-[10px] text-slate-400 font-bold">Sistema de Punto de Venta</p>
+                </div>
+                <hr class="border-dashed border-slate-200">
+                <div class="text-slate-500 font-semibold space-y-0.5">
+                    <p>Ticket: ${ticketId}</p>
+                    <p>Fecha: ${dateStr} ${timeStr}</p>
+                    <p>Turno: Matutino</p>
+                    <p>Atendió: Diego Mendoza</p>
+                    <p>Método: ${paymentMethod}</p>
+                </div>
+                <hr class="border-dashed border-slate-200">
+                <div class="space-y-1">
+                    ${cart.map(i => `
+                        <div class="flex justify-between">
+                            <span class="truncate max-w-[160px]">${i.quantity}x ${i.name}</span>
+                            <span class="font-bold">$${(i.price * i.quantity).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <hr class="border-dashed border-slate-200">
+                <div class="text-right space-y-1 font-bold">
+                    <div class="flex justify-between text-slate-500">
+                        <span>Subtotal</span><span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>IVA 16%</span><span>$${iva.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between text-base text-slate-900 pt-1 border-t border-slate-100">
+                        <span>TOTAL</span><span>$${total.toFixed(2)}</span>
+                    </div>
+                    ${paymentMethod === 'Efectivo' ? `
+                    <div class="flex justify-between text-slate-400 font-normal text-[10px]">
+                        <span>Efectivo recibido</span><span>$${received.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between text-emerald-600 font-normal text-[10px]">
+                        <span>Cambio devuelto</span><span>$${change.toFixed(2)}</span>
+                    </div>` : ''}
+                </div>
+            </div>
+
+            <div class="w-full space-y-2">
+                <button onclick="reprintTicket()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="printer" class="w-4 h-4"></i> Reimprimir Ticket
+                </button>
+                <button onclick="goToBilling()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Facturar (CFDI)
+                </button>
+                <button onclick="resetAll()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl text-sm uppercase tracking-wider transition-all shadow-md active:scale-98 flex items-center justify-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Nueva Venta
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-300 text-center">Gracias por su compra • NexPoS Retail</p>
+        </div>
+    `;
+    lucide.createIcons();
+}
+
+function reprintTicket() {
+    showToast('Ticket listo para imprimir', 'success');
+}
+
+function goToBilling() {
+    showToast('Redirigiendo a facturación...', 'success');
+}
+
+function resetAll() {
+    cart = [];
+    amountReceived = '';
+    currentTicketId = '';
+    closeCheckout();
+    renderCart();
+    renderProducts();
+    renderCashPanel();
+    showToast('Nueva venta iniciada', 'success');
+}
+
+function renderCashPanel() {
+    const balance = DB.getCashBalance();
+    const movs = DB.getCashMovements().slice(0, 3);
+
+    document.getElementById('cashBalance').innerText = `$${balance.current.toFixed(2)}`;
+
+    const recentEl = document.getElementById('recentSales');
+    if (movs.length === 0) {
+        recentEl.innerHTML = `<p class="text-[10px] text-slate-400 italic">Sin movimientos recientes</p>`;
+        return;
+    }
+
+    recentEl.innerHTML = movs.map(m => `
+        <div class="recent-item">
+            <span class="ticket">${m.concept}</span>
+            <span class="amount ${m.amount >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                ${m.amount >= 0 ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}
+            </span>
+        </div>
+    `).join('');
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+        <span class="message">${message}</span>
+    `;
+    container.appendChild(toast);
+    lucide.createIcons();
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+window.onload = init;
+    </script>
+</body>
+</html>

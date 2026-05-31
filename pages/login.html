@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexPoS — Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+/* === NEXPOS DESIGN SYSTEM === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none; user-select: none;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+:root {
+    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+    --slate-800: #1e293b; --slate-900: #0f172a;
+    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
+    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+}
+
+.flex { display: flex; } .flex-col { flex-direction: column; }
+.items-center { align-items: center; } .justify-center { justify-content: center; }
+.text-center { text-align: center; } .text-left { text-align: left; }
+
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-9 { width: 2.25rem; } .w-11 { width: 2.75rem; }
+.h-11 { height: 2.75rem; } .h-screen { height: 100vh; }
+.min-h-screen { min-height: 100vh; } .max-w-sm { max-width: 24rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+.p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pt-4 { padding-top: 1rem; } .pb-2 { padding-bottom: 0.5rem; }
+
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-5 > * + * { margin-top: 1.25rem; }
+.space-y-8 > * + * { margin-top: 2rem; }
+.gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
+
+.text-\[10px\] { font-size: 0.625rem; } .text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; }
+.leading-relaxed { line-height: 1.625; }
+
+.text-white { color: #fff; }
+.text-slate-400 { color: var(--slate-400); } .text-slate-500 { color: var(--slate-500); }
+.text-slate-900 { color: var(--slate-900); }
+.text-emerald-600 { color: var(--emerald-600); } .text-rose-600 { color: var(--rose-600); }
+
+.bg-white { background-color: #fff; } .bg-slate-50 { background-color: var(--slate-50); }
+.bg-slate-900 { background-color: var(--slate-900); } .bg-slate-800 { background-color: #1e293b; }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-rose-50 { background-color: var(--rose-50); }
+.bg-amber-50 { background-color: var(--amber-50); }
+
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
+
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
+
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.animate-shake { animation: shake 0.3s ease; }
+
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:text-slate-900:hover { color: var(--slate-900); }
+.active\:scale-98:active { transform: scale(0.98); }
+
+input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Form Input Styles */
+.form-input {
+    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
+    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-input.error { border-color: var(--rose-500); background: var(--rose-50); }
+.form-input.success { border-color: var(--emerald-500); background: var(--emerald-50); }
+.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
+.form-error { font-size: 0.75rem; color: var(--rose-600); font-weight: 600; display: none; margin-top: 0.25rem; }
+.form-error.show { display: block; animation: fadeIn 0.2s ease; }
+
+/* Tab Styles */
+.tab-btn {
+    flex: 1; text-align: center; padding-bottom: 0.75rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent; transition: all 0.15s ease; cursor: pointer;
+}
+.tab-btn.active { color: var(--slate-900); border-bottom-color: var(--slate-900); }
+.tab-btn:not(.active) { color: var(--slate-400); }
+.tab-btn:not(.active):hover { color: var(--slate-600); }
+
+/* PIN Keypad */
+.pin-display { display: flex; justify-content: center; gap: 0.75rem; margin: 0.5rem 0; }
+.pin-dot {
+    width: 0.75rem; height: 0.75rem; border-radius: 50%;
+    background: var(--slate-200); transition: background 0.15s ease;
+}
+.pin-dot.filled { background: var(--slate-900); }
+.pin-dot.active { animation: pulse 0.3s ease; }
+
+.pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.pin-btn {
+    background: white; border: 1px solid var(--slate-200); border-radius: 0.75rem;
+    padding: 1rem; font-size: 1.125rem; font-weight: 900; color: var(--slate-800);
+    transition: all 0.15s ease; cursor: pointer;
+}
+.pin-btn:hover { background: var(--slate-50); border-color: var(--slate-300); }
+.pin-btn:active { transform: scale(0.95); }
+.pin-btn.zero { grid-column: span 2; }
+.pin-btn.backspace { display: flex; align-items: center; justify-content: center; }
+
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: slideInRight 0.3s ease; max-width: 320px;
+}
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+    color: var(--slate-400); cursor: pointer; transition: color 0.15s ease;
+}
+.password-toggle:hover { color: var(--slate-600); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center antialiased">
+
+    <!-- Demo Mode Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
+    <div class="w-full max-w-sm mx-auto px-4 animate-fade-in">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-md p-8 space-y-8">
+
+            <!-- Logo & Title -->
+            <div class="text-center space-y-3">
+                <div class="w-11 h-11 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm mx-auto">
+                    <span class="text-white text-base font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight text-slate-900">NexPoS</h1>
+                    <p class="text-sm text-slate-500 font-medium">Sistema de Punto de Venta</p>
+                </div>
+            </div>
+
+            <!-- Role Tabs -->
+            <div class="flex border-b border-slate-100">
+                <button id="tabAdmin" class="tab-btn active flex items-center justify-center gap-2" onclick="setActiveTab('admin')">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
+                    <span>Administrador</span>
+                </button>
+                <button id="tabCashier" class="tab-btn flex items-center justify-center gap-2" onclick="setActiveTab('cashier')">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>Cajero Rápido</span>
+                </button>
+            </div>
+
+            <!-- Admin Login Form -->
+            <div id="adminForm" class="space-y-5">
+                <div class="space-y-1">
+                    <label class="form-label" for="emailInput">
+                        <i data-lucide="mail" class="w-3 h-3 inline mr-1"></i>Correo Electrónico
+                    </label>
+                    <input type="email" id="emailInput" value="admin@nexpos.com"
+                        class="form-input"
+                        oninput="validateEmail()">
+                    <p id="emailError" class="form-error flex items-center gap-1">
+                        <i data-lucide="circle-alert" class="w-3 h-3"></i>
+                        <span>Ingresa un correo válido</span>
+                    </p>
+                </div>
+                <div class="space-y-1 relative">
+                    <label class="form-label" for="passwordInput">
+                        <i data-lucide="lock" class="w-3 h-3 inline mr-1"></i>Contraseña
+                    </label>
+                    <input type="password" id="passwordInput" placeholder="••••••••"
+                        class="form-input pr-10"
+                        oninput="validatePassword()">
+                    <i data-lucide="eye" class="password-toggle" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+                    <p id="passwordError" class="form-error flex items-center gap-1">
+                        <i data-lucide="circle-alert" class="w-3 h-3"></i>
+                        <span>La contraseña es requerida</span>
+                    </p>
+                </div>
+                <button id="btnLogin" onclick="handleAdminLogin()"
+                    class="w-full bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="log-in" class="btn-icon w-4 h-4"></i>
+                    <span class="btn-text">Iniciar Sesión</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+
+            <!-- Cashier Login Form -->
+            <div id="cashierForm" class="hidden space-y-5">
+                <div class="space-y-1">
+                    <label class="form-label" for="employeeInput">
+                        <i data-lucide="badge" class="w-3 h-3 inline mr-1"></i>Número de Empleado
+                    </label>
+                    <input type="text" id="employeeInput" value="CAJ-0042"
+                        class="form-input mono uppercase"
+                        oninput="validateEmployee()">
+                    <p id="employeeError" class="form-error flex items-center gap-1">
+                        <i data-lucide="circle-alert" class="w-3 h-3"></i>
+                        <span>Formato: CAJ-XXXX</span>
+                    </p>
+                </div>
+                <div class="space-y-3">
+                    <label class="form-label text-center">
+                        <i data-lucide="key" class="w-3 h-3 inline mr-1"></i>PIN de Acceso
+                    </label>
+                    <div class="pin-display" id="pinDots">
+                        <span class="pin-dot"></span><span class="pin-dot"></span>
+                        <span class="pin-dot"></span><span class="pin-dot"></span>
+                        <span class="pin-dot"></span><span class="pin-dot"></span>
+                    </div>
+                </div>
+                <div class="pin-grid">
+                    <button class="pin-btn" data-value="1" onclick="addPinDigit('1')">1</button>
+                    <button class="pin-btn" data-value="2" onclick="addPinDigit('2')">2</button>
+                    <button class="pin-btn" data-value="3" onclick="addPinDigit('3')">3</button>
+                    <button class="pin-btn" data-value="4" onclick="addPinDigit('4')">4</button>
+                    <button class="pin-btn" data-value="5" onclick="addPinDigit('5')">5</button>
+                    <button class="pin-btn" data-value="6" onclick="addPinDigit('6')">6</button>
+                    <button class="pin-btn" data-value="7" onclick="addPinDigit('7')">7</button>
+                    <button class="pin-btn" data-value="8" onclick="addPinDigit('8')">8</button>
+                    <button class="pin-btn" data-value="9" onclick="addPinDigit('9')">9</button>
+                    <button class="pin-btn zero" data-value="0" onclick="addPinDigit('0')">0</button>
+                    <button class="pin-btn backspace" onclick="removePinDigit()">
+                        <i data-lucide="delete" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <button id="btnCashierLogin" onclick="handleCashierLogin()"
+                    class="w-full bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="log-in" class="btn-icon w-4 h-4"></i>
+                    <span class="btn-text">Acceder como Cajero</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="text-center space-y-3 pt-4 border-t border-slate-100">
+                <a href="forgot-password.html" class="text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors flex items-center justify-center gap-1">
+                    <i data-lucide="key" class="w-3 h-3"></i>
+                    ¿Olvidaste tu contraseña?
+                </a>
+                <p class="text-[10px] text-slate-400">
+                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                    Demo: admin@nexpos.com / cajero: CAJ-0042 con PIN 123456
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// === STATE ===
+let currentTab = 'admin';
+let pin = '';
+const VALID_PIN = '123456';
+const VALID_EMPLOYEE = 'CAJ-0042';
+const VALID_ADMIN = { email: 'admin@nexpos.com', password: 'admin123' };
+
+// === TAB FUNCTIONS ===
+function setActiveTab(tab) {
+    currentTab = tab;
+
+    // Update tab styles
+    document.getElementById('tabAdmin').classList.toggle('active', tab === 'admin');
+    document.getElementById('tabCashier').classList.toggle('active', tab === 'cashier');
+
+    // Show/hide forms
+    document.getElementById('adminForm').classList.toggle('hidden', tab !== 'admin');
+    document.getElementById('cashierForm').classList.toggle('hidden', tab !== 'cashier');
+
+    // Reset forms
+    if (tab === 'cashier') {
+        pin = '';
+        updatePinDots();
+    }
+
+    lucide.createIcons();
+}
+
+// === ADMIN FORM VALIDATION ===
+function validateEmail() {
+    const input = document.getElementById('emailInput');
+    const error = document.getElementById('emailError');
+    const email = input.value.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (email && !valid) {
+        input.classList.add('error');
+        input.classList.remove('success');
+        error.classList.add('show');
+        return false;
+    }
+    if (valid) {
+        input.classList.remove('error');
+        input.classList.add('success');
+        error.classList.remove('show');
+        return true;
+    }
+    input.classList.remove('error', 'success');
+    error.classList.remove('show');
+    return false;
+}
+
+function validatePassword() {
+    const input = document.getElementById('passwordInput');
+    const error = document.getElementById('passwordError');
+    const valid = input.value.length >= 6;
+
+    if (input.value && !valid) {
+        input.classList.add('error');
+        error.classList.add('show');
+        return false;
+    }
+    if (valid) {
+        input.classList.remove('error');
+        input.classList.add('success');
+        error.classList.remove('show');
+        return true;
+    }
+    input.classList.remove('error', 'success');
+    error.classList.remove('show');
+    return false;
+}
+
+function togglePasswordVisibility() {
+    const input = document.getElementById('passwordInput');
+    const icon = document.getElementById('togglePassword');
+    input.type = input.type === 'password' ? 'text' : 'password';
+    icon.setAttribute('data-lucide', input.type === 'password' ? 'eye' : 'eye-off');
+    lucide.createIcons();
+}
+
+// === CASHIER PIN FUNCTIONS ===
+function updatePinDots() {
+    const dots = document.querySelectorAll('#pinDots .pin-dot');
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('filled', i < pin.length);
+        dot.classList.toggle('active', i === pin.length && pin.length < 6);
+    });
+}
+
+function addPinDigit(digit) {
+    if (pin.length < 6) {
+        pin += digit;
+        updatePinDots();
+        // Visual feedback
+        const dots = document.querySelectorAll('#pinDots .pin-dot');
+        if (dots[pin.length - 1]) {
+            dots[pin.length - 1].classList.add('active');
+            setTimeout(() => dots[pin.length - 1]?.classList.remove('active'), 200);
+        }
+    }
+}
+
+function removePinDigit() {
+    if (pin.length > 0) {
+        pin = pin.slice(0, -1);
+        updatePinDots();
+    }
+}
+
+function validateEmployee() {
+    const input = document.getElementById('employeeInput');
+    const error = document.getElementById('employeeError');
+    const value = input.value.trim().toUpperCase();
+    const valid = /^CAJ-\d{4}$/.test(value);
+
+    if (value && !valid) {
+        input.classList.add('error');
+        error.classList.add('show');
+        return false;
+    }
+    if (valid) {
+        input.classList.remove('error');
+        input.classList.add('success');
+        error.classList.remove('show');
+        return true;
+    }
+    input.classList.remove('error', 'success');
+    error.classList.remove('show');
+    return false;
+}
+
+// === LOGIN HANDLERS ===
+function handleAdminLogin() {
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value;
+
+    if (!validateEmail() || !validatePassword()) {
+        showToast('Completa los campos correctamente', 'error');
+        return;
+    }
+
+    // Show loading
+    const btn = document.getElementById('btnLogin');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    // Simulate API call
+    setTimeout(() => {
+        if (email === VALID_ADMIN.email && password === VALID_ADMIN.password) {
+            showToast('Bienvenido, Administrador', 'success');
+            setTimeout(() => window.location.href = 'dashboard.html', 1000);
+        } else {
+            showToast('Credenciales incorrectas', 'error');
+            document.getElementById('adminForm').classList.add('animate-shake');
+            setTimeout(() => document.getElementById('adminForm').classList.remove('animate-shake'), 300);
+        }
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 1200);
+}
+
+function handleCashierLogin() {
+    const employee = document.getElementById('employeeInput').value.trim().toUpperCase();
+
+    if (!validateEmployee()) {
+        showToast('Ingresa un número de empleado válido', 'error');
+        return;
+    }
+    if (pin.length !== 6) {
+        showToast('Ingresa tu PIN de 6 dígitos', 'error');
+        document.getElementById('pinDots').classList.add('animate-shake');
+        setTimeout(() => document.getElementById('pinDots').classList.remove('animate-shake'), 300);
+        return;
+    }
+
+    // Show loading
+    const btn = document.getElementById('btnCashierLogin');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    // Simulate API call
+    setTimeout(() => {
+        if (employee === VALID_EMPLOYEE && pin === VALID_PIN) {
+            showToast('Acceso concedido', 'success');
+            setTimeout(() => window.location.href = 'pos.html', 1000);
+        } else {
+            showToast('Empleado o PIN incorrectos', 'error');
+            pin = '';
+            updatePinDots();
+            document.getElementById('cashierForm').classList.add('animate-shake');
+            setTimeout(() => document.getElementById('cashierForm').classList.remove('animate-shake'), 300);
+        }
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 1200);
+}
+
+// === TOAST NOTIFICATIONS ===
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+        <span class="message">${message}</span>
+    `;
+    container.appendChild(toast);
+    lucide.createIcons();
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// === KEYBOARD SUPPORT ===
+document.addEventListener('keydown', (e) => {
+    if (currentTab === 'admin' && e.key === 'Enter') {
+        handleAdminLogin();
+    }
+    if (currentTab === 'cashier' && e.key === 'Enter' && pin.length === 6) {
+        handleCashierLogin();
+    }
+    // Numeric keypad support for PIN
+    if (currentTab === 'cashier' && /^[0-9]$/.test(e.key) && pin.length < 6) {
+        addPinDigit(e.key);
+    }
+    if (currentTab === 'cashier' && e.key === 'Backspace') {
+        removePinDigit();
+    }
+});
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    document.getElementById('emailInput').focus();
+});
+    </script>
+</body>
+</html>
