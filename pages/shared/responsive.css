@@ -1,0 +1,399 @@
+/* === NEXPoS RESPONSIVE – Mobile-First Overrides === */
+
+/* ---------- Containers & Spacing ---------- */
+@media (max-width: 640px) {
+  .main-content > .max-w-7xl,
+  .main-content > .max-w-5xl {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .main-content > header {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    height: 3.5rem !important;
+  }
+
+  .main-content > header .text-xl {
+    font-size: 1rem !important;
+  }
+
+  .main-content > header .text-xs.font-normal {
+    display: none !important;
+  }
+
+  .main-content > header .text-right {
+    display: none !important;
+  }
+
+  .main-content > header .gap-4 {
+    gap: 0.5rem !important;
+  }
+
+  /* Page title */
+  .text-3xl.font-black {
+    font-size: 1.5rem !important;
+  }
+
+  /* Reduce gaps on mobile */
+  .space-y-8 {
+    margin-top: 0 !important;
+  }
+  .space-y-8 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  .gap-6, .gap-8 {
+    gap: 0.75rem !important;
+  }
+
+  .p-6 {
+    padding: 0.75rem !important;
+  }
+
+  .p-8 {
+    padding: 1rem !important;
+  }
+
+  .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .py-12 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .py-8 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+/* ---------- Header ---------- */
+@media (max-width: 640px) {
+  .main-content > header .text-right,
+  header .text-right {
+    display: none !important;
+  }
+
+  .main-content > header .bg-slate-100.text-slate-700 {
+    font-size: 0.5rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    white-space: nowrap;
+  }
+
+  /* Hide store badge label text on mobile, keep icon */
+  .main-content > header .bg-slate-100 span:not([class*="w-"]) {
+    display: none;
+  }
+
+  /* Header subtitle */
+  .main-content > header .text-xs.font-normal {
+    display: none !important;
+  }
+
+  /* Header title size */
+  .main-content > header .text-xl {
+    font-size: 1rem !important;
+  }
+
+  /* Reduce header height */
+  .main-content > header.h-20 {
+    height: 3.5rem !important;
+  }
+}
+
+/* Mobile sidebar hamburger button (hidden on desktop) */
+.sidebar-mobile-btn {
+  display: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sidebar-mobile-btn:hover {
+  background: var(--slate-100);
+}
+
+/* ---------- Cards ---------- */
+@media (max-width: 640px) {
+  .grid-cols-1.md\:grid-cols-2,
+  .grid-cols-1.md\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .kpi-card {
+    padding: 0.75rem !important;
+  }
+
+  .kpi-card .text-3xl {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* ---------- Tables ---------- */
+@media (max-width: 768px) {
+  .table-container,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  .table-container table,
+  .overflow-x-auto table {
+    min-width: 600px;
+  }
+
+  .table-container::-webkit-scrollbar,
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+  }
+  .table-container::-webkit-scrollbar-thumb,
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 9999px;
+  }
+}
+
+/* Hide columns on mobile */
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+/* ---------- Filters & Search Bars ---------- */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .filter-bar > * {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .filter-bar .flex-wrap {
+    flex-direction: column !important;
+  }
+
+  /* Stack inline filter groups */
+  .flex.items-center.gap-3.flex-wrap {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .flex.items-center.gap-3.flex-wrap > * {
+    width: 100% !important;
+  }
+
+  /* Search inputs full width */
+  input[type="text"].form-input,
+  input[type="search"].form-input,
+  select.form-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ---------- Buttons ---------- */
+@media (max-width: 640px) {
+  .btn-full-mobile {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .flex.gap-2.flex-wrap,
+  .flex.gap-3.flex-wrap {
+    flex-direction: column !important;
+  }
+
+  .flex.gap-2.flex-wrap > *,
+  .flex.gap-3.flex-wrap > * {
+    width: 100% !important;
+  }
+
+  /* Action buttons in cards */
+  .flex.items-center.gap-2:not(.no-stack) {
+    flex-wrap: wrap;
+  }
+  .flex.items-center.gap-2:not(.no-stack) > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ---------- Modals ---------- */
+@media (max-width: 640px) {
+  .modal-content {
+    max-width: calc(100% - 2rem) !important;
+    margin: 1rem;
+    padding: 1rem !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-content .grid-cols-2,
+  .modal-content .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-content .space-y-4 > * + * {
+    margin-top: 0.75rem !important;
+  }
+}
+
+/* ---------- Tabs ---------- */
+@media (max-width: 640px) {
+  .tab-btn {
+    font-size: 0.625rem !important;
+    padding: 0.5rem !important;
+    white-space: nowrap;
+  }
+
+  .tab-btn i {
+    width: 0.875rem !important;
+    height: 0.875rem !important;
+  }
+}
+
+/* ---------- Survey-specific ---------- */
+@media (max-width: 640px) {
+  .client-survey-modal {
+    width: calc(100% - 2rem) !important;
+    max-width: none !important;
+    padding: 1rem !important;
+  }
+
+  .rating-btn {
+    width: 3rem !important;
+    height: 3rem !important;
+    font-size: 1.5rem !important;
+  }
+
+  .client-survey-ratings {
+    gap: 0.5rem !important;
+  }
+
+  .flex-col.md\:flex-row.justify-between.items-start.md\:items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .flex-col.md\:flex-row.justify-between.items-start.md\:items-center > div:last-child {
+    width: 100%;
+  }
+
+  .flex-col.md\:flex-row.justify-between.items-start.md\:items-center > div:last-child .flex {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .flex-col.md\:flex-row.justify-between.items-start.md\:items-center > div:last-child button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* ---------- Charts ---------- */
+@media (max-width: 640px) {
+  .chart-container {
+    height: 180px !important;
+  }
+
+  .h-48 {
+    height: 10rem !important;
+  }
+}
+
+/* ---------- Bulk Actions ---------- */
+@media (max-width: 640px) {
+  .bulk-actions {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .bulk-actions > * {
+    width: 100% !important;
+  }
+}
+
+/* ---------- Grid adjustments ---------- */
+@media (max-width: 640px) {
+  .main-content .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .main-content .gap-1\.5 {
+    gap: 0.25rem !important;
+  }
+}
+
+/* ---------- Settings ---------- */
+@media (max-width: 640px) {
+  .grid.grid-cols-1.lg\:grid-cols-2.gap-8 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---------- Touch targets ---------- */
+@media (pointer: coarse) {
+  .nav-item,
+  button,
+  a,
+  .tab-btn,
+  .table-action-btn,
+  .question-card-btn,
+  input,
+  select,
+  .toggle-switch {
+    min-height: 44px;
+  }
+
+  .nav-item {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  button.rounded-xl,
+  a.rounded-xl {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  input.form-input,
+  select.form-input {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    font-size: 16px !important;
+  }
+}
+
+/* ---------- Prevent zoom on input focus (iOS) ---------- */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
