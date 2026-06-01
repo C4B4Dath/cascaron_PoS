@@ -428,6 +428,9 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     /* Hide mobile drawer on desktop */
     #mobileCartDrawer { display: none !important; }
     #mobileBackdrop { display: none !important; }
+    /* Show/hide sidebar based on cart state, not .hidden class */
+    #cartSidebar[data-empty] { display: none !important; }
+    #cartSidebar:not([data-empty]) { display: flex !important; }
 }
     </style>
 </head>
@@ -471,7 +474,7 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
         </main>
 
         <!-- Desktop Cart Sidebar -->
-        <aside id="cartSidebar" class="w-[480px] bg-white border-l border-slate-100 shadow-2xl flex-shrink-0 hidden cart-transition">
+        <aside id="cartSidebar" data-empty class="w-[480px] bg-white border-l border-slate-100 shadow-2xl flex-shrink-0 cart-transition">
             <div class="cart-content flex flex-col h-full">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 flex-shrink-0">
                     <h2 class="font-bold text-sm uppercase tracking-wider text-slate-400 flex items-center space-x-2">
@@ -726,10 +729,11 @@ function setDrawerState(newState) {
     const drawerItems = document.getElementById('drawerItems');
 
     drawerState = newState;
+    // Always clear inline style so CSS classes take over
+    drawer.style.display = '';
     drawer.className = '';
 
     if (newState === 'hidden') {
-        drawer.style.display = 'none';
         backdrop.classList.remove('visible');
         return;
     }
@@ -854,68 +858,59 @@ function renderProducts() {
 }
 
 function renderCart() {
-    const isMobile = window.innerWidth < 1024;
     const count = cart.reduce((sum, i) => sum + i.quantity, 0);
-
-    // Desktop cart count badge
-    const cartCountEl = document.getElementById('cartCount');
-    if (cartCountEl) cartCountEl.innerText = count;
-
     const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
     const iva = subtotal * 0.16;
     const total = subtotal + iva;
+    const hasItems = cart.length > 0;
 
-    // === DESKTOP ===
-    if (!isMobile) {
-        const sidebar = document.getElementById('cartSidebar');
-        if (cart.length === 0) {
-            sidebar.classList.add('hidden');
-            document.getElementById('btnCheckout').disabled = true;
-            document.getElementById('txtSubtotal').innerText = '$0.00';
-            document.getElementById('txtIva').innerText = '$0.00';
-            document.getElementById('txtTotal').innerText = '$0.00';
-        } else {
-            sidebar.classList.remove('hidden');
-            const container = document.getElementById('cartItems');
-            container.innerHTML = buildCartItemsHTML(cart);
-            document.getElementById('txtSubtotal').innerText = `$${subtotal.toFixed(2)}`;
-            document.getElementById('txtIva').innerText = `$${iva.toFixed(2)}`;
-            document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('btnCheckout').disabled = false;
-        }
+    // === DESKTOP SIDEBAR — always update, CSS handles visibility via media query ===
+    // We never toggle .hidden on the sidebar anymore; instead use a data attribute
+    // so CSS media queries remain the single source of truth for display.
+    const sidebar = document.getElementById('cartSidebar');
+    if (hasItems) {
+        sidebar.removeAttribute('data-empty');
+        const container = document.getElementById('cartItems');
+        if (container) container.innerHTML = buildCartItemsHTML(cart);
+    } else {
+        sidebar.setAttribute('data-empty', '');
     }
+    // Always update text fields (they might be visible after resize)
+    const cartCountEl = document.getElementById('cartCount');
+    if (cartCountEl) cartCountEl.innerText = count;
+    const sub = document.getElementById('txtSubtotal');
+    const ivaEl = document.getElementById('txtIva');
+    const tot = document.getElementById('txtTotal');
+    const btn = document.getElementById('btnCheckout');
+    if (sub) sub.innerText = hasItems ? `$${subtotal.toFixed(2)}` : '$0.00';
+    if (ivaEl) ivaEl.innerText = hasItems ? `$${iva.toFixed(2)}` : '$0.00';
+    if (tot) tot.innerText = hasItems ? `$${total.toFixed(2)}` : '$0.00';
+    if (btn) btn.disabled = !hasItems;
 
-    // === MOBILE DRAWER ===
-    if (isMobile) {
-        if (cart.length === 0) {
-            setDrawerState('hidden');
-        } else {
-            // Update drawer summary
-            const summaryEl = document.getElementById('drawerSummaryText');
-            const badgeEl = document.getElementById('drawerTotalBadge');
-            if (summaryEl) summaryEl.textContent = `${count} artículo${count !== 1 ? 's' : ''}`;
-            if (badgeEl) badgeEl.textContent = `$${total.toFixed(2)}`;
+    // === MOBILE DRAWER — always update regardless of current viewport ===
+    if (!hasItems) {
+        setDrawerState('hidden');
+    } else {
+        const summaryEl = document.getElementById('drawerSummaryText');
+        const badgeEl = document.getElementById('drawerTotalBadge');
+        if (summaryEl) summaryEl.textContent = `${count} artículo${count !== 1 ? 's' : ''}`;
+        if (badgeEl) badgeEl.textContent = `$${total.toFixed(2)}`;
 
-            // Update totals in footer
-            const ds = document.getElementById('drawerSubtotal');
-            const di = document.getElementById('drawerIva');
-            const dt = document.getElementById('drawerTotal');
-            if (ds) ds.textContent = `$${subtotal.toFixed(2)}`;
-            if (di) di.textContent = `$${iva.toFixed(2)}`;
-            if (dt) dt.textContent = `$${total.toFixed(2)}`;
+        const ds = document.getElementById('drawerSubtotal');
+        const di = document.getElementById('drawerIva');
+        const dt = document.getElementById('drawerTotal');
+        if (ds) ds.textContent = `$${subtotal.toFixed(2)}`;
+        if (di) di.textContent = `$${iva.toFixed(2)}`;
+        if (dt) dt.textContent = `$${total.toFixed(2)}`;
 
-            // Update checkout button
-            const drawerCheckout = document.getElementById('drawerBtnCheckout');
-            if (drawerCheckout) drawerCheckout.disabled = false;
+        const drawerCheckout = document.getElementById('drawerBtnCheckout');
+        if (drawerCheckout) drawerCheckout.disabled = false;
 
-            // Update items in expanded view
-            const drawerItemsEl = document.getElementById('drawerItems');
-            if (drawerItemsEl) drawerItemsEl.innerHTML = buildCartItemsHTML(cart);
+        const drawerItemsEl = document.getElementById('drawerItems');
+        if (drawerItemsEl) drawerItemsEl.innerHTML = buildCartItemsHTML(cart);
 
-            // Auto-open to partial if currently hidden
-            if (drawerState === 'hidden') setDrawerState('partial');
-            else setDrawerState(drawerState);
-        }
+        if (drawerState === 'hidden') setDrawerState('partial');
+        else setDrawerState(drawerState);
     }
 
     lucide.createIcons();
