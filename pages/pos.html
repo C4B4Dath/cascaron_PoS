@@ -20,7 +20,7 @@ body {
 }
 .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
 :root {
@@ -271,140 +271,164 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     animation: pulse 2s infinite;
 }
 
-/* === CART SIDEBAR - MOBILE OPTIMIZED (FULL CONTENT PRESERVED) === */
-
-#cartSidebar {
-    width: 480px;
-    background: white;
-    border-left: 1px solid var(--slate-100);
+/* === DESKTOP: Independent scroll areas === */
+#mainCatalog {
     display: flex;
     flex-direction: column;
     height: 100%;
-    box-shadow: -4px 0 20px rgba(0,0,0,0.08);
-    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     overflow: hidden;
 }
-
-#cartSidebar.collapsed {
-    width: 4rem !important;
+#productGrid {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
-#cartSidebar.collapsed .cart-content { display: none; }
-#cartSidebar.collapsed .cart-toggle-btn { transform: rotate(180deg); }
 
-.cart-toggle-btn {
-    position: absolute;
-    top: 1rem;
-    left: -2.5rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0 0.75rem 0.75rem 0;
-    background: var(--slate-900);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
-    z-index: 10;
-}
-.cart-toggle-btn:hover { background: var(--slate-800); }
-
-.cart-content {
+#cartSidebar {
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 100%;
+    overflow: hidden;
 }
-
-.cart-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--slate-100);
-    background: var(--slate-50/30);
-    flex-shrink: 0;
-}
-
-/* KEY FIX: Items area scrolls independently */
 #cartItems {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem 1.5rem;
-    background: white;
+    padding-right: 0.5rem;
 }
 
+/* Desktop footer: no max-height restriction, button always visible */
 .cart-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid var(--slate-100);
-    background: white;
     flex-shrink: 0;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+    overflow-y: auto;
+}
+.cart-footer-scrollable {
+    max-height: 35vh;
+    overflow-y: auto;
 }
 
-/* === MOBILE SPECIFIC === */
-@media (max-width: 1024px) {
-    #cartSidebar {
-        position: fixed;
-        right: 0;
-        top: 5rem;
-        bottom: 0;
-        width: 100%;
-        max-width: 100vw;
-        transform: translateX(100%);
-        z-index: 55;
-        border-left: none;
-        border-top: 1px solid var(--slate-100);
-    }
+/* ============================================================
+   MOBILE BOTTOM DRAWER
+   - 3 states: hidden (no cart), collapsed (handle bar only),
+     partial (totals + checkout btn visible), expanded (full)
+   ============================================================ */
 
-    #cartSidebar:not(.hidden) { transform: translateX(0); }
+/* The overlay backdrop shown when cart is expanded */
+#mobileBackdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.3);
+    z-index: 48;
+    backdrop-filter: blur(1px);
+}
+#mobileBackdrop.visible { display: block; }
 
-    #cartSidebar.collapsed {
-        width: 3.5rem !important;
-        max-width: 3.5rem !important;
-        transform: translateX(calc(100% - 3.5rem)) !important;
-    }
-
-    .cart-toggle-btn { display: none !important; }
-
-    /* Floating button for mobile */
-    .floating-cart-btn {
-        position: fixed;
-        bottom: 1rem;
-        right: 1rem;
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 50%;
-        background: var(--slate-900);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        z-index: 50;
-    }
-    .floating-cart-btn:hover { background: var(--slate-800); transform: scale(1.05); }
-    .floating-cart-btn .badge {
-        position: absolute; top: -0.25rem; right: -0.25rem;
-        background: var(--emerald-500); color: white;
-        font-size: 0.625rem; font-weight: 900;
-        width: 1.25rem; height: 1.25rem; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-    }
-
-    /* Compact mobile styles */
-    .cart-header { padding: 0.75rem 1rem; }
-    #cartItems { padding: 0.75rem 1rem; }
-    .cart-item { padding: 0.75rem !important; }
-    .cart-item img { width: 3rem !important; height: 3rem !important; }
-    .cart-footer { padding: 0.75rem 1rem; }
+/* The drawer itself */
+#mobileCartDrawer {
+    display: none;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 49;
+    background: white;
+    border-radius: 1.25rem 1.25rem 0 0;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.15);
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), height 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow: hidden;
+    flex-direction: column;
+}
+/* Collapsed: only the handle pill + mini summary (≈80px) */
+#mobileCartDrawer.state-collapsed {
+    display: flex;
+    height: 88px;
+}
+/* Partial: handle + totals + checkout button (≈220px) */
+#mobileCartDrawer.state-partial {
+    display: flex;
+    height: 200px;
+}
+/* Expanded: full sheet */
+#mobileCartDrawer.state-expanded {
+    display: flex;
+    height: 88vh;
 }
 
+/* Handle bar at the top of the drawer */
+.drawer-handle {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.6rem 1rem 0.4rem;
+    cursor: pointer;
+    touch-action: none;
+    background: white;
+    border-radius: 1.25rem 1.25rem 0 0;
+    border-bottom: 1px solid var(--slate-100);
+    user-select: none;
+}
+.drawer-pill {
+    width: 2.5rem; height: 4px;
+    background: var(--slate-300);
+    border-radius: 9999px;
+    margin-bottom: 0.5rem;
+    transition: background 0.15s;
+}
+.drawer-handle:hover .drawer-pill { background: var(--slate-500); }
+.drawer-handle-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.drawer-toggle-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem;
+    border-radius: 0.5rem;
+    background: var(--slate-100);
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+    color: var(--slate-600);
+}
+.drawer-toggle-btn:hover { background: var(--slate-200); }
+
+/* Scrollable items section inside drawer */
+.drawer-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Fixed footer inside drawer: totals + checkout btn - NEVER hidden */
+.drawer-footer {
+    flex-shrink: 0;
+    background: white;
+    border-top: 1px solid var(--slate-100);
+    padding: 0.75rem 1rem;
+}
+/* Compact totals row used in partial state */
+.drawer-totals-compact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.625rem;
+}
+
+/* Padding on catalog so content isn't hidden behind the drawer */
+@media (max-width: 1023px) {
+    #mainCatalog { padding-bottom: 6rem !important; }
+
+    /* Hide desktop sidebar on mobile */
+    #cartSidebar { display: none !important; }
+}
 @media (min-width: 1024px) {
-    .floating-cart-btn { display: none !important; }
+    /* Hide mobile drawer on desktop */
+    #mobileCartDrawer { display: none !important; }
+    #mobileBackdrop { display: none !important; }
 }
-
-#cartItems.custom-scrollbar { overscroll-behavior: contain; }
     </style>
 </head>
 <body class="h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
@@ -432,8 +456,8 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 
     <div class="flex overflow-hidden relative bg-slate-50/40" style="height: calc(100vh - 5rem);">
 
-        <main id="mainCatalog" class="flex-1 flex flex-col p-8 overflow-y-auto space-y-8 custom-scrollbar">
-
+        <!-- Main Catalog -->
+        <main id="mainCatalog" class="flex-1 flex flex-col p-8 space-y-8">
             <div class="flex flex-col md:flex-row gap-6 items-center justify-between flex-shrink-0">
                 <div class="relative w-full md:w-96">
                     <input type="text" id="searchInput" oninput="handleSearch(this.value)"
@@ -443,26 +467,13 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                 </div>
                 <div id="categoryContainer" class="flex space-x-8 overflow-x-auto w-full md:w-auto pb-1 md:pb-0"></div>
             </div>
-
-            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 custom-scrollbar"></div>
         </main>
 
-        <!-- Cart Sidebar with Full Content Preserved -->
-        <aside id="cartSidebar" class="hidden cart-transition">
-
-            <button onclick="toggleCartSidebar()" class="cart-toggle-btn lg:flex hidden" title="Contraer/Expandir carrito">
-                <i data-lucide="chevron-right" class="w-5 h-5"></i>
-            </button>
-
-            <button onclick="toggleCartSidebar()" class="floating-cart-btn">
-                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                <span class="badge" id="floatingCartCount">0</span>
-            </button>
-
-            <div class="cart-content">
-
-                <!-- Header -->
-                <div class="cart-header flex justify-between items-center">
+        <!-- Desktop Cart Sidebar -->
+        <aside id="cartSidebar" class="w-[480px] bg-white border-l border-slate-100 shadow-2xl flex-shrink-0 hidden cart-transition">
+            <div class="cart-content flex flex-col h-full">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 flex-shrink-0">
                     <h2 class="font-bold text-sm uppercase tracking-wider text-slate-400 flex items-center space-x-2">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                         <span>Artículos en Carrito</span>
@@ -473,47 +484,45 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                     </button>
                 </div>
 
-                <!-- Scrollable Items Area -->
-                <div id="cartItems" class="custom-scrollbar space-y-4"></div>
+                <div id="cartItems" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 bg-white"></div>
 
-                <!-- Footer with FULL original content -->
-                <div class="cart-footer space-y-4">
+                <!-- Desktop footer: no max-height so button is always visible -->
+                <div class="p-6 border-t border-slate-100 bg-white shadow-md flex-shrink-0 cart-footer">
+                    <div class="cart-footer-scrollable custom-scrollbar space-y-4">
+                        <div class="cash-panel">
+                            <div class="demo-warning">
+                                <i data-lucide="info" class="w-4 h-4"></i>
+                                <span>Vista Demo: En producción el cajero NO ve estos datos de caja</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="label">Saldo Caja</span>
+                                <span id="cashBalance" class="value">$1,500.00</span>
+                            </div>
+                            <div class="recent custom-scrollbar" style="max-height: 100px; overflow-y: auto;">
+                                <span class="label block mb-1">Últimas Ventas</span>
+                                <div id="recentSales" class="space-y-1"></div>
+                            </div>
+                        </div>
 
-                    <!-- Cash Panel - FULL CONTENT RESTORED -->
-                    <div class="cash-panel">
-                        <div class="demo-warning">
-                            <i data-lucide="info" class="w-4 h-4"></i>
-                            <span>Vista Demo: En producción el cajero NO ve estos datos de caja</span>
-                        </div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="label">Saldo Caja</span>
-                            <span id="cashBalance" class="value">$1,500.00</span>
-                        </div>
-                        <div class="recent">
-                            <span class="label block mb-1">Últimas Ventas</span>
-                            <div id="recentSales" class="space-y-1"></div>
+                        <div class="space-y-2 text-sm text-slate-500 font-normal">
+                            <div class="flex justify-between">
+                                <span>Subtotal</span>
+                                <span id="txtSubtotal" class="text-slate-800 font-semibold">$0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>IVA Trasladado (16%)</span>
+                                <span id="txtIva" class="text-slate-800 font-semibold">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-slate-900 pt-4 border-t border-slate-100 font-black">
+                                <span class="text-lg">Total General</span>
+                                <span id="txtTotal" class="text-3xl text-emerald-600 font-black tracking-tight">$0.00</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Totals - FULL CONTENT RESTORED -->
-                    <div class="space-y-2 text-sm text-slate-500 font-normal">
-                        <div class="flex justify-between">
-                            <span>Subtotal</span>
-                            <span id="txtSubtotal" class="text-slate-800 font-semibold">$0.00</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>IVA Trasladado (16%)</span>
-                            <span id="txtIva" class="text-slate-800 font-semibold">$0.00</span>
-                        </div>
-                        <div class="flex justify-between text-slate-900 pt-4 border-t border-slate-100 font-black">
-                            <span class="text-lg">Total General</span>
-                            <span id="txtTotal" class="text-3xl text-emerald-600 font-black tracking-tight">$0.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Checkout Button - FULL CONTENT RESTORED -->
+                    <!-- Checkout button is OUTSIDE the scrollable area so it's always visible -->
                     <button onclick="openCheckout()" id="btnCheckout"
-                        class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        class="w-full mt-4 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         disabled>
                         <i data-lucide="credit-card" class="w-4 h-4"></i>
                         Proceder al Pago
@@ -523,6 +532,65 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
         </aside>
     </div>
 
+    <!-- ====================================================
+         MOBILE BOTTOM DRAWER (replaces floating button)
+         States: collapsed → partial → expanded
+         ==================================================== -->
+    <div id="mobileBackdrop" onclick="setDrawerState('partial')"></div>
+
+    <div id="mobileCartDrawer">
+        <!-- Drag handle + mini summary row -->
+        <div class="drawer-handle" id="drawerHandleTap" onclick="cycleDrawerState()">
+            <div class="drawer-pill"></div>
+            <div class="drawer-handle-content">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-cart" style="width:1rem;height:1rem;color:var(--slate-600)"></i>
+                    <span id="drawerSummaryText" class="text-sm font-bold text-slate-800">0 artículos</span>
+                    <span id="drawerTotalBadge" class="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">$0.00</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="clearCartMobile(event)" id="drawerClearBtn" class="text-xs text-rose-400 hover:text-rose-600 font-bold uppercase hidden transition-colors">
+                        Vaciar
+                    </button>
+                    <button class="drawer-toggle-btn" id="drawerExpandBtn" aria-label="Expandir carrito">
+                        <i data-lucide="chevron-up" style="width:1rem;height:1rem"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scrollable cart items (shown only when expanded) -->
+        <div class="drawer-items custom-scrollbar" id="drawerItems"></div>
+
+        <!-- Fixed footer: always visible with totals + checkout btn -->
+        <div class="drawer-footer">
+            <!-- Totals row -->
+            <div class="drawer-totals-compact">
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-3 text-xs text-slate-500">
+                        <span>Subtotal</span>
+                        <span id="drawerSubtotal" class="text-slate-700 font-semibold">$0.00</span>
+                        <span class="text-slate-300">·</span>
+                        <span>IVA 16%</span>
+                        <span id="drawerIva" class="text-slate-700 font-semibold">$0.00</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-black text-slate-900">Total:</span>
+                        <span id="drawerTotal" class="text-xl font-black text-emerald-600 tracking-tight">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Checkout button — ALWAYS VISIBLE, never hidden by scroll -->
+            <button onclick="openCheckout()" id="drawerBtnCheckout"
+                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                disabled>
+                <i data-lucide="credit-card" class="w-4 h-4"></i>
+                Proceder al Pago
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
     <div id="checkoutModal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-xs z-50 flex justify-end hidden">
         <div class="w-full max-w-md bg-white h-full flex flex-col shadow-2xl relative border-l border-slate-100 animate-slide-right">
             <div class="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -530,7 +598,7 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                 <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400">Módulo de Cobro</h3>
                 <div class="w-20"></div>
             </div>
-            <div id="checkoutContent" class="flex-1 flex flex-col justify-between p-6 bg-white"></div>
+            <div id="checkoutContent" class="flex-1 flex flex-col justify-between p-6 bg-white overflow-y-auto"></div>
         </div>
     </div>
 
@@ -538,7 +606,7 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 
     <script>
 // === DATABASE ===
-const DB_VERSION = '2.3';
+const DB_VERSION = '2.1';
 
 const DB = {
     _get(key, def) {
@@ -554,10 +622,8 @@ const DB = {
         const data = includeVersion ? { value: val, version: DB_VERSION } : val;
         localStorage.setItem('nexpos_' + key, JSON.stringify(data));
     },
-
     getSales() { return this._get('sales', []); },
     setSales(s) { this._set('sales', s); },
-
     addSale(sale) {
         const sales = this.getSales();
         sales.unshift(sale);
@@ -566,7 +632,6 @@ const DB = {
         this._updateInventory(sale);
         return sale;
     },
-
     _updateCashRegister(sale) {
         if (sale.method !== 'Efectivo') return;
         const movs = this._get('cash_movements', []);
@@ -579,7 +644,6 @@ const DB = {
         this._set('cash_movements', movs);
         this.setCashBalance({ ...balance, current: balance.current + sale.total });
     },
-
     _updateInventory(sale) {
         const inv = this.getInventory();
         sale.items.forEach(item => {
@@ -588,7 +652,6 @@ const DB = {
         });
         this.setInventory(inv);
     },
-
     getInventory() {
         let inv = this._get('inventory', [], true);
         if (inv.length === 0) {
@@ -619,12 +682,10 @@ const DB = {
         return inv;
     },
     setInventory(inv) { this._set('inventory', inv, true); },
-
     getCashBalance() { return this._get('cash_balance', { initial: 1500, current: 1500 }); },
     setCashBalance(b) { this._set('cash_balance', b); },
     getCashMovements() { return this._get('cash_movements', []); },
     setCashMovements(m) { this._set('cash_movements', m); },
-
     seedDemoData() {
         if (this.getSales().length > 0) return;
         const demoSales = [
@@ -650,52 +711,86 @@ let searchQuery = '';
 let amountReceived = '';
 let paymentMethod = 'Efectivo';
 let currentTicketId = '';
-let cartCollapsed = false;
 
+// Mobile drawer state: 'hidden' | 'collapsed' | 'partial' | 'expanded'
+let drawerState = 'hidden';
+
+// ============================================================
+// MOBILE DRAWER LOGIC
+// ============================================================
+function setDrawerState(newState) {
+    const drawer = document.getElementById('mobileCartDrawer');
+    const backdrop = document.getElementById('mobileBackdrop');
+    const expandBtn = document.getElementById('drawerExpandBtn');
+    const clearBtn = document.getElementById('drawerClearBtn');
+    const drawerItems = document.getElementById('drawerItems');
+
+    drawerState = newState;
+    drawer.className = '';
+
+    if (newState === 'hidden') {
+        drawer.style.display = 'none';
+        backdrop.classList.remove('visible');
+        return;
+    }
+
+    drawer.classList.add('state-' + newState);
+
+    // Backdrop only when expanded
+    if (newState === 'expanded') {
+        backdrop.classList.add('visible');
+    } else {
+        backdrop.classList.remove('visible');
+    }
+
+    // Update chevron direction
+    if (expandBtn) {
+        const icon = expandBtn.querySelector('i');
+        if (icon) {
+            icon.setAttribute('data-lucide', newState === 'expanded' ? 'chevron-down' : 'chevron-up');
+        }
+    }
+
+    // Show clear button only in expanded state
+    if (clearBtn) {
+        clearBtn.classList.toggle('hidden', newState !== 'expanded');
+    }
+
+    // Show/hide items list
+    if (drawerItems) {
+        drawerItems.style.display = newState === 'expanded' ? 'flex' : 'none';
+    }
+
+    lucide.createIcons();
+}
+
+function cycleDrawerState() {
+    if (cart.length === 0) return;
+    if (drawerState === 'collapsed') setDrawerState('partial');
+    else if (drawerState === 'partial') setDrawerState('expanded');
+    else if (drawerState === 'expanded') setDrawerState('partial');
+    else setDrawerState('partial');
+}
+
+function clearCartMobile(e) {
+    e.stopPropagation();
+    if (cart.length === 0) return;
+    cart = [];
+    renderCart();
+    renderProducts();
+    showToast('Carrito vaciado', 'success');
+}
+
+// ============================================================
+// INIT
+// ============================================================
 function init() {
     DB.seedDemoData();
     renderCategories();
     renderProducts();
     renderCart();
     renderCashPanel();
-    setupCartBehavior();
     lucide.createIcons();
-}
-
-function setupCartBehavior() {
-    window.addEventListener('resize', updateToggleVisibility);
-    updateToggleVisibility();
-}
-
-function updateToggleVisibility() {
-    const floatingBtn = document.querySelector('.floating-cart-btn');
-    if (window.innerWidth < 1024) {
-        if (floatingBtn) floatingBtn.style.display = 'flex';
-    } else {
-        if (floatingBtn) floatingBtn.style.display = 'none';
-    }
-}
-
-function toggleCartSidebar() {
-    const sidebar = document.getElementById('cartSidebar');
-    cartCollapsed = !cartCollapsed;
-
-    if (cartCollapsed) {
-        sidebar.classList.add('collapsed');
-    } else {
-        sidebar.classList.remove('collapsed');
-        sidebar.classList.remove('hidden');
-    }
-    updateFloatingCartBadge();
-}
-
-function updateFloatingCartBadge() {
-    const badge = document.getElementById('floatingCartCount');
-    const count = cart.reduce((sum, i) => sum + i.quantity, 0);
-    if (badge) {
-        badge.innerText = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    }
 }
 
 function renderCategories() {
@@ -741,18 +836,14 @@ function renderProducts() {
         const stockClass = p.stock <= 2 ? 'critical' : p.stock <= 5 ? 'low' : 'ok';
         const stockText = p.stock <= 2 ? '¡Últimas!' : p.stock <= 5 ? 'Pocas' : `${p.stock} pzas`;
         const imgSrc = p.img + (p.img.includes('?') ? '&' : '?') + 'v=' + DB_VERSION;
-
         return `
         <div onclick="${p.stock > 0 ? `addToCart(${p.id})` : ''}"
             class="product-card bg-white rounded-2xl border border-slate-100 p-6 flex flex-col justify-between relative cursor-pointer group shadow-md hover:shadow-xl hover:border-slate-300 transition-all duration-200 ${p.stock <= 2 ? 'ring-2 ring-rose-200' : ''}">
-
             <span class="stock-badge ${stockClass}">${stockText}</span>
             <span class="absolute top-6 right-6 text-base font-black text-slate-900 bg-white/90 backdrop-blur-xs px-3 py-1 rounded-lg border border-slate-100 shadow-xs">$${p.price.toFixed(2)}</span>
-
             <div class="w-full aspect-square bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center p-2 mb-6">
                 <img src="${imgSrc}" alt="${p.name}" loading="lazy" class="product-img w-full h-full object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/400x400?text=Sin+Imagen'">
             </div>
-
             <div class="text-center space-y-1">
                 <p class="text-xs text-slate-400 uppercase tracking-widest font-black">${p.category}</p>
                 <h3 class="font-bold text-slate-800 text-sm tracking-tight leading-snug truncate">${p.name}</h3>
@@ -763,30 +854,78 @@ function renderProducts() {
 }
 
 function renderCart() {
-    const sidebar = document.getElementById('cartSidebar');
+    const isMobile = window.innerWidth < 1024;
     const count = cart.reduce((sum, i) => sum + i.quantity, 0);
-    document.getElementById('cartCount').innerText = count;
-    updateFloatingCartBadge();
 
-    const container = document.getElementById('cartItems');
+    // Desktop cart count badge
+    const cartCountEl = document.getElementById('cartCount');
+    if (cartCountEl) cartCountEl.innerText = count;
 
-    if (cart.length === 0) {
-        sidebar.classList.add('hidden');
-        document.getElementById('btnCheckout').disabled = true;
-        document.getElementById('txtSubtotal').innerText = '$0.00';
-        document.getElementById('txtIva').innerText = '$0.00';
-        document.getElementById('txtTotal').innerText = '$0.00';
-        return;
+    const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+    const iva = subtotal * 0.16;
+    const total = subtotal + iva;
+
+    // === DESKTOP ===
+    if (!isMobile) {
+        const sidebar = document.getElementById('cartSidebar');
+        if (cart.length === 0) {
+            sidebar.classList.add('hidden');
+            document.getElementById('btnCheckout').disabled = true;
+            document.getElementById('txtSubtotal').innerText = '$0.00';
+            document.getElementById('txtIva').innerText = '$0.00';
+            document.getElementById('txtTotal').innerText = '$0.00';
+        } else {
+            sidebar.classList.remove('hidden');
+            const container = document.getElementById('cartItems');
+            container.innerHTML = buildCartItemsHTML(cart);
+            document.getElementById('txtSubtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('txtIva').innerText = `$${iva.toFixed(2)}`;
+            document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('btnCheckout').disabled = false;
+        }
     }
 
-    sidebar.classList.remove('hidden');
+    // === MOBILE DRAWER ===
+    if (isMobile) {
+        if (cart.length === 0) {
+            setDrawerState('hidden');
+        } else {
+            // Update drawer summary
+            const summaryEl = document.getElementById('drawerSummaryText');
+            const badgeEl = document.getElementById('drawerTotalBadge');
+            if (summaryEl) summaryEl.textContent = `${count} artículo${count !== 1 ? 's' : ''}`;
+            if (badgeEl) badgeEl.textContent = `$${total.toFixed(2)}`;
 
-    // FULL cart item content RESTORED
-    container.innerHTML = cart.map(item => {
+            // Update totals in footer
+            const ds = document.getElementById('drawerSubtotal');
+            const di = document.getElementById('drawerIva');
+            const dt = document.getElementById('drawerTotal');
+            if (ds) ds.textContent = `$${subtotal.toFixed(2)}`;
+            if (di) di.textContent = `$${iva.toFixed(2)}`;
+            if (dt) dt.textContent = `$${total.toFixed(2)}`;
+
+            // Update checkout button
+            const drawerCheckout = document.getElementById('drawerBtnCheckout');
+            if (drawerCheckout) drawerCheckout.disabled = false;
+
+            // Update items in expanded view
+            const drawerItemsEl = document.getElementById('drawerItems');
+            if (drawerItemsEl) drawerItemsEl.innerHTML = buildCartItemsHTML(cart);
+
+            // Auto-open to partial if currently hidden
+            if (drawerState === 'hidden') setDrawerState('partial');
+            else setDrawerState(drawerState);
+        }
+    }
+
+    lucide.createIcons();
+}
+
+function buildCartItemsHTML(cartItems) {
+    return cartItems.map(item => {
         const product = PRODUCTS.find(p => p.id === item.id);
         const stockLeft = product ? product.stock : 0;
         const imgSrc = item.img + (item.img.includes('?') ? '&' : '?') + 'v=' + DB_VERSION;
-
         return `
         <div class="cart-item border border-slate-100 rounded-2xl bg-slate-50/50 flex space-x-4 items-center relative flex-shrink-0 p-4 cart-item-enter">
             <img src="${imgSrc}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl bg-white border border-slate-200 shadow-sm flex-shrink-0" onerror="this.src='https://via.placeholder.com/80x80?text=IMG'">
@@ -810,46 +949,18 @@ function renderCart() {
             </div>
         </div>
     `}).join('');
-
-    // FULL totals calculation RESTORED
-    const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-    const iva = subtotal * 0.16;
-    const total = subtotal + iva;
-
-    document.getElementById('txtSubtotal').innerText = `$${subtotal.toFixed(2)}`;
-    document.getElementById('txtIva').innerText = `$${iva.toFixed(2)}`;
-    document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
-    document.getElementById('btnCheckout').disabled = false;
-
-    lucide.createIcons();
 }
 
 function addToCart(id) {
     const product = PRODUCTS.find(p => p.id === id);
-    if (!product || product.stock <= 0) {
-        showToast('Producto agotado', 'error');
-        return;
-    }
-
+    if (!product || product.stock <= 0) { showToast('Producto agotado', 'error'); return; }
     const existing = cart.find(item => item.id === id);
     if (existing) {
-        if (existing.quantity >= product.stock) {
-            showToast('Stock máximo alcanzado', 'error');
-            return;
-        }
+        if (existing.quantity >= product.stock) { showToast('Stock máximo alcanzado', 'error'); return; }
         existing.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-
-    renderCart();
-    renderProducts();
+    } else { cart.push({ ...product, quantity: 1 }); }
+    renderCart(); renderProducts();
     showToast(`${product.name} agregado`, 'success');
-
-    // Auto-expand cart on mobile when adding items
-    if (window.innerWidth < 1024 && cartCollapsed) {
-        toggleCartSidebar();
-    }
 }
 
 function updateQuantity(id, delta) {
@@ -857,33 +968,15 @@ function updateQuantity(id, delta) {
     const product = PRODUCTS.find(p => p.id === id);
     if (item && product) {
         const newQty = item.quantity + delta;
-        if (newQty <= 0) {
-            cart = cart.filter(i => i.id !== id);
-        } else if (newQty <= product.stock) {
-            item.quantity = newQty;
-        } else {
-            showToast('No hay suficiente stock', 'error');
-            return;
-        }
+        if (newQty <= 0) cart = cart.filter(i => i.id !== id);
+        else if (newQty <= product.stock) item.quantity = newQty;
+        else { showToast('No hay suficiente stock', 'error'); return; }
     }
-    renderCart();
-    renderProducts();
+    renderCart(); renderProducts();
 }
 
-function removeFromCart(id) {
-    cart = cart.filter(i => i.id !== id);
-    renderCart();
-    renderProducts();
-}
-
-// FIXED: Direct clear without confirmation (as requested)
-function clearCart() {
-    if (cart.length === 0) return;
-    cart = [];
-    renderCart();
-    renderProducts();
-    showToast('Carrito vaciado', 'success');
-}
+function removeFromCart(id) { cart = cart.filter(i => i.id !== id); renderCart(); renderProducts(); }
+function clearCart() { if (cart.length === 0) return; cart = []; renderCart(); renderProducts(); showToast('Carrito vaciado', 'success'); }
 
 function getTotals() {
     const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
@@ -894,17 +987,8 @@ function getTotals() {
     return { subtotal, iva, total, change, received };
 }
 
-function openCheckout() {
-    if (cart.length === 0) return;
-    amountReceived = '';
-    paymentMethod = 'Efectivo';
-    document.getElementById('checkoutModal').classList.remove('hidden');
-    renderCheckoutForm();
-}
-
-function closeCheckout() {
-    document.getElementById('checkoutModal').classList.add('hidden');
-}
+function openCheckout() { if (cart.length === 0) return; amountReceived = ''; paymentMethod = 'Efectivo'; document.getElementById('checkoutModal').classList.remove('hidden'); renderCheckoutForm(); }
+function closeCheckout() { document.getElementById('checkoutModal').classList.add('hidden'); }
 
 function renderCheckoutForm() {
     const { total, change, received } = getTotals();
@@ -916,143 +1000,43 @@ function renderCheckoutForm() {
             <div>
                 <label class="text-xs text-slate-400 font-black uppercase tracking-wider block mb-2">Método de Pago</label>
                 <div class="payment-methods">
-                    <div class="payment-method ${paymentMethod === 'Efectivo' ? 'active' : ''}" onclick="setPaymentMethod('Efectivo')">
-                        <i data-lucide="banknote" class="w-5 h-5 mx-auto"></i>
-                        Efectivo
-                    </div>
-                    <div class="payment-method ${paymentMethod === 'Tarjeta' ? 'active' : ''}" onclick="setPaymentMethod('Tarjeta')">
-                        <i data-lucide="credit-card" class="w-5 h-5 mx-auto"></i>
-                        Tarjeta
-                    </div>
-                    <div class="payment-method ${paymentMethod === 'Mixto' ? 'active' : ''}" onclick="setPaymentMethod('Mixto')">
-                        <i data-lucide="layers" class="w-5 h-5 mx-auto"></i>
-                        Mixto
-                    </div>
+                    <div class="payment-method ${paymentMethod === 'Efectivo' ? 'active' : ''}" onclick="setPaymentMethod('Efectivo')"><i data-lucide="banknote" class="w-5 h-5 mx-auto"></i>Efectivo</div>
+                    <div class="payment-method ${paymentMethod === 'Tarjeta' ? 'active' : ''}" onclick="setPaymentMethod('Tarjeta')"><i data-lucide="credit-card" class="w-5 h-5 mx-auto"></i>Tarjeta</div>
+                    <div class="payment-method ${paymentMethod === 'Mixto' ? 'active' : ''}" onclick="setPaymentMethod('Mixto')"><i data-lucide="layers" class="w-5 h-5 mx-auto"></i>Mixto</div>
                 </div>
             </div>
-
-            <div class="text-center py-4 border-b border-slate-100">
-                <span class="text-xs text-slate-400 uppercase tracking-widest block mb-1 font-black">Monto de la Venta</span>
-                <span class="text-4xl font-black text-slate-900 tracking-tight">$${total.toFixed(2)}</span>
-            </div>
-
+            <div class="text-center py-4 border-b border-slate-100"><span class="text-xs text-slate-400 uppercase tracking-widest block mb-1 font-black">Monto de la Venta</span><span class="text-4xl font-black text-slate-900 tracking-tight">$${total.toFixed(2)}</span></div>
             ${paymentMethod !== 'Tarjeta' ? `
-            <div>
-                <label class="text-xs text-slate-400 font-black uppercase tracking-wider block mb-2">Efectivo Entregado</label>
-                <input type="text" readonly id="receivedInput" placeholder="$0.00"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 font-mono text-2xl text-right font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 received-display"
-                    value="${amountReceived ? '$' + parseFloat(amountReceived).toFixed(2) : ''}">
-            </div>
-            <div class="flex justify-between items-center py-3 px-1 bg-emerald-50 rounded-xl ${change > 0 ? '' : 'opacity-40'}">
-                <span class="text-slate-400 uppercase tracking-wider text-xs font-black flex items-center gap-1">
-                    <i data-lucide="arrow-left-right" class="w-3 h-3"></i> Cambio a devolver
-                </span>
-                <span class="font-mono font-black text-xl ${change > 0 ? 'text-emerald-600' : 'text-slate-400'}">$${change.toFixed(2)}</span>
-            </div>
-            ` : `
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-                <i data-lucide="credit-card" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i>
-                <p class="text-sm font-bold text-slate-700">Pago con tarjeta</p>
-                <p class="text-xs text-slate-400 mt-1">Conecta el terminal para procesar</p>
-            </div>
-            `}
+            <div><label class="text-xs text-slate-400 font-black uppercase tracking-wider block mb-2">Efectivo Entregado</label><input type="text" readonly id="receivedInput" placeholder="$0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 font-mono text-2xl text-right font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 received-display" value="${amountReceived ? '$' + parseFloat(amountReceived).toFixed(2) : ''}"></div>
+            <div class="flex justify-between items-center py-3 px-1 bg-emerald-50 rounded-xl ${change > 0 ? '' : 'opacity-40'}"><span class="text-slate-400 uppercase tracking-wider text-xs font-black flex items-center gap-1"><i data-lucide="arrow-left-right" class="w-3 h-3"></i> Cambio a devolver</span><span class="font-mono font-black text-xl ${change > 0 ? 'text-emerald-600' : 'text-slate-400'}">$${change.toFixed(2)}</span></div>` : `
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center"><i data-lucide="credit-card" class="w-8 h-8 text-blue-600 mx-auto mb-2"></i><p class="text-sm font-bold text-slate-700">Pago con tarjeta</p><p class="text-xs text-slate-400 mt-1">Conecta el terminal para procesar</p></div>`}
         </div>
-
         <div class="space-y-3">
             ${paymentMethod === 'Efectivo' ? `
-            <div class="grid grid-cols-4 gap-2">
-                ${[50, 100, 200, 500].map(bill => `
-                    <button onclick="quickCash(${bill})" class="quick-cash-btn bg-slate-50 border border-slate-200 hover:bg-slate-100 py-3 rounded-xl font-mono text-xs font-bold text-slate-700 transition-all active:scale-95">$${bill}</button>
-                `).join('')}
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-                ${['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => `
-                    <button onclick="pressKey('${k}')" class="keypad-btn bg-white hover:bg-slate-50 py-4 rounded-xl text-slate-800 border border-slate-200 font-black text-base active:scale-95 transition-all">${k === '⌫' ? '⌫' : k}</button>
-                `).join('')}
-            </div>
-            ` : ''}
-
-            <button id="btnProcessPayment" ${canPay ? '' : 'disabled'} onclick="processPayment()"
-                class="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl text-center text-sm tracking-wider uppercase transition-all active:scale-98 flex items-center justify-center gap-2">
-                <i data-lucide="check-circle" class="w-4 h-4"></i>
-                Pagar $${total.toFixed(2)}
-            </button>
-            <button onclick="cancelCheckout()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
-                Cancelar Venta
-            </button>
-        </div>
-    `;
+            <div class="grid grid-cols-4 gap-2">${[50, 100, 200, 500].map(bill => `<button onclick="quickCash(${bill})" class="quick-cash-btn bg-slate-50 border border-slate-200 hover:bg-slate-100 py-3 rounded-xl font-mono text-xs font-bold text-slate-700 transition-all active:scale-95">$${bill}</button>`).join('')}</div>
+            <div class="grid grid-cols-3 gap-2">${['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map(k => `<button onclick="pressKey('${k}')" class="keypad-btn bg-white hover:bg-slate-50 py-4 rounded-xl text-slate-800 border border-slate-200 font-black text-base active:scale-95 transition-all">${k === '⌫' ? '⌫' : k}</button>`).join('')}</div>` : ''}
+            <button id="btnProcessPayment" ${canPay ? '' : 'disabled'} onclick="processPayment()" class="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 rounded-xl text-center text-sm tracking-wider uppercase transition-all active:scale-98 flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i>Pagar $${total.toFixed(2)}</button>
+            <button onclick="cancelCheckout()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar Venta</button>
+        </div>`;
     lucide.createIcons();
 }
 
-function setPaymentMethod(method) {
-    paymentMethod = method;
-    if (method !== 'Efectivo') amountReceived = '';
-    renderCheckoutForm();
-}
-
-function pressKey(key) {
-    if (key === '⌫') {
-        amountReceived = amountReceived.slice(0, -1);
-    } else if (key === '.' && !amountReceived.includes('.')) {
-        amountReceived += '.';
-    } else if (!isNaN(key)) {
-        amountReceived += key;
-    }
-    renderCheckoutForm();
-}
-
-function quickCash(amount) {
-    const curr = parseFloat(amountReceived) || 0;
-    amountReceived = (curr + amount).toFixed(2);
-    renderCheckoutForm();
-}
+function setPaymentMethod(method) { paymentMethod = method; if (method !== 'Efectivo') amountReceived = ''; renderCheckoutForm(); }
+function pressKey(key) { if (key === '⌫') amountReceived = amountReceived.slice(0, -1); else if (key === '.' && !amountReceived.includes('.')) amountReceived += '.'; else if (!isNaN(key)) amountReceived += key; renderCheckoutForm(); }
+function quickCash(amount) { const curr = parseFloat(amountReceived) || 0; amountReceived = (curr + amount).toFixed(2); renderCheckoutForm(); }
 
 function processPayment() {
     const { subtotal, iva, total, change, received } = getTotals();
     if (paymentMethod === 'Efectivo' && received < total) return;
-
     const ticketId = 'TKT-' + String(Math.floor(Math.random() * 90000) + 10000);
     const now = new Date();
-    const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-
-    const sale = {
-        ticket: ticketId, date: dateStr, time: timeStr,
-        cashier: 'Diego Mendoza', method: paymentMethod, status: 'Completada',
-        subtotal, iva, total, received: paymentMethod === 'Efectivo' ? received : total, change,
-        items: cart.map(i => ({ name: i.name, sku: i.sku, quantity: i.quantity, price: i.price }))
-    };
-
-    DB.addSale(sale);
-    currentTicketId = ticketId;
-
-    const content = document.getElementById('checkoutContent');
-    content.innerHTML = `
-        <div class="flex-1 flex flex-col items-center justify-center text-center space-y-6">
-            <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse-soft shadow-lg">
-                <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
-            </div>
-            <div>
-                <h3 class="text-2xl font-black text-slate-900 tracking-tight">Pago Exitoso</h3>
-                <p class="text-sm text-slate-400 mt-1 font-medium">Transacción #${ticketId} completada</p>
-            </div>
-        </div>
-    `;
+    const sale = { ticket: ticketId, date: now.toLocaleDateString('es-MX'), time: now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'}), cashier: 'Diego Mendoza', method: paymentMethod, status: 'Completada', subtotal, iva, total, received: paymentMethod === 'Efectivo' ? received : total, change, items: cart.map(i => ({ name: i.name, sku: i.sku, quantity: i.quantity, price: i.price })) };
+    DB.addSale(sale); currentTicketId = ticketId;
+    document.getElementById('checkoutContent').innerHTML = `<div class="flex-1 flex flex-col items-center justify-center text-center space-y-6"><div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse-soft shadow-lg"><svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg></div><div><h3 class="text-2xl font-black text-slate-900 tracking-tight">Pago Exitoso</h3><p class="text-sm text-slate-400 mt-1 font-medium">Transacción #${ticketId} completada</p></div></div>`;
     setTimeout(() => renderTicket(), 1200);
 }
 
-function cancelCheckout() {
-    if (confirm('¿Estás seguro de cancelar esta venta? Se perderán todos los artículos del carrito.')) {
-        closeCheckout();
-        cart = [];
-        renderCart();
-        renderProducts();
-        showToast('Venta cancelada', 'error');
-    }
-}
+function cancelCheckout() { if (confirm('¿Cancelar venta?')) { closeCheckout(); cart = []; renderCart(); renderProducts(); showToast('Venta cancelada', 'error'); } }
 
 function renderTicket() {
     const content = document.getElementById('checkoutContent');
@@ -1061,103 +1045,45 @@ function renderTicket() {
     const now = new Date();
     const dateStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
     content.innerHTML = `
         <div class="flex-1 flex flex-col items-center space-y-6 overflow-y-auto p-2 ticket-appear">
             <div class="bg-white border border-slate-200 p-6 w-full text-slate-800 font-mono text-xs space-y-2 rounded-xl shadow-xs">
-                <div class="text-center">
-                    <p class="text-base font-black tracking-tight text-slate-900">NexPoS</p>
-                    <p class="text-[10px] text-slate-400 font-bold">Sistema de Punto de Venta</p>
-                </div>
+                <div class="text-center"><p class="text-base font-black tracking-tight text-slate-900">NexPoS</p><p class="text-[10px] text-slate-400 font-bold">Sistema de Punto de Venta</p></div>
                 <hr class="border-dashed border-slate-200">
-                <div class="text-slate-500 font-semibold space-y-0.5">
-                    <p>Ticket: ${ticketId}</p>
-                    <p>Fecha: ${dateStr} ${timeStr}</p>
-                    <p>Turno: Matutino</p>
-                    <p>Atendió: Diego Mendoza</p>
-                    <p>Método: ${paymentMethod}</p>
-                </div>
+                <div class="text-slate-500 font-semibold space-y-0.5"><p>Ticket: ${ticketId}</p><p>Fecha: ${dateStr} ${timeStr}</p><p>Turno: Matutino</p><p>Atendió: Diego Mendoza</p><p>Método: ${paymentMethod}</p></div>
                 <hr class="border-dashed border-slate-200">
-                <div class="space-y-1">
-                    ${cart.map(i => `
-                        <div class="flex justify-between">
-                            <span class="truncate max-w-[160px]">${i.quantity}x ${i.name}</span>
-                            <span class="font-bold">$${(i.price * i.quantity).toFixed(2)}</span>
-                        </div>
-                    `).join('')}
-                </div>
+                <div class="space-y-1">${cart.map(i => `<div class="flex justify-between"><span class="truncate max-w-[160px]">${i.quantity}x ${i.name}</span><span class="font-bold">$${(i.price * i.quantity).toFixed(2)}</span></div>`).join('')}</div>
                 <hr class="border-dashed border-slate-200">
                 <div class="text-right space-y-1 font-bold">
-                    <div class="flex justify-between text-slate-500">
-                        <span>Subtotal</span><span>$${subtotal.toFixed(2)}</span>
-                    </div>
-                    <div class="flex justify-between text-slate-500">
-                        <span>IVA 16%</span><span>$${iva.toFixed(2)}</span>
-                    </div>
-                    <div class="flex justify-between text-base text-slate-900 pt-1 border-t border-slate-100">
-                        <span>TOTAL</span><span>$${total.toFixed(2)}</span>
-                    </div>
-                    ${paymentMethod === 'Efectivo' ? `
-                    <div class="flex justify-between text-slate-400 font-normal text-[10px]">
-                        <span>Efectivo recibido</span><span>$${received.toFixed(2)}</span>
-                    </div>
-                    <div class="flex justify-between text-emerald-600 font-normal text-[10px]">
-                        <span>Cambio devuelto</span><span>$${change.toFixed(2)}</span>
-                    </div>` : ''}
+                    <div class="flex justify-between text-slate-500"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+                    <div class="flex justify-between text-slate-500"><span>IVA 16%</span><span>$${iva.toFixed(2)}</span></div>
+                    <div class="flex justify-between text-base text-slate-900 pt-1 border-t border-slate-100"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>
+                    ${paymentMethod === 'Efectivo' ? `<div class="flex justify-between text-slate-400 font-normal text-[10px]"><span>Efectivo recibido</span><span>$${received.toFixed(2)}</span></div><div class="flex justify-between text-emerald-600 font-normal text-[10px]"><span>Cambio devuelto</span><span>$${change.toFixed(2)}</span></div>` : ''}
                 </div>
             </div>
-
             <div class="w-full space-y-2">
-                <button onclick="reprintTicket()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="printer" class="w-4 h-4"></i> Reimprimir Ticket
-                </button>
-                <button onclick="goToBilling()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Facturar (CFDI)
-                </button>
-                <button onclick="resetAll()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl text-sm uppercase tracking-wider transition-all shadow-md active:scale-98 flex items-center justify-center gap-2">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Nueva Venta
-                </button>
+                <button onclick="reprintTicket()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"><i data-lucide="printer" class="w-4 h-4"></i> Reimprimir Ticket</button>
+                <button onclick="goToBilling()" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> Facturar (CFDI)</button>
+                <button onclick="resetAll()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl text-sm uppercase tracking-wider transition-all shadow-md active:scale-98 flex items-center justify-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Nueva Venta</button>
             </div>
             <p class="text-[10px] text-slate-300 text-center">Gracias por su compra • NexPoS Retail</p>
-        </div>
-    `;
+        </div>`;
     lucide.createIcons();
 }
 
 function reprintTicket() { showToast('Ticket listo para imprimir', 'success'); }
 function goToBilling() { showToast('Redirigiendo a facturación...', 'success'); }
-
-function resetAll() {
-    cart = [];
-    amountReceived = '';
-    currentTicketId = '';
-    closeCheckout();
-    renderCart();
-    renderProducts();
-    renderCashPanel();
-    showToast('Nueva venta iniciada', 'success');
-}
+function resetAll() { cart = []; amountReceived = ''; currentTicketId = ''; closeCheckout(); setDrawerState('hidden'); renderCart(); renderProducts(); renderCashPanel(); showToast('Nueva venta iniciada', 'success'); }
 
 function renderCashPanel() {
     const balance = DB.getCashBalance();
     const movs = DB.getCashMovements().slice(0, 3);
-
-    document.getElementById('cashBalance').innerText = `$${balance.current.toFixed(2)}`;
-
+    const cbEl = document.getElementById('cashBalance');
+    if (cbEl) cbEl.innerText = `$${balance.current.toFixed(2)}`;
     const recentEl = document.getElementById('recentSales');
-    if (movs.length === 0) {
-        recentEl.innerHTML = `<p class="text-[10px] text-slate-400 italic">Sin movimientos recientes</p>`;
-        return;
-    }
-
-    recentEl.innerHTML = movs.map(m => `
-        <div class="recent-item">
-            <span class="ticket">${m.concept}</span>
-            <span class="amount ${m.amount >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
-                ${m.amount >= 0 ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}
-            </span>
-        </div>
-    `).join('');
+    if (!recentEl) return;
+    if (movs.length === 0) { recentEl.innerHTML = `<p class="text-[10px] text-slate-400 italic">Sin movimientos recientes</p>`; return; }
+    recentEl.innerHTML = movs.map(m => `<div class="recent-item"><span class="ticket">${m.concept}</span><span class="amount ${m.amount >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${m.amount >= 0 ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}</span></div>`).join('');
 }
 
 function showToast(message, type = 'success') {
@@ -1169,15 +1095,6 @@ function showToast(message, type = 'success') {
     lucide.createIcons();
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
-
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
-});
-
-window.handleImageError = function(img) {
-    img.src = `https://placehold.co/80x80/64748b/ffffff?text=IMG&v=${DB_VERSION}`;
-};
 
 window.onload = init;
     </script>
