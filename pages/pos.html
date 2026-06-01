@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>NexPoS — Punto de Venta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -267,6 +270,64 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
     animation: pulse 2s infinite;
 }
+
+/* === CART SIDEBAR COLLAPSIBLE (MOBILE) === */
+#cartSidebar.collapsed {
+    width: 4rem !important;
+    transform: translateX(0) !important;
+}
+#cartSidebar.collapsed .cart-content { display: none; }
+#cartSidebar.collapsed .cart-toggle-btn { transform: rotate(180deg); }
+
+.cart-toggle-btn {
+    position: absolute; top: 1rem; left: -2.5rem;
+    width: 2.5rem; height: 2.5rem; border-radius: 0 0.75rem 0.75rem 0;
+    background: var(--slate-900); color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s ease;
+    box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
+}
+.cart-toggle-btn:hover { background: var(--slate-800); }
+
+/* Mobile: Show toggle button always, hide sidebar by default */
+@media (max-width: 1024px) {
+    #cartSidebar {
+        position: fixed; right: 0; top: 5rem; bottom: 0;
+        transform: translateX(100%); z-index: 55;
+    }
+    #cartSidebar:not(.hidden) { transform: translateX(0); }
+    #cartSidebar.collapsed {
+        width: 4rem !important;
+        transform: translateX(calc(100% - 4rem)) !important;
+    }
+    .cart-toggle-btn {
+        left: auto; right: 100%; border-radius: 0.75rem 0 0 0.75rem;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+    .cart-toggle-btn.collapsed { transform: rotate(180deg); }
+}
+
+/* Floating cart button for mobile when collapsed */
+.floating-cart-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    width: 3.5rem; height: 3.5rem; border-radius: 50%;
+    background: var(--slate-900); color: white;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer; transition: all 0.2s ease;
+    z-index: 50;
+}
+.floating-cart-btn:hover { background: var(--slate-800); transform: scale(1.05); }
+.floating-cart-btn .badge {
+    position: absolute; top: -0.25rem; right: -0.25rem;
+    background: var(--emerald-500); color: white;
+    font-size: 0.625rem; font-weight: 900;
+    width: 1.25rem; height: 1.25rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+}
+@media (min-width: 1024px) {
+    .floating-cart-btn { display: none; }
+}
     </style>
 </head>
 <body class="h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
@@ -285,6 +346,10 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
             <span class="text-[10px] font-black bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md uppercase tracking-widest">Modo Cajero</span>
         </div>
         <div class="flex items-center space-x-6">
+            <button onclick="forceReloadProducts()" class="text-xs text-slate-400 hover:text-slate-600 font-bold flex items-center gap-1 transition-colors" title="Forzar recarga de productos">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span class="hidden md:inline">Recargar</span>
+            </button>
             <div class="text-right">
                 <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
                 <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Cajero</p>
@@ -309,59 +374,73 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
             <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
         </main>
 
+        <!-- Cart Sidebar with Collapse Toggle -->
         <aside id="cartSidebar" class="w-[480px] bg-white border-l border-slate-100 flex flex-col h-full shadow-2xl flex-shrink-0 overflow-hidden hidden cart-transition transform translate-x-full lg:translate-x-0">
 
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 flex-shrink-0">
-                <h2 class="font-bold text-sm uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                    <span>Artículos en Carrito</span>
-                    <span id="cartCount" class="bg-slate-900 text-white text-xs px-3 py-1 rounded-full font-black">0</span>
-                </h2>
-                <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-700 font-bold tracking-wide uppercase transition-colors flex items-center gap-1">
-                    <i data-lucide="trash-2" class="w-3 h-3"></i> Vaciar
-                </button>
-            </div>
+            <!-- Toggle Button (Visible on Mobile) -->
+            <button onclick="toggleCartSidebar()" class="cart-toggle-btn hidden lg:flex" title="Contraer/Expandir carrito">
+                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
 
-            <div id="cartItems" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 bg-white"></div>
+            <!-- Mobile Floating Toggle Button -->
+            <button onclick="toggleCartSidebar()" class="floating-cart-btn lg:hidden">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                <span class="badge" id="floatingCartCount">0</span>
+            </button>
 
-            <div class="p-6 border-t border-slate-100 bg-white space-y-4 shadow-md flex-shrink-0">
-
-                <div class="cash-panel">
-                    <div class="demo-warning">
-                        <i data-lucide="info" class="w-4 h-4"></i>
-                        <span>Vista Demo: En producción el cajero NO ve estos datos de caja</span>
-                    </div>
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="label">Saldo Caja</span>
-                        <span id="cashBalance" class="value">$1,500.00</span>
-                    </div>
-                    <div class="recent">
-                        <span class="label block mb-1">Últimas Ventas</span>
-                        <div id="recentSales" class="space-y-1"></div>
-                    </div>
+            <div class="cart-content">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 flex-shrink-0">
+                    <h2 class="font-bold text-sm uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                        <span>Artículos en Carrito</span>
+                        <span id="cartCount" class="bg-slate-900 text-white text-xs px-3 py-1 rounded-full font-black">0</span>
+                    </h2>
+                    <button onclick="clearCart()" class="text-xs text-rose-500 hover:text-rose-700 font-bold tracking-wide uppercase transition-colors flex items-center gap-1">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i> Vaciar
+                    </button>
                 </div>
 
-                <div class="space-y-2 text-sm text-slate-500 font-normal">
-                    <div class="flex justify-between">
-                        <span>Subtotal</span>
-                        <span id="txtSubtotal" class="text-slate-800 font-semibold">$0.00</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>IVA Trasladado (16%)</span>
-                        <span id="txtIva" class="text-slate-800 font-semibold">$0.00</span>
-                    </div>
-                    <div class="flex justify-between text-slate-900 pt-4 border-t border-slate-100 font-black">
-                        <span class="text-lg">Total General</span>
-                        <span id="txtTotal" class="text-3xl text-emerald-600 font-black tracking-tight">$0.00</span>
-                    </div>
-                </div>
+                <div id="cartItems" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 bg-white"></div>
 
-                <button onclick="openCheckout()" id="btnCheckout"
-                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    disabled>
-                    <i data-lucide="credit-card" class="w-4 h-4"></i>
-                    Proceder al Pago
-                </button>
+                <div class="p-6 border-t border-slate-100 bg-white space-y-4 shadow-md flex-shrink-0">
+
+                    <div class="cash-panel">
+                        <div class="demo-warning">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            <span>Vista Demo: En producción el cajero NO ve estos datos de caja</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="label">Saldo Caja</span>
+                            <span id="cashBalance" class="value">$1,500.00</span>
+                        </div>
+                        <div class="recent">
+                            <span class="label block mb-1">Últimas Ventas</span>
+                            <div id="recentSales" class="space-y-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-sm text-slate-500 font-normal">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span id="txtSubtotal" class="text-slate-800 font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>IVA Trasladado (16%)</span>
+                            <span id="txtIva" class="text-slate-800 font-semibold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-900 pt-4 border-t border-slate-100 font-black">
+                            <span class="text-lg">Total General</span>
+                            <span id="txtTotal" class="text-3xl text-emerald-600 font-black tracking-tight">$0.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="openCheckout()" id="btnCheckout"
+                        class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        disabled>
+                        <i data-lucide="credit-card" class="w-4 h-4"></i>
+                        Proceder al Pago
+                    </button>
+                </div>
             </div>
         </aside>
     </div>
@@ -380,12 +459,26 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
 
     <script>
+// === DATABASE WITH VERSIONING FOR CACHE BUSTING ===
+const DB_VERSION = '2.1'; // Incrementa esto para forzar recarga de datos
+
 const DB = {
     _get(key, def) {
-        try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; }
-        catch { return def; }
+        try {
+            const stored = localStorage.getItem('nexpos_' + key);
+            if (!stored) return def;
+            const data = JSON.parse(stored);
+            // Check version for inventory
+            if (key === 'inventory' && data.version !== DB_VERSION) {
+                return def; // Force reload if version mismatch
+            }
+            return data.value ?? def;
+        } catch { return def; }
     },
-    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+    _set(key, val, includeVersion = false) {
+        const data = includeVersion ? { value: val, version: DB_VERSION } : val;
+        localStorage.setItem('nexpos_' + key, JSON.stringify(data));
+    },
 
     getSales() { return this._get('sales', []); },
     setSales(s) { this._set('sales', s); },
@@ -421,36 +514,36 @@ const DB = {
         this.setInventory(inv);
     },
 
-getInventory() {
-    let inv = this._get('inventory', []);
-    if (inv.length === 0) {
-        inv = [
-            { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://imgs.search.brave.com/8TIFUms6kgXxAthMLqRDiLHH83_F6e5q5wm-9ZMEdTU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA0Lzc5Lzg0LzA0/LzM2MF9GXzQ3OTg0/MDQ2OV9ranJCQTAx/UkRvSTFzNFFVZDdj/dzFWM1hoVE1zOTJC/aC5qcGc' },
-            { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00, img: 'https://imgs.search.brave.com/4D8vvNEfBM_dmvLfI6Xt04T1gdb0bkH_x4kYroPatW8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/MDU1MjYtTUxVNzU2/NTA2ODg2MThfMDQy/MDI0LU8ud2VicA' },
-            { id: 4, sku: 'SKU-00004', name: 'Agua Peñafiel 1L', category: 'Bebidas', stock: 15, price: 15.00, img: 'https://imgs.search.brave.com/05Tr0smjXPhvOU7-UE6rnym4p3bg5xVol_OyKB33F2Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy85/Lzk4L0VucmlxdWVf/UGVuYV9OaWV0by5q/cGc' },
-            { id: 5, sku: 'SKU-00005', name: 'Detergente Líquido 1L', category: 'Abarrotes', stock: 1, price: 120.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR92kReb_jtSR7hCQ5oxX6-KHiZx5n-YdMkrA&s' },
-            { id: 6, sku: 'SKU-00006', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTct9vil0XxoL4JiRRRzDZ-b4_7razl6gysVg&s' },
-            { id: 7, sku: 'SKU-00007', name: 'Leche Entera Alpura 1L', category: 'Bebidas', stock: 3, price: 28.00, img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 8, sku: 'SKU-00008', name: 'Jugo Del Valle Naranja 1L', category: 'Bebidas', stock: 18, price: 25.00, img: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 9, sku: 'SKU-00009', name: 'Galletas Marías 400g', category: 'Abarrotes', stock: 12, price: 32.00, img: 'https://www.mayoreototal.mx/cdn/shop/files/Captura_de_pantalla_2025-06-22_a_la_s_8.45.25_a.m._530x@2x.png?v=1750603541' },
-            { id: 10, sku: 'SKU-00010', name: 'Atún en Agua 140g', category: 'Abarrotes', stock: 6, price: 24.00, img: 'https://i5.walmartimages.com/asr/9338ef18-9b9d-4d0b-bf09-eb5340a28300.49fba045f9ff726eafd93ac1a4e8001e.jpeg' },
-            { id: 11, sku: 'SKU-00011', name: 'Arroz Blanco 1kg', category: 'Abarrotes', stock: 20, price: 28.00, img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 12, sku: 'SKU-00012', name: 'Frijoles Negros 400g', category: 'Abarrotes', stock: 15, price: 22.00, img: 'https://www.laranitadelapaz.com.mx/images/thumbs/0006982_frijol-negro-fresno-bolsa-de-1-kg_625.jpeg' },
-            { id: 13, sku: 'SKU-00013', name: 'Aceite Vegetal 1L', category: 'Abarrotes', stock: 8, price: 45.00, img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 14, sku: 'SKU-00014', name: 'Azúcar Blanca 1kg', category: 'Abarrotes', stock: 10, price: 24.00, img: 'https://www.costco.com.mx/medias/sys_master/products/h9a/h4f/82432991035422.jpg' },
-            { id: 15, sku: 'SKU-00015', name: 'Café Molido 250g', category: 'Abarrotes', stock: 5, price: 65.00, img: 'https://http2.mlstatic.com/D_NQ_NP_794704-MLC83515200994_042025-O.webp' },
-            { id: 16, sku: 'SKU-00016', name: 'Shampoo Head 400ml', category: 'Cuidado Personal', stock: 7, price: 85.00, img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 17, sku: 'SKU-00017', name: 'Jabón de Baño Zote 150g', category: 'Cuidado Personal', stock: 30, price: 18.00, img: 'https://images.unsplash.com/photo-1605264964528-06403738d6dc?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 18, sku: 'SKU-00018', name: 'Pasta Dental Colgate 75ml', category: 'Cuidado Personal', stock: 14, price: 35.00, img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop&auto=format&q=80' },
-            { id: 19, sku: 'SKU-00019', name: 'Papel Higiénico 4 rollos', category: 'Abarrotes', stock: 9, price: 42.00, img: 'https://i5.walmartimages.com/asr/f9fd017f-8a55-49ce-b7fd-7cd4b1af1dac.a6e7698cd162d0c880134ee26951d878.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF' },
-            { id: 20, sku: 'SKU-00020', name: 'Cloro 1L', category: 'Abarrotes', stock: 4, price: 28.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuRAs_-MnH50LME9eia5sd4YzVrXLWtwdNLw&s' },
-        ];
-        this._set('inventory', inv);
-    }
-    return inv;
-},
-    setInventory(inv) { this._set('inventory', inv); },
+    getInventory() {
+        let inv = this._get('inventory', [], true);
+        if (inv.length === 0) {
+            inv = [
+                { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://imgs.search.brave.com/8TIFUms6kgXxAthMLqRDiLHH83_F6e5q5wm-9ZMEdTU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA0Lzc5Lzg0LzA0/LzM2MF9GXzQ3OTg0/MDQ2OV9ranJCQTAx/UkRvSTFzNFFVZDdj/dzFWM1hoVE1zOTJC/aC5qcGc' },
+                { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00, img: 'https://imgs.search.brave.com/4D8vvNEfBM_dmvLfI6Xt04T1gdb0bkH_x4kYroPatW8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/MDU1MjYtTUxVNzU2/NTA2ODg2MThfMDQy/MDI0LU8ud2VicA' },
+                { id: 4, sku: 'SKU-00004', name: 'Agua Peñafiel 1L', category: 'Bebidas', stock: 15, price: 15.00, img: 'https://imgs.search.brave.com/05Tr0smjXPhvOU7-UE6rnym4p3bg5xVol_OyKB33F2Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy85/Lzk4L0VucmlxdWVf/UGVuYV9OaWV0by5q/cGc' },
+                { id: 5, sku: 'SKU-00005', name: 'Detergente Líquido 1L', category: 'Abarrotes', stock: 1, price: 120.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR92kReb_jtSR7hCQ5oxX6-KHiZx5n-YdMkrA&s' },
+                { id: 6, sku: 'SKU-00006', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTct9vil0XxoL4JiRRRzDZ-b4_7razl6gysVg&s' },
+                { id: 7, sku: 'SKU-00007', name: 'Leche Entera Alpura 1L', category: 'Bebidas', stock: 3, price: 28.00, img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 8, sku: 'SKU-00008', name: 'Jugo Del Valle Naranja 1L', category: 'Bebidas', stock: 18, price: 25.00, img: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 9, sku: 'SKU-00009', name: 'Galletas Marías 400g', category: 'Abarrotes', stock: 12, price: 32.00, img: 'https://www.mayoreototal.mx/cdn/shop/files/Captura_de_pantalla_2025-06-22_a_la_s_8.45.25_a.m._530x@2x.png?v=1750603541' },
+                { id: 10, sku: 'SKU-00010', name: 'Atún en Agua 140g', category: 'Abarrotes', stock: 6, price: 24.00, img: 'https://i5.walmartimages.com/asr/9338ef18-9b9d-4d0b-bf09-eb5340a28300.49fba045f9ff726eafd93ac1a4e8001e.jpeg' },
+                { id: 11, sku: 'SKU-00011', name: 'Arroz Blanco 1kg', category: 'Abarrotes', stock: 20, price: 28.00, img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 12, sku: 'SKU-00012', name: 'Frijoles Negros 400g', category: 'Abarrotes', stock: 15, price: 22.00, img: 'https://www.laranitadelapaz.com.mx/images/thumbs/0006982_frijol-negro-fresno-bolsa-de-1-kg_625.jpeg' },
+                { id: 13, sku: 'SKU-00013', name: 'Aceite Vegetal 1L', category: 'Abarrotes', stock: 8, price: 45.00, img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 14, sku: 'SKU-00014', name: 'Azúcar Blanca 1kg', category: 'Abarrotes', stock: 10, price: 24.00, img: 'https://www.costco.com.mx/medias/sys_master/products/h9a/h4f/82432991035422.jpg' },
+                { id: 15, sku: 'SKU-00015', name: 'Café Molido 250g', category: 'Abarrotes', stock: 5, price: 65.00, img: 'https://http2.mlstatic.com/D_NQ_NP_794704-MLC83515200994_042025-O.webp' },
+                { id: 16, sku: 'SKU-00016', name: 'Shampoo Head 400ml', category: 'Cuidado Personal', stock: 7, price: 85.00, img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 17, sku: 'SKU-00017', name: 'Jabón de Baño Zote 150g', category: 'Cuidado Personal', stock: 30, price: 18.00, img: 'https://images.unsplash.com/photo-1605264964528-06403738d6dc?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 18, sku: 'SKU-00018', name: 'Pasta Dental Colgate 75ml', category: 'Cuidado Personal', stock: 14, price: 35.00, img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 19, sku: 'SKU-00019', name: 'Papel Higiénico 4 rollos', category: 'Abarrotes', stock: 9, price: 42.00, img: 'https://i5.walmartimages.com/asr/f9fd017f-8a55-49ce-b7fd-7cd4b1af1dac.a6e7698cd162d0c880134ee26951d878.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF' },
+                { id: 20, sku: 'SKU-00020', name: 'Cloro 1L', category: 'Abarrotes', stock: 4, price: 28.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuRAs_-MnH50LME9eia5sd4YzVrXLWtwdNLw&s' },
+            ];
+            this._set('inventory', inv, true); // Save with version
+        }
+        return inv;
+    },
+    setInventory(inv) { this._set('inventory', inv, true); },
 
     getCashBalance() { return this._get('cash_balance', { initial: 1500, current: 1500 }); },
     setCashBalance(b) { this._set('cash_balance', b); },
@@ -473,6 +566,16 @@ getInventory() {
             { id: 3, time: '11:45', type: 'Ingreso', concept: 'Venta TKT-00431', amount: 0, balance: 2780 },
         ];
         this.setCashMovements(movs);
+    },
+
+    // NEW: Force reload products by clearing localStorage
+    forceReloadProducts() {
+        localStorage.removeItem('nexpos_inventory');
+        localStorage.removeItem('nexpos_sales');
+        localStorage.removeItem('nexpos_cash_balance');
+        localStorage.removeItem('nexpos_cash_movements');
+        showToast('Datos recargados desde servidor', 'success');
+        location.reload();
     }
 };
 
@@ -484,6 +587,7 @@ let searchQuery = '';
 let amountReceived = '';
 let paymentMethod = 'Efectivo';
 let currentTicketId = '';
+let cartCollapsed = false; // Track cart sidebar state
 
 function init() {
     DB.seedDemoData();
@@ -491,7 +595,59 @@ function init() {
     renderProducts();
     renderCart();
     renderCashPanel();
+    setupMobileCartToggle();
     lucide.createIcons();
+}
+
+// === MOBILE CART TOGGLE SETUP ===
+function setupMobileCartToggle() {
+    const sidebar = document.getElementById('cartSidebar');
+    const toggleBtn = sidebar.querySelector('.cart-toggle-btn');
+    const floatingBtn = document.querySelector('.floating-cart-btn');
+
+    // Show toggle buttons based on screen size
+    function updateToggleVisibility() {
+        if (window.innerWidth < 1024) {
+            if (toggleBtn) toggleBtn.classList.add('hidden');
+            if (floatingBtn) floatingBtn.classList.remove('hidden');
+        } else {
+            if (toggleBtn) toggleBtn.classList.remove('hidden');
+            if (floatingBtn) floatingBtn.classList.add('hidden');
+        }
+    }
+
+    window.addEventListener('resize', updateToggleVisibility);
+    updateToggleVisibility();
+}
+
+function toggleCartSidebar() {
+    const sidebar = document.getElementById('cartSidebar');
+    const toggleBtn = sidebar.querySelector('.cart-toggle-btn');
+    const floatingBtn = document.querySelector('.floating-cart-btn');
+
+    cartCollapsed = !cartCollapsed;
+
+    if (cartCollapsed) {
+        sidebar.classList.add('collapsed');
+        if (toggleBtn) toggleBtn.classList.add('collapsed');
+        if (floatingBtn) floatingBtn.classList.add('collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+        if (toggleBtn) toggleBtn.classList.remove('collapsed');
+        if (floatingBtn) floatingBtn.classList.remove('collapsed');
+    }
+
+    // Update floating button badge visibility
+    updateFloatingCartBadge();
+}
+
+function updateFloatingCartBadge() {
+    const badge = document.getElementById('floatingCartCount');
+    const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+    if (badge) {
+        badge.innerText = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
 }
 
 function renderCategories() {
@@ -528,6 +684,9 @@ function renderProducts() {
                 <span class="text-5xl text-slate-200 mb-4">🔍</span>
                 <p class="text-lg font-bold text-slate-300">Sin resultados</p>
                 <p class="text-sm text-slate-300 mt-1">Intenta con otros términos o categoría</p>
+                <button onclick="forceReloadProducts()" class="mt-4 text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1">
+                    <i data-lucide="refresh-cw" class="w-3 h-3"></i> Forzar recarga de productos
+                </button>
             </div>
         `;
         return;
@@ -536,6 +695,8 @@ function renderProducts() {
     grid.innerHTML = filtered.map(p => {
         const stockClass = p.stock <= 2 ? 'critical' : p.stock <= 5 ? 'low' : 'ok';
         const stockText = p.stock <= 2 ? '¡Últimas!' : p.stock <= 5 ? 'Pocas' : `${p.stock} pzas`;
+        // Add cache-busting param to image URL
+        const imgSrc = p.img + (p.img.includes('?') ? '&' : '?') + 'v=' + DB_VERSION;
 
         return `
         <div onclick="${p.stock > 0 ? `addToCart(${p.id})` : ''}"
@@ -545,7 +706,7 @@ function renderProducts() {
             <span class="absolute top-6 right-6 text-base font-black text-slate-900 bg-white/90 backdrop-blur-xs px-3 py-1 rounded-lg border border-slate-100 shadow-xs">$${p.price.toFixed(2)}</span>
 
             <div class="w-full aspect-square bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center p-2 mb-6">
-                <img src="${p.img}" alt="${p.name}" loading="lazy" class="product-img w-full h-full object-cover rounded-lg">
+                <img src="${imgSrc}" alt="${p.name}" loading="lazy" class="product-img w-full h-full object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/400x400?text=Sin+Imagen'">
             </div>
 
             <div class="text-center space-y-1">
@@ -561,6 +722,8 @@ function renderCart() {
     const sidebar = document.getElementById('cartSidebar');
     const count = cart.reduce((sum, i) => sum + i.quantity, 0);
     document.getElementById('cartCount').innerText = count;
+    updateFloatingCartBadge();
+
     const container = document.getElementById('cartItems');
 
     if (cart.length === 0) {
@@ -577,10 +740,11 @@ function renderCart() {
     container.innerHTML = cart.map(item => {
         const product = PRODUCTS.find(p => p.id === item.id);
         const stockLeft = product ? product.stock : 0;
+        const imgSrc = item.img + (item.img.includes('?') ? '&' : '?') + 'v=' + DB_VERSION;
 
         return `
         <div class="cart-item border border-slate-100 rounded-2xl bg-slate-50/50 flex space-x-4 items-center relative flex-shrink-0 p-4 cart-item-enter">
-            <img src="${item.img}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl bg-white border border-slate-200 shadow-sm flex-shrink-0">
+            <img src="${imgSrc}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl bg-white border border-slate-200 shadow-sm flex-shrink-0" onerror="this.src='https://via.placeholder.com/80x80?text=IMG'">
             <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-start">
                     <h4 class="font-bold text-slate-900 text-sm leading-tight pr-6 truncate">${item.name}</h4>
@@ -947,6 +1111,13 @@ function renderCashPanel() {
             </span>
         </div>
     `).join('');
+}
+
+// === NEW: Force Reload Products Function ===
+function forceReloadProducts() {
+    if (confirm('¿Forzar recarga de productos?\n\nEsto limpiará los datos guardados y los volverá a cargar desde el servidor de demostración.')) {
+        DB.forceReloadProducts();
+    }
 }
 
 function showToast(message, type = 'success') {

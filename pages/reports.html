@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>NexPoS — Reportes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -280,7 +283,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     font-size: 0.625rem; font-weight: 700; background: var(--blue-50); color: var(--blue-700);
 }
     </style>
-    <link rel="stylesheet" href="shared/responsive.css">
+    <link rel="stylesheet" href="shared/responsive.css?v=1">
 </head>
 <body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
 
@@ -1082,9 +1085,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     <script>
 // === DATABASE ===
+const DB_VERSION = '1.0';
 const DB = {
-    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
-    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+    _get(key, def) {
+        try {
+            const stored = localStorage.getItem('nexpos_' + key);
+            if (!stored) return def;
+            const data = JSON.parse(stored);
+            if (data.version !== DB_VERSION) return def;
+            return data.value ?? def;
+        } catch { return def; }
+    },
+    _set(key, val) {
+        localStorage.setItem('nexpos_' + key, JSON.stringify({ value: val, version: DB_VERSION }));
+    },
 
     getSales() { return this._get('sales', []); },
     setSales(s) { this._set('sales', s); },
@@ -1412,6 +1426,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 
 window.onload = init;
     </script>
-    <script src="shared/navbar.js"></script>
+    <script src="shared/navbar.js?v=1"></script>
 </body>
 </html>

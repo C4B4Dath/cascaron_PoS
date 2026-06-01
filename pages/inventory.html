@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>NexPoS — Inventario</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -188,8 +191,6 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     animation: pulse 2s infinite;
 }
 
-
-
 /* Form Input Styles */
 .form-input {
     width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
@@ -292,8 +293,16 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .btn-loading .spinner { display: inline-block; }
 .btn-loading .btn-text { display: none; }
+
+/* Product Image in Table */
+.product-thumb {
+    width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
+    object-fit: cover; border: 1px solid var(--slate-200);
+    background: var(--slate-100); flex-shrink: 0;
+}
+.product-thumb.loading { animation: pulse 1.5s infinite; }
     </style>
-    <link rel="stylesheet" href="shared/responsive.css">
+    <link rel="stylesheet" href="shared/responsive.css?v=1">
 </head>
 <body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
 
@@ -302,8 +311,6 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
         <i data-lucide="zap" class="w-3 h-3"></i>
         <span>Modo Demo</span>
     </div>
-
-
 
     <!-- Main Content -->
     <div class="main-content">
@@ -519,6 +526,19 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
                         <input type="text" id="modalSku" readonly class="form-input mono bg-slate-100 cursor-not-allowed">
                     </div>
                 </div>
+                <!-- Image URL Input for Simulation -->
+                <div>
+                    <label class="form-label">URL de Imagen (simulación)</label>
+                    <input type="text" id="modalImg" placeholder="https://..." class="form-input text-xs" list="imageSuggestions">
+                    <datalist id="imageSuggestions">
+                        <option value="https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=400&h=400&fit=crop&auto=format&q=80">
+                        <option value="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=400&fit=crop&auto=format&q=80">
+                        <option value="https://images.unsplash.com/photo-1612282131721-6e5a26c8fdba?w=400&h=400&fit=crop&auto=format&q=80">
+                        <option value="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&auto=format&q=80">
+                        <option value="https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&h=400&fit=crop&auto=format&q=80">
+                    </datalist>
+                    <p class="text-[10px] text-slate-400 mt-1">💡 Usa las URLs sugeridas para simulación realista</p>
+                </div>
             </div>
             <div class="flex gap-3 pt-2">
                 <button onclick="closeProductModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
@@ -605,31 +625,55 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
 
     <script>
-// === DATABASE ===
+// === DATABASE WITH VERSIONING FOR CACHE BUSTING ===
+const DB_VERSION = '2.2'; // Incrementa para forzar recarga de datos
+
 const DB = {
-    _get(key, def) { try { return JSON.parse(localStorage.getItem('nexpos_' + key)) ?? def; } catch { return def; } },
-    _set(key, val) { localStorage.setItem('nexpos_' + key, JSON.stringify(val)); },
+    _get(key, def) {
+        try {
+            const stored = localStorage.getItem('nexpos_' + key);
+            if (!stored) return def;
+            const data = JSON.parse(stored);
+            if (key === 'inventory' && data.version !== DB_VERSION) return def;
+            return data.value ?? def;
+        } catch { return def; }
+    },
+    _set(key, val, includeVersion = false) {
+        const data = includeVersion ? { value: val, version: DB_VERSION } : val;
+        localStorage.setItem('nexpos_' + key, JSON.stringify(data));
+    },
 
     getInventory() {
-        let inv = this._get('inventory', []);
+        let inv = this._get('inventory', [], true);
         if (inv.length === 0) {
+            // === MISMO ARRAY DE PRODUCTOS QUE EL POS PARA CONSISTENCIA ===
             inv = [
-                { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://placehold.co/80x80/10b981/ffffff?text=PARA' },
-                { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://placehold.co/80x80/dc2626/ffffff?text=COCA' },
-                { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00, img: 'https://placehold.co/80x80/f59e0b/ffffff?text=SABR' },
-                { id: 4, sku: 'SKU-00004', name: 'Agua Peñafiel 1L', category: 'Bebidas', stock: 15, price: 15.00, img: 'https://placehold.co/80x80/3b82f6/ffffff?text=AGUA' },
-                { id: 5, sku: 'SKU-00005', name: 'Detergente Líquido 1L', category: 'Abarrotes', stock: 1, price: 120.00, img: 'https://placehold.co/80x80/8b5cf6/ffffff?text=DETER' },
-                { id: 6, sku: 'SKU-00006', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00, img: 'https://placehold.co/80x80/f97316/ffffff?text=CONCHA' },
-                { id: 7, sku: 'SKU-00007', name: 'Leche Entera Alpura 1L', category: 'Bebidas', stock: 3, price: 28.00, img: 'https://placehold.co/80x80/06b6d4/ffffff?text=LECHE' },
-                { id: 8, sku: 'SKU-00008', name: 'Jugo Del Valle Naranja 1L', category: 'Bebidas', stock: 18, price: 25.00, img: 'https://placehold.co/80x80/f97316/ffffff?text=JUGO' },
-                { id: 9, sku: 'SKU-00009', name: 'Galletas Marías 400g', category: 'Abarrotes', stock: 12, price: 32.00, img: 'https://placehold.co/80x80/d97706/ffffff?text=MARIAS' },
-                { id: 10, sku: 'SKU-00010', name: 'Atún en Agua 140g', category: 'Abarrotes', stock: 6, price: 24.00, img: 'https://placehold.co/80x80/64748b/ffffff?text=ATUN' },
+                { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://imgs.search.brave.com/8TIFUms6kgXxAthMLqRDiLHH83_F6e5q5wm-9ZMEdTU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA0Lzc5Lzg0LzA0/LzM2MF9GXzQ3OTg0/MDQ2OV9ranJCQTAx/UkRvSTFzNFFVZDdj/dzFWM1hoVE1zOTJC/aC5qcGc' },
+                { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Original 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 3, sku: 'SKU-77123', name: 'Sabritas Original 45g', category: 'Abarrotes', stock: 2, price: 22.00, img: 'https://imgs.search.brave.com/4D8vvNEfBM_dmvLfI6Xt04T1gdb0bkH_x4kYroPatW8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/MDU1MjYtTUxVNzU2/NTA2ODg2MThfMDQy/MDI0LU8ud2VicA' },
+                { id: 4, sku: 'SKU-00004', name: 'Agua Peñafiel 1L', category: 'Bebidas', stock: 15, price: 15.00, img: 'https://imgs.search.brave.com/05Tr0smjXPhvOU7-UE6rnym4p3bg5xVol_OyKB33F2Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy85/Lzk4L0VucmlxdWVf/UGVuYV9OaWV0by5q/cGc' },
+                { id: 5, sku: 'SKU-00005', name: 'Detergente Líquido 1L', category: 'Abarrotes', stock: 1, price: 120.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR92kReb_jtSR7hCQ5oxX6-KHiZx5n-YdMkrA&s' },
+                { id: 6, sku: 'SKU-00006', name: 'Pan Dulce Concha Vainilla', category: 'Abarrotes', stock: 25, price: 12.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTct9vil0XxoL4JiRRRzDZ-b4_7razl6gysVg&s' },
+                { id: 7, sku: 'SKU-00007', name: 'Leche Entera Alpura 1L', category: 'Bebidas', stock: 3, price: 28.00, img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 8, sku: 'SKU-00008', name: 'Jugo Del Valle Naranja 1L', category: 'Bebidas', stock: 18, price: 25.00, img: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 9, sku: 'SKU-00009', name: 'Galletas Marías 400g', category: 'Abarrotes', stock: 12, price: 32.00, img: 'https://www.mayoreototal.mx/cdn/shop/files/Captura_de_pantalla_2025-06-22_a_la_s_8.45.25_a.m._530x@2x.png?v=1750603541' },
+                { id: 10, sku: 'SKU-00010', name: 'Atún en Agua 140g', category: 'Abarrotes', stock: 6, price: 24.00, img: 'https://i5.walmartimages.com/asr/9338ef18-9b9d-4d0b-bf09-eb5340a28300.49fba045f9ff726eafd93ac1a4e8001e.jpeg' },
+                { id: 11, sku: 'SKU-00011', name: 'Arroz Blanco 1kg', category: 'Abarrotes', stock: 20, price: 28.00, img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 12, sku: 'SKU-00012', name: 'Frijoles Negros 400g', category: 'Abarrotes', stock: 15, price: 22.00, img: 'https://www.laranitadelapaz.com.mx/images/thumbs/0006982_frijol-negro-fresno-bolsa-de-1-kg_625.jpeg' },
+                { id: 13, sku: 'SKU-00013', name: 'Aceite Vegetal 1L', category: 'Abarrotes', stock: 8, price: 45.00, img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 14, sku: 'SKU-00014', name: 'Azúcar Blanca 1kg', category: 'Abarrotes', stock: 10, price: 24.00, img: 'https://www.costco.com.mx/medias/sys_master/products/h9a/h4f/82432991035422.jpg' },
+                { id: 15, sku: 'SKU-00015', name: 'Café Molido 250g', category: 'Abarrotes', stock: 5, price: 65.00, img: 'https://http2.mlstatic.com/D_NQ_NP_794704-MLC83515200994_042025-O.webp' },
+                { id: 16, sku: 'SKU-00016', name: 'Shampoo Head 400ml', category: 'Cuidado Personal', stock: 7, price: 85.00, img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 17, sku: 'SKU-00017', name: 'Jabón de Baño Zote 150g', category: 'Cuidado Personal', stock: 30, price: 18.00, img: 'https://images.unsplash.com/photo-1605264964528-06403738d6dc?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 18, sku: 'SKU-00018', name: 'Pasta Dental Colgate 75ml', category: 'Cuidado Personal', stock: 14, price: 35.00, img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop&auto=format&q=80' },
+                { id: 19, sku: 'SKU-00019', name: 'Papel Higiénico 4 rollos', category: 'Abarrotes', stock: 9, price: 42.00, img: 'https://i5.walmartimages.com/asr/f9fd017f-8a55-49ce-b7fd-7cd4b1af1dac.a6e7698cd162d0c880134ee26951d878.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF' },
+                { id: 20, sku: 'SKU-00020', name: 'Cloro 1L', category: 'Abarrotes', stock: 4, price: 28.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuRAs_-MnH50LME9eia5sd4YzVrXLWtwdNLw&s' },
             ];
-            this._set('inventory', inv);
+            this._set('inventory', inv, true);
         }
         return inv;
     },
-    setInventory(inv) { this._set('inventory', inv); },
+    setInventory(inv) { this._set('inventory', inv, true); },
 
     getMovements() { return this._get('movements', []); },
     setMovements(m) { this._set('movements', m); },
@@ -643,6 +687,14 @@ const DB = {
             { id: 3, type: 'transferencia', product: 'Coca-Cola Original 600ml', sku: 'SKU-10293', qty: -50, date: '23/05/2026', time: '11:40', reasonType: 'transferencia', reason: 'Reabastecimiento por alta demanda', destination: 'Suc. Norte' },
             { id: 4, type: 'retiro', product: 'Leche Entera Alpura 1L', sku: 'SKU-00007', qty: -5, date: '22/05/2026', time: '16:20', reasonType: 'caducado', reason: 'Fecha de caducidad vencida Lote #L445', destination: null },
         ]);
+    },
+
+    // Force reload products by clearing localStorage
+    forceReloadProducts() {
+        localStorage.removeItem('nexpos_inventory');
+        localStorage.removeItem('nexpos_movements');
+        showToast('Datos recargados desde servidor de simulación', 'success');
+        location.reload();
     }
 };
 
@@ -655,6 +707,20 @@ function init() {
     renderTable();
     renderHistory();
     lucide.createIcons();
+}
+
+// === IMAGE URL HELPERS ===
+function getImageUrl(img, productId) {
+    // Add cache-busting param + fallback handler
+    const baseUrl = img || `https://placehold.co/80x80/64748b/ffffff?text=${productId || 'IMG'}`;
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${separator}v=${DB_VERSION}&t=${Date.now()}`;
+}
+
+function handleImageError(img) {
+    // Fallback to placeholder if image fails to load
+    img.src = `https://placehold.co/80x80/64748b/ffffff?text=IMG&v=${DB_VERSION}`;
+    img.classList.remove('loading');
 }
 
 function getStockClass(stock) {
@@ -684,18 +750,30 @@ function renderTable() {
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No se encontraron productos</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">
+            No se encontraron productos
+            <br><button onclick="DB.forceReloadProducts()" class="mt-2 text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 mx-auto">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Forzar recarga de productos
+            </button>
+        </td></tr>`;
+        lucide.createIcons();
         return;
     }
 
     tbody.innerHTML = filtered.map(p => {
         const stockClass = getStockClass(p.stock);
         const stockText = getStockText(p.stock);
+        const imgSrc = getImageUrl(p.img, p.id);
+
         return `
         <tr data-id="${p.id}" class="hover:bg-slate-50/40 transition-colors">
             <td class="p-4 pl-6 font-mono text-xs text-slate-400">${p.sku}</td>
             <td class="p-4 font-bold text-slate-900 flex items-center gap-3">
-                <img src="${p.img}" class="w-8 h-8 object-cover rounded-md border border-slate-100" alt="">
+                <img src="${imgSrc}"
+                     class="product-thumb"
+                     alt="${p.name}"
+                     onerror="handleImageError(this)"
+                     onload="this.classList.remove('loading')">
                 <span class="truncate max-w-[180px]">${p.name}</span>
             </td>
             <td class="p-4 text-xs font-bold text-slate-500 uppercase">${p.category}</td>
@@ -929,6 +1007,7 @@ function openProductModal(productId = null) {
         document.getElementById('modalPrice').value = p.price;
         document.getElementById('modalStock').value = p.stock;
         document.getElementById('modalSku').value = p.sku;
+        document.getElementById('modalImg').value = p.img || '';
     } else {
         title.innerText = 'Nuevo Producto';
         document.getElementById('modalProductId').value = '';
@@ -937,6 +1016,7 @@ function openProductModal(productId = null) {
         document.getElementById('modalPrice').value = '';
         document.getElementById('modalStock').value = '';
         document.getElementById('modalSku').value = 'SKU-' + String(Math.floor(10000 + Math.random() * 90000));
+        document.getElementById('modalImg').value = '';
     }
 
     modal.classList.add('active');
@@ -954,6 +1034,7 @@ function saveProduct() {
     const price = parseFloat(document.getElementById('modalPrice').value);
     const stock = parseInt(document.getElementById('modalStock').value) || 0;
     const sku = document.getElementById('modalSku').value;
+    const img = document.getElementById('modalImg').value.trim();
 
     if (!name) { showToast('Ingresa el nombre del producto', 'error'); return; }
     if (isNaN(price) || price < 0) { showToast('Precio inválido', 'error'); return; }
@@ -963,13 +1044,14 @@ function saveProduct() {
     if (id) {
         const idx = inv.findIndex(i => i.id == id);
         if (idx >= 0) {
-            inv[idx] = { ...inv[idx], name, category, price, stock };
+            inv[idx] = { ...inv[idx], name, category, price, stock, img: img || inv[idx].img };
             showToast('Producto actualizado', 'success');
         }
     } else {
+        // Generate image URL for new product (simulation)
+        const productImg = img || `https://placehold.co/80x80/${getCategoryColor(category)}/ffffff?text=${name.substring(0,4).toUpperCase()}`;
         inv.push({
-            id: Date.now(), sku, name, category, price, stock,
-            img: `https://placehold.co/80x80/${getCategoryColor(category)}/ffffff?text=${name.substring(0,4).toUpperCase()}`
+            id: Date.now(), sku, name, category, price, stock, img: productImg
         });
         showToast('Producto agregado', 'success');
     }
@@ -1140,8 +1222,11 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
 });
 
+// Global image error handler
+window.handleImageError = handleImageError;
+
 window.onload = init;
     </script>
-    <script src="shared/navbar.js"></script>
+    <script src="shared/navbar.js?v=1"></script>
 </body>
 </html>
