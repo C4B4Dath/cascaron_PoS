@@ -18,9 +18,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
     -webkit-user-select: none; user-select: none;
 }
-.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
 :root {
@@ -271,63 +271,140 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     animation: pulse 2s infinite;
 }
 
-/* === CART SIDEBAR COLLAPSIBLE (MOBILE) === */
+/* === CART SIDEBAR - MOBILE OPTIMIZED (FULL CONTENT PRESERVED) === */
+
+#cartSidebar {
+    width: 480px;
+    background: white;
+    border-left: 1px solid var(--slate-100);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow: hidden;
+}
+
 #cartSidebar.collapsed {
     width: 4rem !important;
-    transform: translateX(0) !important;
 }
 #cartSidebar.collapsed .cart-content { display: none; }
 #cartSidebar.collapsed .cart-toggle-btn { transform: rotate(180deg); }
 
 .cart-toggle-btn {
-    position: absolute; top: 1rem; left: -2.5rem;
-    width: 2.5rem; height: 2.5rem; border-radius: 0 0.75rem 0.75rem 0;
-    background: var(--slate-900); color: white;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.2s ease;
+    position: absolute;
+    top: 1rem;
+    left: -2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0 0.75rem 0.75rem 0;
+    background: var(--slate-900);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
     box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
+    z-index: 10;
 }
 .cart-toggle-btn:hover { background: var(--slate-800); }
 
-/* Mobile: Show toggle button always, hide sidebar by default */
-@media (max-width: 1024px) {
-    #cartSidebar {
-        position: fixed; right: 0; top: 5rem; bottom: 0;
-        transform: translateX(100%); z-index: 55;
-    }
-    #cartSidebar:not(.hidden) { transform: translateX(0); }
-    #cartSidebar.collapsed {
-        width: 4rem !important;
-        transform: translateX(calc(100% - 4rem)) !important;
-    }
-    .cart-toggle-btn {
-        left: auto; right: 100%; border-radius: 0.75rem 0 0 0.75rem;
-        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-    }
-    .cart-toggle-btn.collapsed { transform: rotate(180deg); }
+.cart-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
-/* Floating cart button for mobile when collapsed */
-.floating-cart-btn {
-    position: fixed; bottom: 1.5rem; right: 1.5rem;
-    width: 3.5rem; height: 3.5rem; border-radius: 50%;
-    background: var(--slate-900); color: white;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    cursor: pointer; transition: all 0.2s ease;
-    z-index: 50;
+.cart-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--slate-100);
+    background: var(--slate-50/30);
+    flex-shrink: 0;
 }
-.floating-cart-btn:hover { background: var(--slate-800); transform: scale(1.05); }
-.floating-cart-btn .badge {
-    position: absolute; top: -0.25rem; right: -0.25rem;
-    background: var(--emerald-500); color: white;
-    font-size: 0.625rem; font-weight: 900;
-    width: 1.25rem; height: 1.25rem; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+
+/* KEY FIX: Items area scrolls independently */
+#cartItems {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+    background: white;
 }
+
+.cart-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--slate-100);
+    background: white;
+    flex-shrink: 0;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+}
+
+/* === MOBILE SPECIFIC === */
+@media (max-width: 1024px) {
+    #cartSidebar {
+        position: fixed;
+        right: 0;
+        top: 5rem;
+        bottom: 0;
+        width: 100%;
+        max-width: 100vw;
+        transform: translateX(100%);
+        z-index: 55;
+        border-left: none;
+        border-top: 1px solid var(--slate-100);
+    }
+
+    #cartSidebar:not(.hidden) { transform: translateX(0); }
+
+    #cartSidebar.collapsed {
+        width: 3.5rem !important;
+        max-width: 3.5rem !important;
+        transform: translateX(calc(100% - 3.5rem)) !important;
+    }
+
+    .cart-toggle-btn { display: none !important; }
+
+    /* Floating button for mobile */
+    .floating-cart-btn {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        background: var(--slate-900);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 50;
+    }
+    .floating-cart-btn:hover { background: var(--slate-800); transform: scale(1.05); }
+    .floating-cart-btn .badge {
+        position: absolute; top: -0.25rem; right: -0.25rem;
+        background: var(--emerald-500); color: white;
+        font-size: 0.625rem; font-weight: 900;
+        width: 1.25rem; height: 1.25rem; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Compact mobile styles */
+    .cart-header { padding: 0.75rem 1rem; }
+    #cartItems { padding: 0.75rem 1rem; }
+    .cart-item { padding: 0.75rem !important; }
+    .cart-item img { width: 3rem !important; height: 3rem !important; }
+    .cart-footer { padding: 0.75rem 1rem; }
+}
+
 @media (min-width: 1024px) {
-    .floating-cart-btn { display: none; }
+    .floating-cart-btn { display: none !important; }
 }
+
+#cartItems.custom-scrollbar { overscroll-behavior: contain; }
     </style>
 </head>
 <body class="h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
@@ -346,10 +423,6 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
             <span class="text-[10px] font-black bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md uppercase tracking-widest">Modo Cajero</span>
         </div>
         <div class="flex items-center space-x-6">
-            <button onclick="forceReloadProducts()" class="text-xs text-slate-400 hover:text-slate-600 font-bold flex items-center gap-1 transition-colors" title="Forzar recarga de productos">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                <span class="hidden md:inline">Recargar</span>
-            </button>
             <div class="text-right">
                 <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
                 <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Cajero</p>
@@ -374,22 +447,22 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
             <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
         </main>
 
-        <!-- Cart Sidebar with Collapse Toggle -->
-        <aside id="cartSidebar" class="w-[480px] bg-white border-l border-slate-100 flex flex-col h-full shadow-2xl flex-shrink-0 overflow-hidden hidden cart-transition transform translate-x-full lg:translate-x-0">
+        <!-- Cart Sidebar with Full Content Preserved -->
+        <aside id="cartSidebar" class="hidden cart-transition">
 
-            <!-- Toggle Button (Visible on Mobile) -->
-            <button onclick="toggleCartSidebar()" class="cart-toggle-btn hidden lg:flex" title="Contraer/Expandir carrito">
+            <button onclick="toggleCartSidebar()" class="cart-toggle-btn lg:flex hidden" title="Contraer/Expandir carrito">
                 <i data-lucide="chevron-right" class="w-5 h-5"></i>
             </button>
 
-            <!-- Mobile Floating Toggle Button -->
-            <button onclick="toggleCartSidebar()" class="floating-cart-btn lg:hidden">
+            <button onclick="toggleCartSidebar()" class="floating-cart-btn">
                 <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                 <span class="badge" id="floatingCartCount">0</span>
             </button>
 
             <div class="cart-content">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/30 flex-shrink-0">
+
+                <!-- Header -->
+                <div class="cart-header flex justify-between items-center">
                     <h2 class="font-bold text-sm uppercase tracking-wider text-slate-400 flex items-center space-x-2">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
                         <span>Artículos en Carrito</span>
@@ -400,10 +473,13 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                     </button>
                 </div>
 
-                <div id="cartItems" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 bg-white"></div>
+                <!-- Scrollable Items Area -->
+                <div id="cartItems" class="custom-scrollbar space-y-4"></div>
 
-                <div class="p-6 border-t border-slate-100 bg-white space-y-4 shadow-md flex-shrink-0">
+                <!-- Footer with FULL original content -->
+                <div class="cart-footer space-y-4">
 
+                    <!-- Cash Panel - FULL CONTENT RESTORED -->
                     <div class="cash-panel">
                         <div class="demo-warning">
                             <i data-lucide="info" class="w-4 h-4"></i>
@@ -419,6 +495,7 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                         </div>
                     </div>
 
+                    <!-- Totals - FULL CONTENT RESTORED -->
                     <div class="space-y-2 text-sm text-slate-500 font-normal">
                         <div class="flex justify-between">
                             <span>Subtotal</span>
@@ -434,6 +511,7 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                         </div>
                     </div>
 
+                    <!-- Checkout Button - FULL CONTENT RESTORED -->
                     <button onclick="openCheckout()" id="btnCheckout"
                         class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         disabled>
@@ -459,8 +537,8 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
 
     <script>
-// === DATABASE WITH VERSIONING FOR CACHE BUSTING ===
-const DB_VERSION = '2.1'; // Incrementa esto para forzar recarga de datos
+// === DATABASE ===
+const DB_VERSION = '2.3';
 
 const DB = {
     _get(key, def) {
@@ -468,10 +546,7 @@ const DB = {
             const stored = localStorage.getItem('nexpos_' + key);
             if (!stored) return def;
             const data = JSON.parse(stored);
-            // Check version for inventory
-            if (key === 'inventory' && data.version !== DB_VERSION) {
-                return def; // Force reload if version mismatch
-            }
+            if (key === 'inventory' && data.version !== DB_VERSION) return def;
             return data.value ?? def;
         } catch { return def; }
     },
@@ -539,7 +614,7 @@ const DB = {
                 { id: 19, sku: 'SKU-00019', name: 'Papel Higiénico 4 rollos', category: 'Abarrotes', stock: 9, price: 42.00, img: 'https://i5.walmartimages.com/asr/f9fd017f-8a55-49ce-b7fd-7cd4b1af1dac.a6e7698cd162d0c880134ee26951d878.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF' },
                 { id: 20, sku: 'SKU-00020', name: 'Cloro 1L', category: 'Abarrotes', stock: 4, price: 28.00, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuRAs_-MnH50LME9eia5sd4YzVrXLWtwdNLw&s' },
             ];
-            this._set('inventory', inv, true); // Save with version
+            this._set('inventory', inv, true);
         }
         return inv;
     },
@@ -552,30 +627,18 @@ const DB = {
 
     seedDemoData() {
         if (this.getSales().length > 0) return;
-
         const demoSales = [
             { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, received: 1300.00, change: 20.00, items: [{ name: 'Paracetamol 500mg', sku: 'SKU-48291', quantity: 5, price: 45.00 }, { name: 'Coca-Cola 600ml', sku: 'SKU-10293', quantity: 12, price: 18.50 }] },
             { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, received: 2450.00, change: 0.00, items: [{ name: 'Detergente Líquido 1L', sku: 'SKU-00005', quantity: 5, price: 120.00 }] },
             { ticket: 'TKT-00429', date: '27/05/2026', time: '18:05', cashier: 'María López', method: 'Efectivo', status: 'Cancelada', subtotal: 297.41, iva: 47.59, total: 345.00, received: 0, change: 0, items: [{ name: 'Pan Dulce Concha', sku: 'SKU-00006', quantity: 3, price: 12.00 }] },
         ];
         this.setSales(demoSales);
-
         const movs = [
             { id: 1, time: '09:00', type: 'Apertura', concept: 'Fondo inicial', amount: 1500, balance: 1500 },
             { id: 2, time: '10:23', type: 'Ingreso', concept: 'Venta TKT-00430', amount: 1280, balance: 2780 },
             { id: 3, time: '11:45', type: 'Ingreso', concept: 'Venta TKT-00431', amount: 0, balance: 2780 },
         ];
         this.setCashMovements(movs);
-    },
-
-    // NEW: Force reload products by clearing localStorage
-    forceReloadProducts() {
-        localStorage.removeItem('nexpos_inventory');
-        localStorage.removeItem('nexpos_sales');
-        localStorage.removeItem('nexpos_cash_balance');
-        localStorage.removeItem('nexpos_cash_movements');
-        showToast('Datos recargados desde servidor', 'success');
-        location.reload();
     }
 };
 
@@ -587,7 +650,7 @@ let searchQuery = '';
 let amountReceived = '';
 let paymentMethod = 'Efectivo';
 let currentTicketId = '';
-let cartCollapsed = false; // Track cart sidebar state
+let cartCollapsed = false;
 
 function init() {
     DB.seedDemoData();
@@ -595,49 +658,34 @@ function init() {
     renderProducts();
     renderCart();
     renderCashPanel();
-    setupMobileCartToggle();
+    setupCartBehavior();
     lucide.createIcons();
 }
 
-// === MOBILE CART TOGGLE SETUP ===
-function setupMobileCartToggle() {
-    const sidebar = document.getElementById('cartSidebar');
-    const toggleBtn = sidebar.querySelector('.cart-toggle-btn');
-    const floatingBtn = document.querySelector('.floating-cart-btn');
-
-    // Show toggle buttons based on screen size
-    function updateToggleVisibility() {
-        if (window.innerWidth < 1024) {
-            if (toggleBtn) toggleBtn.classList.add('hidden');
-            if (floatingBtn) floatingBtn.classList.remove('hidden');
-        } else {
-            if (toggleBtn) toggleBtn.classList.remove('hidden');
-            if (floatingBtn) floatingBtn.classList.add('hidden');
-        }
-    }
-
+function setupCartBehavior() {
     window.addEventListener('resize', updateToggleVisibility);
     updateToggleVisibility();
 }
 
+function updateToggleVisibility() {
+    const floatingBtn = document.querySelector('.floating-cart-btn');
+    if (window.innerWidth < 1024) {
+        if (floatingBtn) floatingBtn.style.display = 'flex';
+    } else {
+        if (floatingBtn) floatingBtn.style.display = 'none';
+    }
+}
+
 function toggleCartSidebar() {
     const sidebar = document.getElementById('cartSidebar');
-    const toggleBtn = sidebar.querySelector('.cart-toggle-btn');
-    const floatingBtn = document.querySelector('.floating-cart-btn');
-
     cartCollapsed = !cartCollapsed;
 
     if (cartCollapsed) {
         sidebar.classList.add('collapsed');
-        if (toggleBtn) toggleBtn.classList.add('collapsed');
-        if (floatingBtn) floatingBtn.classList.add('collapsed');
     } else {
         sidebar.classList.remove('collapsed');
-        if (toggleBtn) toggleBtn.classList.remove('collapsed');
-        if (floatingBtn) floatingBtn.classList.remove('collapsed');
+        sidebar.classList.remove('hidden');
     }
-
-    // Update floating button badge visibility
     updateFloatingCartBadge();
 }
 
@@ -684,9 +732,6 @@ function renderProducts() {
                 <span class="text-5xl text-slate-200 mb-4">🔍</span>
                 <p class="text-lg font-bold text-slate-300">Sin resultados</p>
                 <p class="text-sm text-slate-300 mt-1">Intenta con otros términos o categoría</p>
-                <button onclick="forceReloadProducts()" class="mt-4 text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1">
-                    <i data-lucide="refresh-cw" class="w-3 h-3"></i> Forzar recarga de productos
-                </button>
             </div>
         `;
         return;
@@ -695,7 +740,6 @@ function renderProducts() {
     grid.innerHTML = filtered.map(p => {
         const stockClass = p.stock <= 2 ? 'critical' : p.stock <= 5 ? 'low' : 'ok';
         const stockText = p.stock <= 2 ? '¡Últimas!' : p.stock <= 5 ? 'Pocas' : `${p.stock} pzas`;
-        // Add cache-busting param to image URL
         const imgSrc = p.img + (p.img.includes('?') ? '&' : '?') + 'v=' + DB_VERSION;
 
         return `
@@ -727,7 +771,7 @@ function renderCart() {
     const container = document.getElementById('cartItems');
 
     if (cart.length === 0) {
-        sidebar.classList.add('hidden', 'translate-x-full');
+        sidebar.classList.add('hidden');
         document.getElementById('btnCheckout').disabled = true;
         document.getElementById('txtSubtotal').innerText = '$0.00';
         document.getElementById('txtIva').innerText = '$0.00';
@@ -735,8 +779,9 @@ function renderCart() {
         return;
     }
 
-    sidebar.classList.remove('hidden', 'translate-x-full');
+    sidebar.classList.remove('hidden');
 
+    // FULL cart item content RESTORED
     container.innerHTML = cart.map(item => {
         const product = PRODUCTS.find(p => p.id === item.id);
         const stockLeft = product ? product.stock : 0;
@@ -766,6 +811,7 @@ function renderCart() {
         </div>
     `}).join('');
 
+    // FULL totals calculation RESTORED
     const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
     const iva = subtotal * 0.16;
     const total = subtotal + iva;
@@ -799,6 +845,11 @@ function addToCart(id) {
     renderCart();
     renderProducts();
     showToast(`${product.name} agregado`, 'success');
+
+    // Auto-expand cart on mobile when adding items
+    if (window.innerWidth < 1024 && cartCollapsed) {
+        toggleCartSidebar();
+    }
 }
 
 function updateQuantity(id, delta) {
@@ -825,6 +876,7 @@ function removeFromCart(id) {
     renderProducts();
 }
 
+// FIXED: Direct clear without confirmation (as requested)
 function clearCart() {
     if (cart.length === 0) return;
     cart = [];
@@ -1072,13 +1124,8 @@ function renderTicket() {
     lucide.createIcons();
 }
 
-function reprintTicket() {
-    showToast('Ticket listo para imprimir', 'success');
-}
-
-function goToBilling() {
-    showToast('Redirigiendo a facturación...', 'success');
-}
+function reprintTicket() { showToast('Ticket listo para imprimir', 'success'); }
+function goToBilling() { showToast('Redirigiendo a facturación...', 'success'); }
 
 function resetAll() {
     cart = [];
@@ -1113,30 +1160,24 @@ function renderCashPanel() {
     `).join('');
 }
 
-// === NEW: Force Reload Products Function ===
-function forceReloadProducts() {
-    if (confirm('¿Forzar recarga de productos?\n\nEsto limpiará los datos guardados y los volverá a cargar desde el servidor de demostración.')) {
-        DB.forceReloadProducts();
-    }
-}
-
 function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i>
-        <span class="message">${message}</span>
-    `;
+    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
     container.appendChild(toast);
     lucide.createIcons();
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(20px)';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+});
+
+window.handleImageError = function(img) {
+    img.src = `https://placehold.co/80x80/64748b/ffffff?text=IMG&v=${DB_VERSION}`;
+};
 
 window.onload = init;
     </script>
