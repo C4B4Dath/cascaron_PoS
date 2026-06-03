@@ -41,7 +41,7 @@
     '  #nexpos-sidebar.collapsed { width: 16rem !important; }' +
     '  .sidebar-backdrop {' +
     '    display: block; position: fixed; inset: 0;' +
-    '    background: rgba(0,0,0,0.5); z-index: 9998;' +
+    '    background: rgba(0,0,0,0.5); z-index: 9997; left: 16rem;' +
     '    opacity: 0; visibility: hidden; transition: all 0.3s ease;' +
     '  }' +
     '  .sidebar-backdrop.active { opacity: 1; visibility: visible; }' +
@@ -70,7 +70,7 @@
   function isActive(href) { return currentPage === href; }
 
   var sidebarHTML =
-    '<div id="nexpos-sidebar" class="fixed left-0 top-0 h-full bg-slate-900 text-white z-[9999] flex flex-col shadow-2xl overflow-y-auto custom-scrollbar">' +
+    '<div id="nexpos-sidebar" class="fixed left-0 top-0 h-full bg-slate-900 text-white z-[10000] flex flex-col shadow-2xl overflow-y-auto custom-scrollbar">' +
     '  <div class="sidebar-header p-4 border-b border-slate-700 flex items-center gap-3 flex-shrink-0 relative">' +
     '    <div class="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">' +
     '      <span class="text-white text-xs font-black tracking-tighter">N:</span>' +

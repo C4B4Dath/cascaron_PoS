@@ -6,9 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>NexPoS - Configuración</title>
+    <title>NexPoS — Configuración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-<style>
+    <style>
 /* === NEXPOS DESIGN SYSTEM === */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -21,9 +22,7 @@ body {
 .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
-* { scrollbar-width: thin; scrollbar-color: #94a3b8 #f1f5f9; }
 
-/* Colors */
 :root {
     --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
     --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
@@ -31,437 +30,563 @@ body {
     --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
     --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
     --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
-    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706; --amber-700: #b45309;
+    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
+    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
 }
 
-/* Layout */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-wrap { flex-wrap: wrap; }
-.flex-1 { flex: 1 1 0%; }
-.flex-shrink-0 { flex-shrink: 0; }
-.grid { display: grid; }
-.hidden { display: none !important; }
-.block { display: block; }
-.inline-block { display: inline-block; }
-.overflow-hidden { overflow: hidden; }
-.overflow-x-auto { overflow-x: auto; }
-.overflow-y-auto { overflow-y: auto; }
-.relative { position: relative; }
-.absolute { position: absolute; }
-.fixed { position: fixed; }
-.sticky { position: sticky; }
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.top-0 { top: 0; }
-.z-10 { z-index: 10; }
-.z-40 { z-index: 40; }
-.z-50 { z-index: 50; }
+.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
+.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
+.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; }
 
-/* Alignment */
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.items-end { align-items: flex-end; }
-.items-baseline { align-items: baseline; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.justify-end { justify-content: flex-end; }
-.justify-around { justify-content: space-around; }
-.self-start { align-self: flex-start; }
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
+.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
 
-/* Sizing */
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.w-3 { width: 0.75rem; }
-.w-7 { width: 1.75rem; }
-.w-8 { width: 2rem; }
-.w-9 { width: 2.25rem; }
-.w-10 { width: 2.5rem; }
-.w-11 { width: 2.75rem; }
-.w-20 { width: 5rem; }
-.w-56 { width: 14rem; }
-.h-2 { height: 0.5rem; }
-.h-2\.5 { height: 0.625rem; }
-.h-3 { height: 0.75rem; }
-.h-4 { height: 1rem; }
-.h-5 { height: 1.25rem; }
-.h-6 { height: 1.5rem; }
-.h-7 { height: 1.75rem; }
-.h-8 { height: 2rem; }
-.h-9 { height: 2.25rem; }
-.h-10 { height: 2.5rem; }
-.h-11 { height: 2.75rem; }
-.h-20 { height: 5rem; }
-.h-48 { height: 12rem; }
-.h-screen { height: 100vh; }
-.min-h-screen { min-height: 100vh; }
-.min-h-0 { min-height: 0; }
-.max-w-5xl { max-width: 64rem; }
-.max-w-7xl { max-width: 80rem; }
-.max-w-md { max-width: 28rem; }
-.max-w-sm { max-width: 24rem; }
-.max-w-xs { max-width: 20rem; }
-.mx-auto { margin-left: auto; margin-right: auto; }
+.w-full { width: 100%; } .h-full { height: 100%; }
+.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
+.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
+.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
+.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-screen { height: 100vh; }
+.max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
 
-/* Padding/Spacing patterns - utility */
 .p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
-.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; }
-.p-8 { padding: 2rem; } .p-10 { padding: 2.5rem; }
-.px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
-.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
-.px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+.p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
 .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
 .px-4 { padding-left: 1rem; padding-right: 1rem; }
-.px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-.px-8 { padding-left: 2rem; padding-right: 2rem; }
-.py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
 .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-.py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
-.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
 .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
 .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
 .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
-.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-.pt-2 { padding-top: 0.5rem; }
-.pt-4 { padding-top: 1rem; }
-.pt-6 { padding-top: 1.5rem; }
-.pb-1 { padding-bottom: 0.25rem; }
-.pb-2 { padding-bottom: 0.5rem; }
-.pb-3 { padding-bottom: 0.75rem; }
-.pb-4 { padding-bottom: 1rem; }
-.pb-6 { padding-bottom: 1.5rem; }
-.pl-3 { padding-left: 0.75rem; }
-.pl-4 { padding-left: 1rem; }
-.pl-6 { padding-left: 1.5rem; }
-.pl-11 { padding-left: 2.75rem; }
-.pr-4 { padding-right: 1rem; }
-.pr-6 { padding-right: 1.5rem; }
+.pt-4 { padding-top: 1rem; } .pb-2 { padding-bottom: 0.5rem; }
+.pl-3 { padding-left: 0.75rem; } .pr-4 { padding-right: 1rem; }
 
-.m-0 { margin: 0; }
-.mt-1 { margin-top: 0.25rem; }
-.mt-2 { margin-top: 0.5rem; }
-.mt-4 { margin-top: 1rem; }
-.mt-6 { margin-top: 1.5rem; }
-.mb-1 { margin-bottom: 0.25rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-6 { margin-bottom: 1.5rem; }
-.ml-1 { margin-left: 0.25rem; }
-.ml-2 { margin-left: 0.5rem; }
-.ml-4 { margin-left: 1rem; }
-.mr-2 { margin-right: 0.5rem; }
-.mr-3 { margin-right: 0.75rem; }
-.-mt-1 { margin-top: -0.25rem; }
-.-top-6 { top: -1.5rem; }
-.left-1\/2 { left: 50%; }
-.-translate-x-1\/2 { transform: translateX(-50%); }
-.-translate-y-1\/2 { transform: translateY(-50%); }
-.space-x-0\.5 > * + * { margin-left: 0.125rem; }
-.space-x-1 > * + * { margin-left: 0.25rem; }
-.space-x-1\.5 > * + * { margin-left: 0.375rem; }
-.space-x-2 > * + * { margin-left: 0.5rem; }
-.space-x-3 > * + * { margin-left: 0.75rem; }
-.space-x-4 > * + * { margin-left: 1rem; }
-.space-x-6 > * + * { margin-left: 1.5rem; }
-.space-x-8 > * + * { margin-left: 2rem; }
-.space-y-1 > * + * { margin-top: 0.25rem; }
-.space-y-2 > * + * { margin-top: 0.5rem; }
-.space-y-3 > * + * { margin-top: 0.75rem; }
-.space-y-4 > * + * { margin-top: 1rem; }
-.space-y-6 > * + * { margin-top: 1.5rem; }
-.space-y-8 > * + * { margin-top: 2rem; }
-.gap-2 { gap: 0.5rem; }
-.gap-3 { gap: 0.75rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
+.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
+.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; } .space-y-6 > * + * { margin-top: 1.5rem; }
+.gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
 
-.cursor-pointer { cursor: pointer; }
+.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
 
-/* Typography */
-.text-xs { font-size: 0.75rem; line-height: 1rem; }
-.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-.text-base { font-size: 1rem; line-height: 1.5rem; }
-.text-lg { font-size: 1.125rem; line-height: 1.5rem; }
-.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-.text-2xl { font-size: 1.5rem; line-height: 2rem; }
-.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-.text-\[10px\] { font-size: 0.625rem; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-.font-extrabold { font-weight: 800; }
-.font-black { font-weight: 900; }
-.font-mono { font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Courier, monospace; }
+.text-xs { font-size: 0.75rem; line-height: 1rem; } .text-sm { font-size: 0.875rem; }
+.text-base { font-size: 1rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
+.font-mono { font-family: 'SF Mono', Menlo, monospace; }
 .uppercase { text-transform: uppercase; }
-.tracking-tight { letter-spacing: -0.025em; }
-.tracking-wider { letter-spacing: 0.05em; }
-.tracking-widest { letter-spacing: 0.1em; }
-.leading-relaxed { line-height: 1.625; }
-.antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; }
+.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Text Colors */
 .text-white { color: #fff; }
-.text-slate-300 { color: var(--slate-300); }
-.text-slate-400 { color: var(--slate-400); }
-.text-slate-500 { color: var(--slate-500); }
-.text-slate-600 { color: var(--slate-600); }
-.text-slate-700 { color: var(--slate-700); }
-.text-slate-800 { color: var(--slate-800); }
-.text-slate-900 { color: var(--slate-900); }
-.text-emerald-500 { color: var(--emerald-500); }
-.text-emerald-600 { color: var(--emerald-600); }
+.text-slate-400 { color: var(--slate-400); } .text-slate-500 { color: var(--slate-500); }
+.text-slate-600 { color: var(--slate-600); } .text-slate-700 { color: var(--slate-700); }
+.text-slate-800 { color: var(--slate-800); } .text-slate-900 { color: var(--slate-900); }
+.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
 .text-emerald-700 { color: var(--emerald-700); }
-.text-rose-500 { color: var(--rose-500); }
-.text-rose-600 { color: var(--rose-600); }
-.text-rose-700 { color: var(--rose-700); }
-.text-blue-500 { color: var(--blue-500); }
-.text-blue-600 { color: var(--blue-600); }
-.text-amber-500 { color: var(--amber-500); }
-.text-amber-600 { color: var(--amber-600); }
-.text-yellow-400 { color: #facc15; }
+.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
+.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
+.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
 
-/* Backgrounds */
 .bg-white { background-color: #fff; }
-.bg-slate-50 { background-color: var(--slate-50); }
-.bg-slate-100 { background-color: var(--slate-100); }
-.bg-slate-200 { background-color: var(--slate-200); }
-.bg-slate-400 { background-color: var(--slate-400); }
-.bg-slate-500 { background-color: var(--slate-500); }
-.bg-slate-900 { background-color: var(--slate-900); }
-.bg-emerald-50 { background-color: var(--emerald-50); }
-.bg-emerald-500 { background-color: var(--emerald-500); }
-.bg-rose-50 { background-color: var(--rose-50); }
-.bg-rose-500 { background-color: var(--rose-500); }
-.bg-blue-50 { background-color: var(--blue-50); }
-.bg-blue-500 { background-color: var(--blue-500); }
-.bg-blue-600 { background-color: var(--blue-600); }
+.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
+.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
+.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
+.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
 .bg-amber-50 { background-color: var(--amber-50); }
-.bg-amber-500 { background-color: var(--amber-500); }
-.bg-purple-50 { background-color: #faf5ff; }
-.bg-transparent { background-color: transparent; }
-.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
-.bg-slate-50\/30 { background-color: rgba(248, 250, 252, 0.3); }
-.bg-slate-50\/40 { background-color: rgba(248, 250, 252, 0.4); }
-.bg-slate-50\/50 { background-color: rgba(248, 250, 252, 0.5); }
-.bg-slate-950\/20 { background-color: rgba(2, 6, 23, 0.2); }
 
-/* Borders */
-.border { border: 1px solid; }
-.border-0 { border: none; }
-.border-b { border-bottom-width: 1px; border-bottom-style: solid; }
-.border-t { border-top-width: 1px; border-top-style: solid; }
-.border-l-4 { border-left-width: 4px; border-left-style: solid; }
-.border-dashed { border-style: dashed; }
-.border-slate-100 { border-color: var(--slate-100); }
-.border-slate-200 { border-color: var(--slate-200); }
+.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
+.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
+.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
 .border-slate-900 { border-color: var(--slate-900); }
-.border-emerald-200 { border-color: #a7f3d0; }
-.border-rose-200 { border-color: #fecaca; }
 .border-emerald-500 { border-color: var(--emerald-500); }
 .border-transparent { border-color: transparent; }
 .divide-y > * + * { border-top: 1px solid var(--slate-100); }
 
-/* Border Radius */
-.rounded { border-radius: 0.25rem; }
-.rounded-lg { border-radius: 0.5rem; }
-.rounded-xl { border-radius: 0.75rem; }
-.rounded-2xl { border-radius: 1rem; }
-.rounded-full { border-radius: 9999px; }
-
-/* Shadows */
+.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
 .shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
 .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
 .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
-.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
 
-/* Transitions */
-.transition-all { transition: all 0.2s ease; }
-.transition-colors { transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease; }
-.transition-transform { transition: transform 0.2s ease; }
-.duration-300 { transition-duration: 300ms; }
+.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 2s infinite; }
 
-/* Hover/Active */
 .hover\:bg-slate-50:hover { background-color: var(--slate-50); }
 .hover\:bg-slate-100:hover { background-color: var(--slate-100); }
 .hover\:bg-slate-800:hover { background-color: #1e293b; }
 .hover\:bg-emerald-100:hover { background-color: #d1fae5; }
 .hover\:bg-rose-50:hover { background-color: var(--rose-50); }
-.hover\:bg-rose-100:hover { background-color: #ffe4e6; }
-.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
 .hover\:text-slate-600:hover { color: var(--slate-600); }
 .hover\:text-slate-900:hover { color: var(--slate-900); }
 .hover\:text-rose-600:hover { color: var(--rose-600); }
-.hover\:text-rose-700:hover { color: var(--rose-700); }
-.hover\:bg-slate-50\/40:hover { background-color: rgba(248, 250, 252, 0.4); }
 .hover\:border-slate-300:hover { border-color: var(--slate-300); }
-.hover\:border-slate-400:hover { border-color: var(--slate-400); }
-.hover\:opacity-100:hover { opacity: 1; }
-.hover\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
 .active\:scale-95:active { transform: scale(0.95); }
-.active\:scale-98:active { transform: scale(0.98); }
 
-/* Animations */
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.animate-fade-in { animation: fadeIn 0.3s ease; }
-@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
-.animate-slide-right { animation: slideInRight 0.3s ease; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-.animate-slide-up { animation: slideUp 0.3s ease; }
-
-/* Backdrop */
 .backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Input Focus */
-input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
-
-/* Disabled */
-button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* Responsive Grid */
 .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
 @media (min-width: 768px) {
     .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-    .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .md\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
     .md\:flex-row { flex-direction: row; }
-    .md\:w-96 { width: 24rem; }
-    .md\:w-auto { width: auto; }
-    .md\:pb-0 { padding-bottom: 0; }
 }
 @media (min-width: 1024px) {
     .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
     .lg\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-    .lg\:col-span-2 { grid-column: span 2; }
-}
-@media (min-width: 1280px) {
-    .xl\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* States */
-.disabled\:opacity-40:disabled { opacity: 0.4; }
-.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
-.disabled\:bg-slate-100:disabled { background-color: #f1f5f9; }
-.disabled\:text-slate-300:disabled { color: #cbd5e1; }
-.group:hover .group-hover\:scale-105 { transform: scale(1.05); }
-.hover\:scale-125:hover { transform: scale(1.25); }
-.cursor-not-allowed { cursor: not-allowed; }
-.select-none { -webkit-user-select: none; user-select: none; }
-.italic { font-style: italic; }
-
-/* Additional utilities */
-.space-y-5 > * + * { margin-top: 1.25rem; }
-.space-y-10 > * + * { margin-top: 2.5rem; }
-.gap-8 { gap: 2rem; }
-.gap-5 { gap: 1.25rem; }
-.whitespace-nowrap { white-space: nowrap; }
-.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.object-cover { object-fit: cover; }
-.appearance-none { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
-.leading-snug { line-height: 1.375; }
-.min-w-\[120px\] { min-width: 120px; }
-.min-w-\[200px\] { min-width: 200px; }
-.max-w-\[160px\] { max-width: 160px; }
-.col-span-full { grid-column: 1 / -1; }
-.aspect-square { aspect-ratio: 1 / 1; }
-.opacity-40 { opacity: 0.4; }
-.opacity-50 { opacity: 0.5; }
-.opacity-0 { opacity: 0; }
-.group:hover .group-hover\:opacity-100 { opacity: 1; }
-.border-slate-700 { border-color: #334155; }
-.text-slate-950 { color: #020617; }
-.text-5xl { font-size: 3rem; line-height: 1; }
-.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-.text-\[5rem\] { font-size: 5rem; }
-
-/* Responsive helpers */
-@media (min-width: 768px) {
-    .md\:inline { display: inline !important; }
-    .md\:hidden { display: none !important; }
+/* Toast Notification */
+.toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
+    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
+    display: flex; align-items: center; gap: 0.75rem;
+    animation: fadeIn 0.3s ease; max-width: 320px;
 }
-@media (min-width: 1024px) {
-    .lg\:col-span-1 { grid-column: span 1; }
-    .lg\:col-span-3 { grid-column: span 3; }
+.toast.success { border-left: 4px solid var(--emerald-500); }
+.toast.error { border-left: 4px solid var(--rose-500); }
+.toast .icon { width: 1.25rem; height: 1.25rem; }
+.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+
+/* Demo Badge */
+.demo-badge {
+    position: fixed; top: 1rem; right: 1rem; z-index: 60;
+    background: var(--amber-50); color: var(--amber-700);
+    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
+    animation: pulse 2s infinite;
 }
 
+/* Settings Specific Styles */
+.settings-card {
+    background: white; border: 1px solid var(--slate-100);
+    border-radius: 1rem; padding: 1.5rem;
+    box-shadow: var(--shadow-xs);
+}
+.settings-section {
+    border-left: 4px solid var(--slate-900);
+    padding-left: 0.75rem;
+    margin-bottom: 1rem;
+}
+.settings-section-title {
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--slate-400);
+}
 
-/* Settings page specific styles */
+.form-group { margin-bottom: 1rem; }
+.form-label {
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--slate-400);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+.form-input {
+    width: 100%;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 0.75rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
+.form-input.mono { font-family: monospace; font-weight: 700; }
 
-</style>
-    <link rel="stylesheet" href="shared/responsive.css?v=1">
+/* Branch Item */
+.branch-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem; border: 1px solid var(--slate-100);
+    border-radius: 1rem; transition: all 0.15s ease;
+}
+.branch-item:hover { background: var(--slate-50/40); border-color: var(--slate-200); }
+.branch-info { flex: 1; }
+.branch-name { font-weight: 700; color: var(--slate-900); font-size: 0.875rem; }
+.branch-address { font-size: 0.75rem; color: var(--slate-400); }
+.branch-status {
+    padding: 0.25rem 0.75rem; border-radius: 9999px;
+    font-size: 0.625rem; font-weight: 800; text-transform: uppercase;
+    cursor: pointer; transition: all 0.15s ease;
+}
+.branch-status.active { background: var(--emerald-50); color: var(--emerald-700); }
+.branch-status.inactive { background: var(--slate-100); color: var(--slate-500); }
+
+/* Add Branch Button */
+.add-branch-btn {
+    width: 100%; border: 2px dashed var(--slate-200);
+    border-radius: 1rem; padding: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    gap: 0.5rem; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--slate-400); cursor: pointer;
+    transition: all 0.15s ease;
+}
+.add-branch-btn:hover {
+    border-color: var(--slate-400);
+    background: var(--slate-50);
+    color: var(--slate-600);
+}
+
+/* Action Buttons */
+.action-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem 1.5rem; border-radius: 0.75rem;
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.05em; transition: all 0.15s ease; cursor: pointer;
+}
+.action-btn.primary {
+    background: var(--slate-900); color: white;
+    border: 1px solid var(--slate-900);
+}
+.action-btn.primary:hover { background: var(--slate-800); }
+.action-btn.secondary {
+    background: white; color: var(--slate-700);
+    border: 1px solid var(--slate-200);
+}
+.action-btn.secondary:hover { background: var(--slate-50); }
+.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Modal */
+.modal-overlay {
+    position: fixed; inset: 0; background: var(--slate-950/20);
+    backdrop-filter: blur(2px); display: flex;
+    align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; visibility: hidden; transition: all 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-content {
+    background: white; border-radius: 1rem; padding: 1.5rem;
+    width: 100%; max-width: 28rem; box-shadow: var(--shadow-xl);
+    transform: translateY(10px); transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+
+/* Loading Spinner */
+.spinner {
+    width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-loading .spinner { display: inline-block; }
+.btn-loading .btn-text { display: none; }
+    </style>
 </head>
 <body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+
+    <!-- Demo Badge -->
+    <div class="demo-badge">
+        <i data-lucide="zap" class="w-3 h-3"></i>
+        <span>Modo Demo</span>
+    </div>
+
+    <!-- Main Content -->
     <div class="main-content">
-    <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
-        <div class="flex items-center space-x-4">
-            <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
-                <span class="text-white text-sm font-black tracking-tighter">N:</span>
+        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+            <div class="flex items-center gap-4">
+                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                    <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span>
+                </div>
             </div>
-            <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS <span class="text-xs font-normal text-slate-400 ml-2">Panel de Administración</span></span>
-        </div>
-        <div class="text-right">
-            <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Administrador</p>
-        </div>
-    </header>
-    <div class="max-w-7xl mx-auto px-8 py-12 space-y-8">
-        <div>
-            <h1 class="text-3xl font-black tracking-tight text-slate-900">Configuraci&oacute;n del Sistema</h1>
-            <p class="text-slate-500 mt-1 text-sm">Administra la configuraci&oacute;n general y sucursales</p>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-6">
-                <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-slate-900 pl-3">Generales</h2>
-                <div class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-black text-slate-400 uppercase tracking-wider block">Nombre del Negocio</label>
-                        <input type="text" id="businessName" value="NexPoS Retail" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-400 transition-all">
+            <div class="flex items-center gap-4">
+                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <i data-lucide="store" class="w-3 h-3"></i>Central
+                </span>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Diego Mendoza</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Administrador</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 py-12 space-y-8">
+
+            <!-- Page Header -->
+            <div>
+                <h1 class="text-3xl font-black tracking-tight text-slate-900">Configuración del Sistema</h1>
+                <p class="text-slate-500 mt-1 text-sm">Administra la configuración general y sucursales</p>
+            </div>
+
+            <!-- Settings Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- General Settings Card -->
+                <div class="settings-card space-y-6">
+                    <h2 class="settings-section-title settings-section">Generales</h2>
+
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label" for="businessName">Nombre del Negocio</label>
+                            <input type="text" id="businessName" value="NexPoS Retail" class="form-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="rfc">RFC</label>
+                            <input type="text" id="rfc" value="NEXR260101XXX" class="form-input mono" maxlength="13" pattern="[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}" placeholder="AAA010101AAA">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="form-label" for="iva">IVA Predeterminado</label>
+                                <select id="iva" class="form-input cursor-pointer">
+                                    <option value="0">0% - Exento</option>
+                                    <option value="8">8% - Frontera</option>
+                                    <option value="16" selected>16% - General</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="currency">Moneda</label>
+                                <select id="currency" class="form-input cursor-pointer">
+                                    <option value="MXN" selected>MXN - Peso Mexicano</option>
+                                    <option value="USD">USD - Dólar Americano</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="timezone">Zona Horaria</label>
+                            <select id="timezone" class="form-input cursor-pointer">
+                                <option value="America/Mexico_City" selected>México - Centro (GMT-6)</option>
+                                <option value="America/Tijuana">México - Pacífico (GMT-8)</option>
+                                <option value="America/Cancun">México - Caribe (GMT-5)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-black text-slate-400 uppercase tracking-wider block">RFC</label>
-                        <input type="text" id="rfc" value="NEXR260101XXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono font-bold focus:outline-none focus:ring-2 focus:ring-slate-400 transition-all">
+                </div>
+
+                <!-- Branches Card -->
+                <div class="settings-card space-y-6">
+                    <h2 class="settings-section-title settings-section">Multi-Sucursal</h2>
+
+                    <div id="branchesContainer" class="space-y-3"></div>
+
+                    <button onclick="openBranchModal()" class="add-branch-btn">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Agregar Sucursal</span>
+                    </button>
+
+                    <p class="text-xs text-slate-400 text-center">
+                        <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                        Las sucursales inactivas no aparecerán en el punto de venta
+                    </p>
+                </div>
+
+                <!-- POS Settings Card -->
+                <div class="settings-card space-y-6">
+                    <h2 class="settings-section-title settings-section">Punto de Venta</h2>
+
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label">Ticket por Defecto</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="ticketType" value="simple" checked class="w-4 h-4">
+                                    <span class="text-sm">Simple (sin logo)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="ticketType" value="detailed" class="w-4 h-4">
+                                    <span class="text-sm">Detallado (con logo y footer)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="footerText">Texto del Footer del Ticket</label>
+                            <textarea id="footerText" rows="2" class="form-input" placeholder="Gracias por su compra">Gracias por su compra • NexPoS Retail</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="askForInvoice" checked class="w-4 h-4 rounded">
+                                <span class="text-sm font-medium">Preguntar por factura al finalizar venta</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="autoPrint" class="w-4 h-4 rounded">
+                                <span class="text-sm font-medium">Imprimir ticket automáticamente</span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-black text-slate-400 uppercase tracking-wider block">IVA Predeterminado</label>
-                        <input type="text" id="iva" value="16%" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono font-bold focus:outline-none focus:ring-2 focus:ring-slate-400 transition-all">
+                </div>
+
+                <!-- Security Card -->
+                <div class="settings-card space-y-6">
+                    <h2 class="settings-section-title settings-section">Seguridad</h2>
+
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label class="form-label" for="pinLength">Longitud del PIN de Cajero</label>
+                            <select id="pinLength" class="form-input cursor-pointer">
+                                <option value="4">4 dígitos</option>
+                                <option value="6" selected>6 dígitos</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="requirePinForVoid" checked class="w-4 h-4 rounded">
+                                <span class="text-sm font-medium">Requerir PIN para cancelar ventas</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="requirePinForDiscount" checked class="w-4 h-4 rounded">
+                                <span class="text-sm font-medium">Requerir PIN para aplicar descuentos</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="logAllActions" checked class="w-4 h-4 rounded">
+                                <span class="text-sm font-medium">Registrar todas las acciones en auditoría</span>
+                            </label>
+                        </div>
+
+                        <button onclick="changeAdminPassword()" class="w-full action-btn secondary justify-center">
+                            <i data-lucide="key" class="w-4 h-4"></i>
+                            <span>Cambiar Contraseña de Administrador</span>
+                        </button>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-black text-slate-400 uppercase tracking-wider block">Moneda</label>
-                        <select id="currency" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-slate-400 transition-all appearance-none">
-                            <option value="MXN" selected>MXN - Peso Mexicano</option>
-                            <option value="USD">USD - D&oacute;lar Americano</option>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 pt-4">
+                <button onclick="cancelChanges()" class="action-btn secondary">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                    <span>Cancelar</span>
+                </button>
+                <button onclick="saveSettings()" id="saveBtn" class="action-btn primary">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span class="btn-text">Guardar Cambios</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Add/Edit Branch Modal -->
+    <div id="branchModal" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900" id="modalTitle">Nueva Sucursal</h3>
+                <button onclick="closeBranchModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="editBranchId">
+
+            <div class="space-y-3">
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Sucursal <span class="text-rose-500">*</span></label>
+                    <input type="text" id="branchName" placeholder="Ej: Sucursal Norte" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" id="branchAddress" placeholder="Calle, Número, Colonia, CP" class="form-input">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" id="branchPhone" placeholder="55 1234 5678" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="branchStatus" class="form-input cursor-pointer">
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-6">
-                <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 border-l-4 border-slate-900 pl-3">Multi-Sucursal</h2>
-                <div id="branchesContainer" class="space-y-3"></div>
-                <button onclick="agregarSucursal()" class="w-full border-2 border-dashed border-slate-200 hover:border-slate-400 hover:bg-slate-50 rounded-2xl py-4 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider transition-all flex items-center justify-center space-x-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Agregar Sucursal</span>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeBranchModal()" class="flex-1 action-btn secondary justify-center">Cancelar</button>
+                <button onclick="saveBranch()" class="flex-1 action-btn primary justify-center">
+                    <span class="btn-text">Guardar</span>
+                    <span class="spinner"></span>
                 </button>
             </div>
         </div>
-        <div class="flex justify-end space-x-4">
-            <button onclick="cancelar()" class="border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
-            <button onclick="guardar()" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center space-x-2">
-                <i data-lucide="save" class="w-4 h-4"></i>
-                <span>Guardar Cambios</span>
-            </button>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900">Cambiar Contraseña</h3>
+                <button onclick="closePasswordModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div class="form-group">
+                    <label class="form-label">Contraseña Actual</label>
+                    <input type="password" id="currentPassword" class="form-input" placeholder="••••••••">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nueva Contraseña</label>
+                    <input type="password" id="newPassword" class="form-input" placeholder="Mínimo 8 caracteres">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="••••••••">
+                </div>
+
+                <p class="text-xs text-slate-400">
+                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                    La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.
+                </p>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="closePasswordModal()" class="flex-1 action-btn secondary justify-center">Cancelar</button>
+                <button onclick="updatePassword()" class="flex-1 action-btn primary justify-center">
+                    <span class="btn-text">Actualizar</span>
+                    <span class="spinner"></span>
+                </button>
+            </div>
         </div>
     </div>
-    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+
     <script>
 // === DATABASE ===
 const DB_VERSION = '1.0';
@@ -478,183 +603,314 @@ const DB = {
     _set(key, val) {
         localStorage.setItem('nexpos_' + key, JSON.stringify({ value: val, version: DB_VERSION }));
     },
-
-    getSales() { return this._get('sales', []); },
-    setSales(s) { this._set('sales', s); },
-    addSale(sale) {
-        const sales = this.getSales();
-        sales.unshift(sale);
-        this.setSales(sales);
-        this._updateCashRegister(sale);
-        this._updateInventory(sale);
-        return sale;
-    },
-    _updateCashRegister(sale) {
-        const movs = this._get('cash_movements', []);
-        movs.unshift({
-            id: Date.now(),
-            time: sale.time,
-            type: 'Ingreso',
-            concept: 'Venta ' + sale.ticket,
-            amount: sale.total,
-            balance: 0
-        });
-        this._set('cash_movements', movs);
-    },
-    _updateInventory(sale) {
-        const inv = this.getInventory();
-        sale.items.forEach(item => {
-            const prod = inv.find(p => p.sku === item.sku);
-            if (prod) {
-                prod.stock = Math.max(0, prod.stock - item.quantity);
-            }
-        });
-        this.setInventory(inv);
-    },
-
-    getInventory() {
-        let inv = this._get('inventory', []);
-        if (inv.length === 0) {
-            inv = [
-                { id: 1, sku: 'SKU-48291', name: 'Paracetamol 500mg', category: 'Farmacia', stock: 42, price: 45.00, img: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=80&auto=format&fit=crop&q=80' },
-                { id: 2, sku: 'SKU-10293', name: 'Coca-Cola Refresco 600ml', category: 'Bebidas', stock: 8, price: 18.50, img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=80&auto=format&fit=crop&q=80' },
-                { id: 3, sku: 'SKU-77123', name: 'Doritos Nacho 64g', category: 'Botanas', stock: 2, price: 21.00, img: 'https://images.unsplash.com/photo-1612282131721-6e5a26c8fdba?w=80&auto=format&fit=crop&q=80' },
-            ];
-            this._set('inventory', inv);
-        }
-        return inv;
-    },
-    setInventory(inv) { this._set('inventory', inv); },
-
-    getCashBalance() { return this._get('cash_balance', { initial: 1500, current: 1500 }); },
-    setCashBalance(b) { this._set('cash_balance', b); },
-
-    getCashMovements() { return this._get('cash_movements', []); },
-    setCashMovements(m) { this._set('cash_movements', m); },
-
-    seedDemoData() {
-        const sales = this.getSales();
-        if (sales.length > 0) return;
-        const demo = [
-            { ticket: 'TKT-00430', date: '28/05/2026', time: '10:23', cashier: 'Diego Mendoza', method: 'Efectivo', status: 'Completada', subtotal: 1103.45, iva: 176.55, total: 1280.00, received: 1300.00, change: 20.00, items: [{ name: 'Paracetamol 500mg', quantity: 5, price: 45.00 }, { name: 'Coca-Cola 600ml', quantity: 12, price: 18.50 }, { name: 'Sabritas 45g', quantity: 10, price: 22.00 }] },
-            { ticket: 'TKT-00431', date: '28/05/2026', time: '11:45', cashier: 'Diego Mendoza', method: 'Tarjeta', status: 'Completada', subtotal: 2112.07, iva: 337.93, total: 2450.00, received: 2450.00, change: 0.00, items: [{ name: 'Paracetamol 500mg', quantity: 20, price: 45.00 }, { name: 'Detergente Líquido 1L', quantity: 5, price: 120.00 }, { name: 'Leche Entera 1L', quantity: 10, price: 28.00 }] },
-            { ticket: 'TKT-00429', date: '27/05/2026', time: '18:05', cashier: 'María López', method: 'Efectivo', status: 'Cancelada', subtotal: 297.41, iva: 47.59, total: 345.00, received: 0, change: 0, items: [{ name: 'Pan Dulce Concha', quantity: 3, price: 12.00 }, { name: 'Jugo Del Valle 1L', quantity: 5, price: 25.00 }] },
-            { ticket: 'TKT-00428', date: '27/05/2026', time: '16:30', cashier: 'María López', method: 'Tarjeta', status: 'Completada', subtotal: 489.48, iva: 78.32, total: 567.80, received: 567.80, change: 0, items: [{ name: 'Coca-Cola 600ml', quantity: 6, price: 18.50 }, { name: 'Sabritas 45g', quantity: 4, price: 22.00 }, { name: 'Agua Peñafiel 1L', quantity: 8, price: 15.00 }] },
-            { ticket: 'TKT-00427', date: '27/05/2026', time: '14:00', cashier: 'Carlos Ruiz', method: 'Efectivo', status: 'Completada', subtotal: 775.86, iva: 124.14, total: 900.00, received: 1000.00, change: 100.00, items: [{ name: 'Detergente Líquido 1L', quantity: 3, price: 120.00 }, { name: 'Leche Entera 1L', quantity: 10, price: 28.00 }, { name: 'Paracetamol 500mg', quantity: 4, price: 45.00 }] },
-        ];
-        demo.forEach(s => {
-            s.items = s.items.map(i => ({ ...i, sku: 'SKU-48291' }));
-        });
-        this.setSales(demo);
-
-        const movs = [
-            { id: 1, time: '09:00', type: 'Apertura', concept: 'Fondo inicial de caja', amount: 1500, balance: 1500 },
-            { id: 2, time: '10:23', type: 'Ingreso', concept: 'Venta ticket TKT-00430', amount: 1280, balance: 2780 },
-            { id: 3, time: '11:45', type: 'Ingreso', concept: 'Venta ticket TKT-00431', amount: 2450, balance: 5230 },
-            { id: 4, time: '13:10', type: 'Retiro', concept: 'Pago a proveedor', amount: -800, balance: 4430 },
-            { id: 5, time: '14:30', type: 'Ingreso', concept: 'Venta ticket TKT-00432', amount: 188.04, balance: 4618.04 },
-        ];
-        this.setCashMovements(movs);
-        this.setCashBalance({ initial: 1500, current: 4618.04 });
-    },
-
-    getLastTicketId() {
-        const sales = this.getSales();
-        let max = 432;
-        sales.forEach(s => {
-            const n = parseInt(s.ticket.replace('TKT-', ''));
-            if (n > max) max = n;
-        });
-        return max;
+    getConfig() { return this._get('config', this.getDefaultConfig()); },
+    setConfig(cfg) { this._set('config', cfg); },
+    getDefaultConfig() {
+        return {
+            businessName: 'NexPoS Retail',
+            rfc: 'NEXR260101XXX',
+            iva: '16',
+            currency: 'MXN',
+            timezone: 'America/Mexico_City',
+            ticketType: 'simple',
+            footerText: 'Gracias por su compra • NexPoS Retail',
+            askForInvoice: true,
+            autoPrint: false,
+            pinLength: 6,
+            requirePinForVoid: true,
+            requirePinForDiscount: true,
+            logAllActions: true,
+            branches: [
+                { id: 1, name: 'Central', address: 'Av. Principal #123, Centro', phone: '55 1234 5678', active: true },
+                { id: 2, name: 'Norte', address: 'Blvd. Norte #456, Industrial', phone: '55 8765 4321', active: true },
+                { id: 3, name: 'Sur', address: 'Calle Sur #789, Residencial', phone: '55 1122 3344', active: false }
+            ]
+        };
     }
 };
 
-
-</script>
-<script>
-let branches = [
-    { id: 1, name: 'Central', address: 'Av. Principal #123, Centro', active: true },
-    { id: 2, name: 'Norte', address: 'Blvd. Norte #456, Industrial', active: true },
-    { id: 3, name: 'Sur', address: 'Calle Sur #789, Residencial', active: false }
-];
+let branches = [];
 let nextBranchId = 4;
+
+function init() {
+    const config = DB.getConfig();
+
+    // Load general settings
+    document.getElementById('businessName').value = config.businessName;
+    document.getElementById('rfc').value = config.rfc;
+    document.getElementById('iva').value = config.iva;
+    document.getElementById('currency').value = config.currency;
+    document.getElementById('timezone').value = config.timezone;
+
+    // Load POS settings
+    document.querySelector(`input[name="ticketType"][value="${config.ticketType}"]`).checked = true;
+    document.getElementById('footerText').value = config.footerText;
+    document.getElementById('askForInvoice').checked = config.askForInvoice;
+    document.getElementById('autoPrint').checked = config.autoPrint;
+
+    // Load security settings
+    document.getElementById('pinLength').value = config.pinLength;
+    document.getElementById('requirePinForVoid').checked = config.requirePinForVoid;
+    document.getElementById('requirePinForDiscount').checked = config.requirePinForDiscount;
+    document.getElementById('logAllActions').checked = config.logAllActions;
+
+    // Load branches
+    branches = JSON.parse(JSON.stringify(config.branches));
+    nextBranchId = Math.max(...branches.map(b => b.id)) + 1;
+
+    renderBranches();
+    lucide.createIcons();
+}
 
 function renderBranches() {
     const container = document.getElementById('branchesContainer');
+
+    if (branches.length === 0) {
+        container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">No hay sucursales registradas</p>`;
+        return;
+    }
+
     container.innerHTML = branches.map(b => `
-        <div class="border border-slate-100 rounded-2xl p-4 flex items-center justify-between shadow-xs hover:shadow-md transition-all animate-fade-in">
-            <div class="space-y-1">
-                <p class="font-bold text-slate-900 text-sm">${b.name}</p>
-                <p class="text-xs text-slate-400">${b.address}</p>
+        <div class="branch-item">
+            <div class="branch-info">
+                <p class="branch-name">${b.name}</p>
+                <p class="branch-address">${b.address}${b.phone ? ` · ${b.phone}` : ''}</p>
             </div>
-            <span onclick="toggleBranch(${b.id})" class="cursor-pointer inline-block px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${b.active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}">${b.active ? 'Activa' : 'Inactiva'}</span>
+            <div class="flex items-center gap-3">
+                <span onclick="toggleBranch(${b.id})" class="branch-status ${b.active ? 'active' : 'inactive'}">
+                    ${b.active ? 'Activa' : 'Inactiva'}
+                </span>
+                <button onclick="editBranch(${b.id})" class="text-slate-400 hover:text-slate-600 transition-colors" title="Editar">
+                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                </button>
+                <button onclick="deleteBranch(${b.id})" class="text-slate-400 hover:text-rose-600 transition-colors" title="Eliminar">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
     `).join('');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    lucide.createIcons();
 }
 
 function toggleBranch(id) {
     const branch = branches.find(b => b.id === id);
-    if (branch) { branch.active = !branch.active; renderBranches(); }
+    if (branch) {
+        branch.active = !branch.active;
+        renderBranches();
+        showToast(`Sucursal "${branch.name}" ${branch.active ? 'activada' : 'desactivada'}`, 'success');
+    }
 }
 
-function agregarSucursal() {
-    const name = prompt('Nombre de la nueva sucursal:');
-    if (!name) return;
-    branches.push({ id: nextBranchId++, name, address: 'Dirección pendiente', active: true });
-    renderBranches();
-}
+function openBranchModal(branchId = null) {
+    const modal = document.getElementById('branchModal');
+    const title = document.getElementById('modalTitle');
 
-function guardar() {
-    const config = {
-        businessName: document.getElementById('businessName').value,
-        rfc: document.getElementById('rfc').value,
-        iva: document.getElementById('iva').value,
-        currency: document.getElementById('currency').value,
-        branches: branches
-    };
-    localStorage.setItem('nexpos_config', JSON.stringify(config));
-    alert('Configuración guardada exitosamente.');
-}
+    // Reset form
+    document.getElementById('editBranchId').value = '';
+    document.getElementById('branchName').value = '';
+    document.getElementById('branchAddress').value = '';
+    document.getElementById('branchPhone').value = '';
+    document.getElementById('branchStatus').value = 'active';
 
-function cancelar() {
-    const saved = localStorage.getItem('nexpos_config');
-    if (saved) {
-        try {
-            const cfg = JSON.parse(saved);
-            document.getElementById('businessName').value = cfg.businessName || 'NexPoS Retail';
-            document.getElementById('rfc').value = cfg.rfc || 'NEXR260101XXX';
-            document.getElementById('iva').value = cfg.iva || '16%';
-            document.getElementById('currency').value = cfg.currency || 'MXN';
-            if (cfg.branches) { branches = cfg.branches; }
-        } catch(e) {}
+    if (branchId) {
+        const branch = branches.find(b => b.id === branchId);
+        if (!branch) return;
+        title.innerText = 'Editar Sucursal';
+        document.getElementById('editBranchId').value = branch.id;
+        document.getElementById('branchName').value = branch.name;
+        document.getElementById('branchAddress').value = branch.address;
+        document.getElementById('branchPhone').value = branch.phone || '';
+        document.getElementById('branchStatus').value = branch.active ? 'active' : 'inactive';
     } else {
-        document.getElementById('businessName').value = 'NexPoS Retail';
-        document.getElementById('rfc').value = 'NEXR260101XXX';
-        document.getElementById('iva').value = '16%';
-        document.getElementById('currency').value = 'MXN';
+        title.innerText = 'Nueva Sucursal';
     }
-    renderBranches();
+
+    modal.classList.add('active');
+    setTimeout(() => document.getElementById('branchName').focus(), 100);
 }
 
-function loadConfig() {
-    const saved = localStorage.getItem('nexpos_config');
-    if (saved) {
-        try {
-            const cfg = JSON.parse(saved);
-            document.getElementById('businessName').value = cfg.businessName || 'NexPoS Retail';
-            document.getElementById('rfc').value = cfg.rfc || 'NEXR260101XXX';
-            document.getElementById('iva').value = cfg.iva || '16%';
-            document.getElementById('currency').value = cfg.currency || 'MXN';
-            if (cfg.branches) { branches = cfg.branches; }
-        } catch(e) {}
-    }
-    renderBranches();
+function closeBranchModal() {
+    document.getElementById('branchModal').classList.remove('active');
 }
 
-document.addEventListener('DOMContentLoaded', loadConfig);
+function saveBranch() {
+    const id = document.getElementById('editBranchId').value;
+    const name = document.getElementById('branchName').value.trim();
+    const address = document.getElementById('branchAddress').value.trim();
+    const phone = document.getElementById('branchPhone').value.trim();
+    const active = document.getElementById('branchStatus').value === 'active';
 
-</script>
-    <script src="shared/navbar.js?v=1"></script>
+    if (!name) {
+        showToast('El nombre de la sucursal es requerido', 'error');
+        return;
+    }
+
+    const btn = document.querySelector('#branchModal .action-btn.primary');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        if (id) {
+            // Edit existing
+            const idx = branches.findIndex(b => b.id == id);
+            if (idx >= 0) {
+                branches[idx] = { ...branches[idx], name, address, phone, active };
+                showToast('Sucursal actualizada', 'success');
+            }
+        } else {
+            // Add new
+            branches.push({ id: nextBranchId++, name, address, phone, active });
+            showToast('Sucursal agregada', 'success');
+        }
+
+        closeBranchModal();
+        renderBranches();
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 500);
+}
+
+function editBranch(id) {
+    openBranchModal(id);
+}
+
+function deleteBranch(id) {
+    if (branches.length <= 1) {
+        showToast('Debe haber al menos una sucursal', 'error');
+        return;
+    }
+    if (!confirm('¿Eliminar esta sucursal? Esta acción no se puede deshacer.')) return;
+
+    branches = branches.filter(b => b.id !== id);
+    renderBranches();
+    showToast('Sucursal eliminada', 'success');
+}
+
+function openPasswordModal() {
+    document.getElementById('passwordModal').classList.add('active');
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').classList.remove('active');
+}
+
+function changeAdminPassword() {
+    openPasswordModal();
+}
+
+function updatePassword() {
+    const current = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+
+    if (!current || !newPass || !confirm) {
+        showToast('Completa todos los campos', 'error');
+        return;
+    }
+    if (newPass.length < 8) {
+        showToast('La nueva contraseña debe tener al menos 8 caracteres', 'error');
+        return;
+    }
+    if (newPass !== confirm) {
+        showToast('Las contraseñas no coinciden', 'error');
+        return;
+    }
+
+    // In demo mode, just simulate
+    const btn = document.querySelector('#passwordModal .action-btn.primary');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        closePasswordModal();
+        showToast('Contraseña actualizada exitosamente', 'success');
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+    }, 1000);
+}
+
+function saveSettings() {
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.classList.add('btn-loading');
+
+    setTimeout(() => {
+        const config = {
+            businessName: document.getElementById('businessName').value,
+            rfc: document.getElementById('rfc').value,
+            iva: document.getElementById('iva').value,
+            currency: document.getElementById('currency').value,
+            timezone: document.getElementById('timezone').value,
+            ticketType: document.querySelector('input[name="ticketType"]:checked').value,
+            footerText: document.getElementById('footerText').value,
+            askForInvoice: document.getElementById('askForInvoice').checked,
+            autoPrint: document.getElementById('autoPrint').checked,
+            pinLength: document.getElementById('pinLength').value,
+            requirePinForVoid: document.getElementById('requirePinForVoid').checked,
+            requirePinForDiscount: document.getElementById('requirePinForDiscount').checked,
+            logAllActions: document.getElementById('logAllActions').checked,
+            branches: branches
+        };
+
+        DB.setConfig(config);
+
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+        showToast('Configuración guardada exitosamente', 'success');
+    }, 800);
+}
+
+function cancelChanges() {
+    if (confirm('¿Descartar los cambios no guardados?')) {
+        init();
+        showToast('Cambios descartados', 'success');
+    }
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+        <span class="message">${message}</span>
+    `;
+    container.appendChild(toast);
+    lucide.createIcons();
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.classList.remove('active');
+        }
+    });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeBranchModal();
+        closePasswordModal();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveSettings();
+    }
+});
+
+window.onload = init;
+    </script>
 </body>
 </html>
