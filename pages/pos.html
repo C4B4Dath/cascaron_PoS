@@ -9,7 +9,7 @@
     <title>NexPoS — Punto de Venta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
     <style>
 /* === NEXPOS DESIGN SYSTEM === */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -76,6 +76,7 @@ body {
 .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
 .mb-6 { margin-bottom: 1.5rem; } .ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
 .-top-6 { top: -1.5rem; } .left-1\/2 { left: 50%; } .-translate-x-1\/2 { transform: translateX(-50%); }
+.mx-auto { margin-left: auto; margin-right: auto; }
 
 .space-x-1 > * + * { margin-left: 0.25rem; } .space-x-2 > * + * { margin-left: 0.5rem; }
 .space-x-3 > * + * { margin-left: 0.75rem; } .space-x-4 > * + * { margin-left: 1rem; }
@@ -119,6 +120,7 @@ body {
 .bg-slate-900 { background-color: var(--slate-900); }
 .bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
 .bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
+.bg-rose-600 { background-color: var(--rose-600); }
 .bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
 .bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
 .bg-white\/90 { background-color: rgba(255,255,255,0.9); }
@@ -160,6 +162,7 @@ body {
 .hover\:bg-slate-800:hover { background-color: #1e293b; }
 .hover\:bg-emerald-100:hover { background-color: #d1fae5; }
 .hover\:bg-rose-50:hover { background-color: var(--rose-50); }
+.hover\:bg-rose-700:hover { background-color: var(--rose-700); }
 .hover\:bg-blue-50:hover { background-color: var(--blue-50); }
 .hover\:text-slate-600:hover { color: var(--slate-600); }
 .hover\:text-slate-900:hover { color: var(--slate-900); }
@@ -315,11 +318,7 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ============================================================
    MOBILE BOTTOM DRAWER
-   - 3 states: hidden (no cart), collapsed (handle bar only),
-     partial (totals + checkout btn visible), expanded (full)
    ============================================================ */
-
-/* The overlay backdrop shown when cart is expanded */
 #mobileBackdrop {
     display: none;
     position: fixed;
@@ -330,7 +329,6 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 }
 #mobileBackdrop.visible { display: block; }
 
-/* The drawer itself */
 #mobileCartDrawer {
     display: none;
     position: fixed;
@@ -343,23 +341,19 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     overflow: hidden;
     flex-direction: column;
 }
-/* Collapsed: only the handle pill + mini summary (≈80px) */
 #mobileCartDrawer.state-collapsed {
     display: flex;
     height: 88px;
 }
-/* Partial: handle + totals + checkout button (≈220px) */
 #mobileCartDrawer.state-partial {
     display: flex;
     height: 200px;
 }
-/* Expanded: full sheet */
 #mobileCartDrawer.state-expanded {
     display: flex;
     height: 88vh;
 }
 
-/* Handle bar at the top of the drawer */
 .drawer-handle {
     flex-shrink: 0;
     display: flex;
@@ -399,7 +393,6 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 }
 .drawer-toggle-btn:hover { background: var(--slate-200); }
 
-/* Scrollable items section inside drawer */
 .drawer-items {
     flex: 1;
     overflow-y: auto;
@@ -409,14 +402,12 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     gap: 0.75rem;
 }
 
-/* Fixed footer inside drawer: totals + checkout btn - NEVER hidden */
 .drawer-footer {
     flex-shrink: 0;
     background: white;
     border-top: 1px solid var(--slate-100);
     padding: 0.75rem 1rem;
 }
-/* Compact totals row used in partial state */
 .drawer-totals-compact {
     display: flex;
     align-items: center;
@@ -424,18 +415,13 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     margin-bottom: 0.625rem;
 }
 
-/* Padding on catalog so content isn't hidden behind the drawer */
 @media (max-width: 1023px) {
     #mainCatalog { padding-bottom: 6rem !important; }
-
-    /* Hide desktop sidebar on mobile */
     #cartSidebar { display: none !important; }
 }
 @media (min-width: 1024px) {
-    /* Hide mobile drawer on desktop */
     #mobileCartDrawer { display: none !important; }
     #mobileBackdrop { display: none !important; }
-    /* Show/hide sidebar based on cart state, not .hidden class */
     #cartSidebar[data-empty] { display: none !important; }
     #cartSidebar:not([data-empty]) { display: flex !important; }
 }
@@ -443,6 +429,25 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 @keyframes scanAnim {
     0%, 100% { top: calc(50% - 55px); opacity: 0.8; }
     50% { top: calc(50% + 55px); opacity: 1; }
+}
+
+/* Scanner viewfinder canvas overlay (Quagga dibuja aquí) */
+#scannerVideoContainer {
+    position: relative;
+    height: 260px;
+    background: black;
+    overflow: hidden;
+}
+#scannerVideoContainer canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+#scannerVideo {
+    position: relative;
+    z-index: 1;
 }
     </style>
 </head>
@@ -508,7 +513,6 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 
                 <div id="cartItems" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 bg-white"></div>
 
-                <!-- Desktop footer: no max-height so button is always visible -->
                 <div class="p-6 border-t border-slate-100 bg-white shadow-md flex-shrink-0 cart-footer">
                     <div class="cart-footer-scrollable custom-scrollbar space-y-4">
                         <div class="cash-panel">
@@ -542,7 +546,6 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                         </div>
                     </div>
 
-                    <!-- Checkout button is OUTSIDE the scrollable area so it's always visible -->
                     <button onclick="openCheckout()" id="btnCheckout"
                         class="w-full mt-4 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         disabled>
@@ -555,13 +558,11 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     </div>
 
     <!-- ====================================================
-         MOBILE BOTTOM DRAWER (replaces floating button)
-         States: collapsed → partial → expanded
+         MOBILE BOTTOM DRAWER
          ==================================================== -->
     <div id="mobileBackdrop" onclick="setDrawerState('partial')"></div>
 
     <div id="mobileCartDrawer">
-        <!-- Drag handle + mini summary row -->
         <div class="drawer-handle" id="drawerHandleTap" onclick="cycleDrawerState()">
             <div class="drawer-pill"></div>
             <div class="drawer-handle-content">
@@ -581,12 +582,9 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
             </div>
         </div>
 
-        <!-- Scrollable cart items (shown only when expanded) -->
         <div class="drawer-items custom-scrollbar" id="drawerItems"></div>
 
-        <!-- Fixed footer: always visible with totals + checkout btn -->
         <div class="drawer-footer">
-            <!-- Totals row -->
             <div class="drawer-totals-compact">
                 <div class="space-y-0.5">
                     <div class="flex items-center gap-3 text-xs text-slate-500">
@@ -602,7 +600,6 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                     </div>
                 </div>
             </div>
-            <!-- Checkout button — ALWAYS VISIBLE, never hidden by scroll -->
             <button onclick="openCheckout()" id="drawerBtnCheckout"
                 class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-98 text-sm tracking-wider uppercase disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 disabled>
@@ -666,10 +663,10 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
 
             <!-- Estado: cámara activa -->
             <div id="scannerCameraView" class="hidden">
-                <div class="relative bg-black" style="height: 260px;">
+                <div id="scannerVideoContainer">
                     <video id="scannerVideo" class="w-full h-full object-cover" autoplay muted playsinline></video>
                     <!-- Viewfinder overlay -->
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:3;">
                         <div style="width:200px;height:120px;border:3px solid white;border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,0.45);">
                             <div style="position:absolute;top:0;left:0;width:20px;height:20px;border-top:3px solid #10b981;border-left:3px solid #10b981;border-radius:4px 0 0 0;"></div>
                             <div style="position:absolute;top:0;right:0;width:20px;height:20px;border-top:3px solid #10b981;border-right:3px solid #10b981;border-radius:0 4px 0 0;"></div>
@@ -678,15 +675,20 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                         </div>
                     </div>
                     <!-- Scanning line animation -->
-                    <div id="scanLine" style="position:absolute;left:50%;transform:translateX(-50%);width:200px;height:2px;background:linear-gradient(90deg,transparent,#10b981,transparent);animation:scanAnim 1.5s ease-in-out infinite;top:50%;"></div>
+                    <div id="scanLine" style="position:absolute;left:50%;transform:translateX(-50%);width:200px;height:2px;background:linear-gradient(90deg,transparent,#10b981,transparent);animation:scanAnim 1.5s ease-in-out infinite;top:50%;z-index:3;"></div>
                 </div>
                 <div class="p-4 text-center space-y-3">
                     <p id="scannerStatus" class="text-xs text-slate-500 font-semibold flex items-center justify-center gap-2">
                         <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span>
                         Apunta al código de barras...
                     </p>
-                    <button onclick="closeScannerModal()" class="border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-2 px-6 rounded-xl text-xs uppercase tracking-wider transition-all">
-                        Cancelar
+                    <p id="scannerCount" class="text-xs font-black text-slate-400 uppercase tracking-wider">
+                        0 productos agregados
+                    </p>
+                    <button onclick="closeScannerModal()"
+                        class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 mx-auto">
+                        <i data-lucide="stop-circle" class="w-4 h-4"></i>
+                        Detener escáner
                     </button>
                 </div>
             </div>
@@ -826,7 +828,6 @@ let activeField = 'cash';
 let paymentMethod = 'Efectivo';
 let currentTicketId = '';
 
-// Mobile drawer state: 'hidden' | 'collapsed' | 'partial' | 'expanded'
 let drawerState = 'hidden';
 
 // ============================================================
@@ -840,7 +841,6 @@ function setDrawerState(newState) {
     const drawerItems = document.getElementById('drawerItems');
 
     drawerState = newState;
-    // Always clear inline style so CSS classes take over
     drawer.style.display = '';
     drawer.className = '';
 
@@ -851,14 +851,12 @@ function setDrawerState(newState) {
 
     drawer.classList.add('state-' + newState);
 
-    // Backdrop only when expanded
     if (newState === 'expanded') {
         backdrop.classList.add('visible');
     } else {
         backdrop.classList.remove('visible');
     }
 
-    // Update chevron direction
     if (expandBtn) {
         const icon = expandBtn.querySelector('i');
         if (icon) {
@@ -866,12 +864,10 @@ function setDrawerState(newState) {
         }
     }
 
-    // Show clear button only in expanded state
     if (clearBtn) {
         clearBtn.classList.toggle('hidden', newState !== 'expanded');
     }
 
-    // Show/hide items list
     if (drawerItems) {
         drawerItems.style.display = newState === 'expanded' ? 'flex' : 'none';
     }
@@ -975,9 +971,6 @@ function renderCart() {
     const total = subtotal + iva;
     const hasItems = cart.length > 0;
 
-    // === DESKTOP SIDEBAR — always update, CSS handles visibility via media query ===
-    // We never toggle .hidden on the sidebar anymore; instead use a data attribute
-    // so CSS media queries remain the single source of truth for display.
     const sidebar = document.getElementById('cartSidebar');
     if (hasItems) {
         sidebar.removeAttribute('data-empty');
@@ -986,7 +979,6 @@ function renderCart() {
     } else {
         sidebar.setAttribute('data-empty', '');
     }
-    // Always update text fields (they might be visible after resize)
     const cartCountEl = document.getElementById('cartCount');
     if (cartCountEl) cartCountEl.innerText = count;
     const sub = document.getElementById('txtSubtotal');
@@ -998,7 +990,6 @@ function renderCart() {
     if (tot) tot.innerText = hasItems ? `$${total.toFixed(2)}` : '$0.00';
     if (btn) btn.disabled = !hasItems;
 
-    // === MOBILE DRAWER — always update regardless of current viewport ===
     if (!hasItems) {
         setDrawerState('hidden');
     } else {
@@ -1120,7 +1111,6 @@ function renderCheckoutForm() {
     const { total } = getTotals();
     const content = document.getElementById('checkoutContent');
 
-    // --- Efectivo ---
     if (paymentMethod === 'Efectivo') {
         const cash = parseFloat(amountReceived) || 0;
         const change = cash >= total ? cash - total : 0;
@@ -1158,11 +1148,9 @@ function renderCheckoutForm() {
             </button>
             <button onclick="cancelCheckout()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
         </div>`;
-        // Auto-focus the input
         setTimeout(() => { const el = document.getElementById('cashInput'); if (el) el.focus(); }, 50);
     }
 
-    // --- Tarjeta ---
     else if (paymentMethod === 'Tarjeta') {
         content.innerHTML = `
         <div class="space-y-4 overflow-y-auto flex-1">
@@ -1186,7 +1174,6 @@ function renderCheckoutForm() {
         </div>`;
     }
 
-    // --- Mixto ---
     else if (paymentMethod === 'Mixto') {
         const { cash, card, remaining, change } = getMixtoTotals();
         const canPay = (cash + card) >= total && (cash + card) > 0;
@@ -1198,7 +1185,6 @@ function renderCheckoutForm() {
                 <span class="text-xs text-slate-400 uppercase tracking-widest block mb-1 font-black">Total a cobrar</span>
                 <span class="text-3xl font-black text-slate-900 tracking-tight">$${total.toFixed(2)}</span>
             </div>
-            <!-- Two field cards, tap to select which gets keypad focus -->
             <div class="grid grid-cols-2 gap-2">
                 <div onclick="setMixtoField('cash')" class="rounded-xl border-2 p-3 cursor-pointer transition-all ${cashActive ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-300'}">
                     <div class="flex items-center gap-1 mb-1">
@@ -1229,7 +1215,6 @@ function renderCheckoutForm() {
                         style="width:100%;background:transparent;border:none;outline:none;">
                 </div>
             </div>
-            <!-- Status row -->
             <div class="flex gap-2">
                 <div class="flex-1 py-2 px-3 rounded-xl ${remaining > 0 ? 'bg-rose-50' : 'bg-emerald-50'} text-center">
                     <p class="text-[10px] font-black uppercase tracking-wider ${remaining > 0 ? 'text-rose-400' : 'text-emerald-400'}">${remaining > 0 ? 'Falta' : 'Cubierto'}</p>
@@ -1240,7 +1225,6 @@ function renderCheckoutForm() {
                     <p id="mixtoChangeAmount" class="font-mono font-black text-base text-emerald-600">$${change.toFixed(2)}</p>
                 </div>` : ''}
             </div>
-            <!-- Quick cash shortcuts (only visible when cash field is active) -->
             ${cashActive ? `<div class="grid grid-cols-4 gap-2">
                 ${[50, 100, 200, 500].map(b => `<button onclick="quickCashMixto(${b})" class="quick-cash-btn bg-slate-50 border border-slate-200 hover:bg-slate-100 py-2 rounded-xl font-mono text-xs font-bold text-slate-700 transition-all active:scale-95">$${b}</button>`).join('')}
             </div>` : ''}
@@ -1253,7 +1237,6 @@ function renderCheckoutForm() {
             </button>
             <button onclick="cancelCheckout()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
         </div>`;
-        // Focus the active field
         setTimeout(() => {
             const el = document.getElementById(activeField === 'cash' ? 'mixCashInput' : 'mixCardInput');
             if (el) el.focus();
@@ -1285,23 +1268,18 @@ function numpad(fn) {
     </div>`;
 }
 
-// --- Input handlers: support both physical keyboard and numpad ---
 function onCashInput(val) {
-    // Allow only valid numeric string
     const clean = val.replace(/[^0-9.]/g, '');
     amountReceived = clean;
-    // Update display without full re-render to keep focus
     updateCashDisplay();
 }
 
-// ✅ CORREGIDO: Usa IDs únicos en lugar de selectores genéricos
 function updateCashDisplay() {
     const { total } = getTotals();
     const cash = parseFloat(amountReceived) || 0;
     const change = cash >= total ? cash - total : 0;
     const canPay = cash >= total && cash > 0;
 
-    // ✅ Usar IDs únicos para evitar conflictos con otras clases
     const changeAmountEl = document.getElementById('changeAmount');
     const changeContainerEl = document.getElementById('changeContainer');
 
@@ -1333,7 +1311,6 @@ function updateMixtoDisplay() {
     const covered = (parseFloat(amountReceived)||0) + (parseFloat(amountCard)||0);
     const canPay = covered >= total && covered > 0;
 
-    // Update status row
     const statusEl = document.querySelector('.flex.gap-2');
     if (statusEl) {
         statusEl.innerHTML = `
@@ -1347,7 +1324,6 @@ function updateMixtoDisplay() {
             </div>` : ''}`;
     }
 
-    // Actualizar cambio si existe (usando ID único)
     const mixtoChangeEl = document.getElementById('mixtoChangeAmount');
     if (mixtoChangeEl && change > 0) {
         mixtoChangeEl.textContent = `$${change.toFixed(2)}`;
@@ -1359,7 +1335,6 @@ function updateMixtoDisplay() {
 
 function setMixtoField(field) {
     activeField = field;
-    // Just update visual active state without full re-render
     const cashCard = document.querySelector('[onclick="setMixtoField(\'cash\')"]');
     const cardCard = document.querySelector('[onclick="setMixtoField(\'card\')"]');
     if (cashCard) cashCard.className = `rounded-xl border-2 p-3 cursor-pointer transition-all ${field === 'cash' ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-300'}`;
@@ -1374,7 +1349,6 @@ function setPaymentMethod(method) {
     renderCheckoutForm();
 }
 
-// Numpad for Efectivo
 function pressKey(key) {
     if (key === '⌫') amountReceived = amountReceived.slice(0, -1);
     else if (key === '.' && amountReceived.includes('.')) return;
@@ -1385,7 +1359,6 @@ function pressKey(key) {
     updateCashDisplay();
 }
 
-// Numpad for Mixto (targets activeField)
 function pressKeyMixto(key) {
     if (activeField === 'cash') {
         if (key === '⌫') amountReceived = amountReceived.slice(0, -1);
@@ -1495,12 +1468,16 @@ function showToast(message, type = 'success') {
 }
 
 // ============================================================
-// SCANNER MODULE
+// SCANNER MODULE — QuaggaJS2, lectura real de códigos de barras
 // ============================================================
-let codeReader = null;
 let scannerStream = null;
+let scannerRunning = false;
+let scannerAddedCount = 0;
+let lastScannedTime = 0;
+const SCAN_COOLDOWN_MS = 500;
 
 function openScannerModal() {
+    scannerAddedCount = 0;
     document.getElementById('scannerModal').classList.remove('hidden');
     showScannerMethodSelect();
     lucide.createIcons();
@@ -1509,6 +1486,7 @@ function openScannerModal() {
 function closeScannerModal() {
     stopCamera();
     document.getElementById('scannerModal').classList.add('hidden');
+    updateScannerCount();
 }
 
 function showScannerMethodSelect() {
@@ -1527,69 +1505,165 @@ function tryExternalScanner() {
 async function startCameraScanner() {
     document.getElementById('scannerMethodSelect').classList.add('hidden');
     document.getElementById('scannerCameraView').classList.remove('hidden');
+    scannerAddedCount = 0;
+    updateScannerCount();
+    lucide.createIcons();
 
-    const video = document.getElementById('scannerVideo');
     const status = document.getElementById('scannerStatus');
 
+    // Verificar acceso a cámara primero
     try {
-        // Request camera
         scannerStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+            video: { facingMode: 'environment' }
         });
-        video.srcObject = scannerStream;
-
-        // Try ZXing barcode detection
-        if (window.ZXing) {
-            codeReader = new ZXing.BrowserMultiFormatReader();
-            codeReader.decodeFromVideoDevice(null, 'scannerVideo', (result, err) => {
-                if (result) {
-                    onBarcodeDetected(result.getText());
-                }
-            });
-        } else {
-            // ZXing not available: fallback — auto-add random product after 2.5s
-            status.innerHTML = `<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> Escaneando...`;
-            setTimeout(() => {
-                if (!document.getElementById('scannerModal').classList.contains('hidden')) {
-                    addRandomProduct();
-                }
-            }, 2500);
-        }
-    } catch (err) {
+        // Liberar el stream manual — Quagga lo gestiona internamente
+        scannerStream.getTracks().forEach(t => t.stop());
+        scannerStream = null;
+    } catch(err) {
         status.innerHTML = `<span class="w-2 h-2 bg-rose-500 rounded-full inline-block"></span> Sin acceso a cámara`;
-        // Fallback demo: add random product after 1.5s
-        setTimeout(() => {
-            if (!document.getElementById('scannerModal').classList.contains('hidden')) {
-                addRandomProduct();
-            }
-        }, 1500);
+        return;
     }
+
+    status.innerHTML = `<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> Escaneando continuamente...`;
+
+    if (typeof Quagga === 'undefined') {
+        status.innerHTML = `<span class="w-2 h-2 bg-rose-500 rounded-full inline-block"></span> Error: Quagga no disponible`;
+        return;
+    }
+
+    // Configurar Quagga con el contenedor de video
+    const videoContainer = document.getElementById('scannerVideoContainer');
+
+    Quagga.init({
+        inputStream: {
+            name: 'Live',
+            type: 'LiveStream',
+            target: videoContainer,
+            constraints: {
+                facingMode: 'environment',
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+            },
+        },
+        decoder: {
+            readers: [
+                'ean_reader',
+                'ean_8_reader',
+                'code_128_reader',
+                'code_39_reader',
+                'upc_reader',
+                'upc_e_reader',
+                'codabar_reader',
+                'i2of5_reader',
+            ],
+            multiple: false,
+        },
+        locate: true,
+        numOfWorkers: navigator.hardwareConcurrency || 2,
+        frequency: 10,
+        locator: {
+            patchSize: 'medium',
+            halfSample: true,
+        },
+    }, (err) => {
+        if (err) {
+            status.innerHTML = `<span class="w-2 h-2 bg-rose-500 rounded-full inline-block"></span> Error al iniciar cámara`;
+            console.error('Quagga init error:', err);
+            return;
+        }
+        Quagga.start();
+        scannerRunning = true;
+    });
+
+    // Evento de detección - agregar producto aleatorio al detectar cualquier código
+    Quagga.onDetected((result) => {
+        const now = Date.now();
+        // Throttle: ignorar si es demasiado pronto después del último escaneo
+        if (now - lastScannedTime < SCAN_COOLDOWN_MS) return;
+        lastScannedTime = now;
+
+        // Agregar producto aleatorio sin importar el código detectado
+        addRandomProductToCart();
+    });
+
+    // Overlay visual de detección (opcional)
+    Quagga.onProcessed((result) => {
+        const canvas = Quagga.canvas && Quagga.canvas.dom ? Quagga.canvas.dom.overlay : null;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (result && result.boxes) {
+            result.boxes.filter(b => b !== result.box).forEach(box => {
+                Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, ctx, { color: 'rgba(255,255,255,0.3)', lineWidth: 1 });
+            });
+        }
+        if (result && result.box) {
+            Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, ctx, { color: '#10b981', lineWidth: 2 });
+        }
+        if (result && result.codeResult && result.codeResult.code) {
+            Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, ctx, { color: '#10b981', lineWidth: 3 });
+        }
+    });
 }
 
-function onBarcodeDetected(code) {
-    // Stop scanning immediately to avoid duplicates
-    stopCamera();
-    // Try to find product by SKU first, else pick random
-    const byCode = PRODUCTS.find(p => p.sku === code || p.sku.includes(code));
-    const product = byCode || PRODUCTS.filter(p => p.stock > 0)[Math.floor(Math.random() * PRODUCTS.filter(p => p.stock > 0).length)];
-    if (product) {
-        closeScannerModal();
-        addToCart(product.id);
-    }
-}
-
-function addRandomProduct() {
+// Agregar producto aleatorio al carrito
+function addRandomProductToCart() {
     const available = PRODUCTS.filter(p => p.stock > 0);
-    if (available.length === 0) { closeScannerModal(); showToast('Sin productos disponibles', 'error'); return; }
+    if (available.length === 0) return;
+
     const product = available[Math.floor(Math.random() * available.length)];
-    closeScannerModal();
-    addToCart(product.id);
+    addToCartSilent(product.id);
+}
+
+// Agregar al carrito sin toast intrusivo, actualizar contador
+function addToCartSilent(id) {
+    const product = PRODUCTS.find(p => p.id === id);
+    if (!product || product.stock <= 0) return;
+
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        if (existing.quantity >= product.stock) return;
+        existing.quantity += 1;
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+
+    renderCart();
+    renderProducts();
+    flashScanSuccess();
+
+    scannerAddedCount++;
+    updateScannerCount();
+}
+
+function updateScannerCount() {
+    const el = document.getElementById('scannerCount');
+    if (el) {
+        el.textContent = scannerAddedCount === 0
+            ? '0 productos agregados'
+            : `✓ ${scannerAddedCount} producto${scannerAddedCount !== 1 ? 's' : ''} agregado${scannerAddedCount !== 1 ? 's' : ''}`;
+        el.className = scannerAddedCount > 0
+            ? 'text-xs font-black text-emerald-600 uppercase tracking-wider'
+            : 'text-xs font-black text-slate-400 uppercase tracking-wider';
+    }
+}
+
+function flashScanSuccess() {
+    const video = document.getElementById('scannerVideo');
+    if (!video) return;
+    video.style.transition = 'opacity 0.1s';
+    video.style.opacity = '0.4';
+    setTimeout(() => { video.style.opacity = '1'; }, 150);
 }
 
 function stopCamera() {
-    if (codeReader) {
-        try { codeReader.reset(); } catch(e) {}
-        codeReader = null;
+    scannerRunning = false;
+    if (typeof Quagga !== 'undefined') {
+        try {
+            Quagga.offDetected();
+            Quagga.offProcessed();
+            Quagga.stop();
+        } catch(e) {}
     }
     if (scannerStream) {
         scannerStream.getTracks().forEach(t => t.stop());
@@ -1599,7 +1673,7 @@ function stopCamera() {
     if (video) video.srcObject = null;
 }
 
-// Close scanner on backdrop click
+// Cerrar modal al hacer clic en el backdrop
 document.getElementById('scannerModal').addEventListener('click', function(e) {
     if (e.target === this) closeScannerModal();
 });
