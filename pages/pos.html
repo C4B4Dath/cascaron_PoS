@@ -9,6 +9,7 @@
     <title>NexPoS — Punto de Venta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js"></script>
     <style>
 /* === NEXPOS DESIGN SYSTEM === */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -53,10 +54,11 @@ body {
 .aspect-square { aspect-ratio: 1 / 1; }
 
 .p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
-.p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
 .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
 .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
 .px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
 .px-8 { padding-left: 2rem; padding-right: 2rem; }
 .px-11 { padding-left: 2.75rem; }
@@ -95,6 +97,7 @@ body {
 .uppercase { text-transform: uppercase; }
 .tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
 .leading-snug { line-height: 1.375; } .leading-tight { line-height: 1.25; }
+.leading-relaxed { line-height: 1.625; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .text-white { color: #fff; }
@@ -110,6 +113,7 @@ body {
 .text-purple-600 { color: var(--purple-600); }
 
 .bg-white { background-color: #fff; }
+.bg-black { background-color: #000; }
 .bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
 .bg-slate-200 { background-color: var(--slate-200); } .bg-slate-400 { background-color: var(--slate-400); }
 .bg-slate-900 { background-color: var(--slate-900); }
@@ -161,6 +165,7 @@ body {
 .hover\:text-slate-900:hover { color: var(--slate-900); }
 .hover\:text-rose-600:hover { color: var(--rose-600); }
 .hover\:border-slate-300:hover { border-color: var(--slate-300); }
+.hover\:border-slate-900:hover { border-color: var(--slate-900); }
 .hover\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
 .active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
 
@@ -185,6 +190,8 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     .md\:w-96 { width: 24rem; }
     .md\:w-auto { width: auto; }
     .md\:pb-0 { padding-bottom: 0; }
+    .md\:items-center { align-items: center; }
+    .md\:items-stretch { align-items: stretch; }
 }
 @media (min-width: 1024px) {
     .lg\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
@@ -432,6 +439,11 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
     #cartSidebar[data-empty] { display: none !important; }
     #cartSidebar:not([data-empty]) { display: flex !important; }
 }
+
+@keyframes scanAnim {
+    0%, 100% { top: calc(50% - 55px); opacity: 0.8; }
+    50% { top: calc(50% + 55px); opacity: 1; }
+}
     </style>
 </head>
 <body class="h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
@@ -462,11 +474,18 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
         <!-- Main Catalog -->
         <main id="mainCatalog" class="flex-1 flex flex-col p-8 space-y-8">
             <div class="flex flex-col md:flex-row gap-6 items-center justify-between flex-shrink-0">
-                <div class="relative w-full md:w-96">
-                    <input type="text" id="searchInput" oninput="handleSearch(this.value)"
-                        placeholder="Buscar producto por nombre..."
-                        class="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all shadow-xs">
-                    <span class="absolute left-4 top-3.5 text-sm text-slate-400">🔍</span>
+                <div class="flex gap-3 w-full md:w-auto flex-col md:flex-row items-stretch md:items-center">
+                    <div class="relative w-full md:w-96">
+                        <input type="text" id="searchInput" oninput="handleSearch(this.value)"
+                            placeholder="Buscar producto por nombre..."
+                            class="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all shadow-xs">
+                        <span class="absolute left-4 top-3.5 text-sm text-slate-400">🔍</span>
+                    </div>
+                    <button onclick="openScannerModal()"
+                        class="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-3 rounded-full text-xs uppercase tracking-wider transition-all active:scale-95 shadow-xs flex-shrink-0">
+                        <i data-lucide="scan-barcode" class="w-4 h-4"></i>
+                        <span>Escanear</span>
+                    </button>
                 </div>
                 <div id="categoryContainer" class="flex space-x-8 overflow-x-auto w-full md:w-auto pb-1 md:pb-0"></div>
             </div>
@@ -602,6 +621,96 @@ button:disabled, button.disabled { opacity: 0.5; cursor: not-allowed; }
                 <div class="w-20"></div>
             </div>
             <div id="checkoutContent" class="flex-1 flex flex-col justify-between p-6 bg-white overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Scanner Modal -->
+    <div id="scannerModal" class="fixed inset-0 bg-slate-950/20 backdrop-blur-xs z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden animate-fade-in">
+
+            <!-- Header -->
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-black text-sm uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                    <i data-lucide="scan-barcode" class="w-4 h-4 text-slate-400"></i>
+                    Modo Escáner
+                </h3>
+                <button onclick="closeScannerModal()" class="text-slate-300 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Estado: selección de método -->
+            <div id="scannerMethodSelect" class="p-6 space-y-3">
+                <p class="text-xs text-slate-400 text-center mb-4">¿Cómo deseas escanear?</p>
+                <button onclick="startCameraScanner()"
+                    class="w-full flex items-center gap-4 p-4 border-2 border-slate-200 hover:border-slate-900 hover:bg-slate-50 rounded-2xl transition-all group">
+                    <div class="w-10 h-10 bg-slate-100 group-hover:bg-slate-900 rounded-xl flex items-center justify-center transition-all flex-shrink-0">
+                        <i data-lucide="camera" class="w-5 h-5 text-slate-600 group-hover:text-white"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-900 text-sm">Cámara del dispositivo</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Apunta a un código de barras o QR</p>
+                    </div>
+                </button>
+                <button onclick="tryExternalScanner()"
+                    class="w-full flex items-center gap-4 p-4 border-2 border-slate-200 hover:border-slate-900 hover:bg-slate-50 rounded-2xl transition-all group">
+                    <div class="w-10 h-10 bg-slate-100 group-hover:bg-slate-900 rounded-xl flex items-center justify-center transition-all flex-shrink-0">
+                        <i data-lucide="usb" class="w-5 h-5 text-slate-600 group-hover:text-white"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-900 text-sm">Lector externo (USB/BT)</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Pistola lectora conectada al dispositivo</p>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Estado: cámara activa -->
+            <div id="scannerCameraView" class="hidden">
+                <div class="relative bg-black" style="height: 260px;">
+                    <video id="scannerVideo" class="w-full h-full object-cover" autoplay muted playsinline></video>
+                    <!-- Viewfinder overlay -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div style="width:200px;height:120px;border:3px solid white;border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,0.45);">
+                            <div style="position:absolute;top:0;left:0;width:20px;height:20px;border-top:3px solid #10b981;border-left:3px solid #10b981;border-radius:4px 0 0 0;"></div>
+                            <div style="position:absolute;top:0;right:0;width:20px;height:20px;border-top:3px solid #10b981;border-right:3px solid #10b981;border-radius:0 4px 0 0;"></div>
+                            <div style="position:absolute;bottom:0;left:0;width:20px;height:20px;border-bottom:3px solid #10b981;border-left:3px solid #10b981;border-radius:0 0 0 4px;"></div>
+                            <div style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-bottom:3px solid #10b981;border-right:3px solid #10b981;border-radius:0 0 4px 0;"></div>
+                        </div>
+                    </div>
+                    <!-- Scanning line animation -->
+                    <div id="scanLine" style="position:absolute;left:50%;transform:translateX(-50%);width:200px;height:2px;background:linear-gradient(90deg,transparent,#10b981,transparent);animation:scanAnim 1.5s ease-in-out infinite;top:50%;"></div>
+                </div>
+                <div class="p-4 text-center space-y-3">
+                    <p id="scannerStatus" class="text-xs text-slate-500 font-semibold flex items-center justify-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span>
+                        Apunta al código de barras...
+                    </p>
+                    <button onclick="closeScannerModal()" class="border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-2 px-6 rounded-xl text-xs uppercase tracking-wider transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estado: lector no detectado -->
+            <div id="scannerExternalError" class="hidden p-6 text-center space-y-4">
+                <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto">
+                    <i data-lucide="usb-off" class="w-7 h-7 text-amber-500"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-slate-900">No se detectó ningún lector</p>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">Conecta tu pistola lectora USB o Bluetooth y vuelve a intentarlo. Asegúrate de que el dispositivo esté encendido y emparejado.</p>
+                </div>
+                <div class="space-y-2">
+                    <button onclick="showScannerMethodSelect()"
+                        class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                        Volver
+                    </button>
+                    <button onclick="closeScannerModal()" class="w-full border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -1384,6 +1493,116 @@ function showToast(message, type = 'success') {
     lucide.createIcons();
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
+
+// ============================================================
+// SCANNER MODULE
+// ============================================================
+let codeReader = null;
+let scannerStream = null;
+
+function openScannerModal() {
+    document.getElementById('scannerModal').classList.remove('hidden');
+    showScannerMethodSelect();
+    lucide.createIcons();
+}
+
+function closeScannerModal() {
+    stopCamera();
+    document.getElementById('scannerModal').classList.add('hidden');
+}
+
+function showScannerMethodSelect() {
+    document.getElementById('scannerMethodSelect').classList.remove('hidden');
+    document.getElementById('scannerCameraView').classList.add('hidden');
+    document.getElementById('scannerExternalError').classList.add('hidden');
+    stopCamera();
+}
+
+function tryExternalScanner() {
+    document.getElementById('scannerMethodSelect').classList.add('hidden');
+    document.getElementById('scannerExternalError').classList.remove('hidden');
+    lucide.createIcons();
+}
+
+async function startCameraScanner() {
+    document.getElementById('scannerMethodSelect').classList.add('hidden');
+    document.getElementById('scannerCameraView').classList.remove('hidden');
+
+    const video = document.getElementById('scannerVideo');
+    const status = document.getElementById('scannerStatus');
+
+    try {
+        // Request camera
+        scannerStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+        video.srcObject = scannerStream;
+
+        // Try ZXing barcode detection
+        if (window.ZXing) {
+            codeReader = new ZXing.BrowserMultiFormatReader();
+            codeReader.decodeFromVideoDevice(null, 'scannerVideo', (result, err) => {
+                if (result) {
+                    onBarcodeDetected(result.getText());
+                }
+            });
+        } else {
+            // ZXing not available: fallback — auto-add random product after 2.5s
+            status.innerHTML = `<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> Escaneando...`;
+            setTimeout(() => {
+                if (!document.getElementById('scannerModal').classList.contains('hidden')) {
+                    addRandomProduct();
+                }
+            }, 2500);
+        }
+    } catch (err) {
+        status.innerHTML = `<span class="w-2 h-2 bg-rose-500 rounded-full inline-block"></span> Sin acceso a cámara`;
+        // Fallback demo: add random product after 1.5s
+        setTimeout(() => {
+            if (!document.getElementById('scannerModal').classList.contains('hidden')) {
+                addRandomProduct();
+            }
+        }, 1500);
+    }
+}
+
+function onBarcodeDetected(code) {
+    // Stop scanning immediately to avoid duplicates
+    stopCamera();
+    // Try to find product by SKU first, else pick random
+    const byCode = PRODUCTS.find(p => p.sku === code || p.sku.includes(code));
+    const product = byCode || PRODUCTS.filter(p => p.stock > 0)[Math.floor(Math.random() * PRODUCTS.filter(p => p.stock > 0).length)];
+    if (product) {
+        closeScannerModal();
+        addToCart(product.id);
+    }
+}
+
+function addRandomProduct() {
+    const available = PRODUCTS.filter(p => p.stock > 0);
+    if (available.length === 0) { closeScannerModal(); showToast('Sin productos disponibles', 'error'); return; }
+    const product = available[Math.floor(Math.random() * available.length)];
+    closeScannerModal();
+    addToCart(product.id);
+}
+
+function stopCamera() {
+    if (codeReader) {
+        try { codeReader.reset(); } catch(e) {}
+        codeReader = null;
+    }
+    if (scannerStream) {
+        scannerStream.getTracks().forEach(t => t.stop());
+        scannerStream = null;
+    }
+    const video = document.getElementById('scannerVideo');
+    if (video) video.srcObject = null;
+}
+
+// Close scanner on backdrop click
+document.getElementById('scannerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeScannerModal();
+});
 
 window.onload = init;
     </script>
