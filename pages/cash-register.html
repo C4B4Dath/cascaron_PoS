@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <!-- Cache Control: Prevenir almacenamiento en caché del navegador -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Clear-Site-Data" content='"cache"'>
+
     <title>NexPoS — Control de Caja</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-/* === NEXPOS DESIGN SYSTEM === */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     -webkit-user-select: none; user-select: none;
 }
 .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -24,392 +25,570 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
 :root {
-    --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
-    --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
-    --slate-800: #1e293b; --slate-900: #0f172a;
-    --emerald-50: #ecfdf5; --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
-    --rose-50: #fff1f2; --rose-500: #f43f5e; --rose-600: #e11d48; --rose-700: #be123c;
-    --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
-    --amber-50: #fffbeb; --amber-500: #f59e0b; --amber-600: #d97706;
-    --purple-50: #faf5ff; --purple-500: #a855f7; --purple-600: #9333ea;
+    --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0; --slate-300:#cbd5e1;
+    --slate-400:#94a3b8; --slate-500:#64748b; --slate-600:#475569; --slate-700:#334155;
+    --slate-800:#1e293b; --slate-900:#0f172a;
+    --emerald-50:#ecfdf5; --emerald-500:#10b981; --emerald-600:#059669; --emerald-700:#047857;
+    --rose-50:#fff1f2; --rose-500:#f43f5e; --rose-600:#e11d48;
+    --blue-50:#eff6ff; --blue-500:#3b82f6; --blue-600:#2563eb;
+    --amber-50:#fffbeb; --amber-500:#f59e0b; --amber-600:#d97706;
+    --purple-50:#faf5ff; --purple-600:#9333ea;
 }
 
-.flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
-.flex-1 { flex: 1 1 0%; } .flex-shrink-0 { flex-shrink: 0; }
-.grid { display: grid; } .hidden { display: none !important; } .block { display: block; }
-.relative { position: relative; } .absolute { position: absolute; } .fixed { position: fixed; }
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .z-10 { z-index: 10; } .z-40 { z-index: 40; } .z-50 { z-index: 50; } .z-60 { z-index: 60; }
+/* ── LAYOUT ── */
+.flex{display:flex}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}
+.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}
+.grid{display:grid}.hidden{display:none!important}.block{display:block}
+.relative{position:relative}.absolute{position:absolute}.fixed{position:fixed}
+.inset-0{top:0;right:0;bottom:0;left:0}
+.z-40{z-index:40}.z-50{z-index:50}.z-60{z-index:60}.z-100{z-index:100}
+.items-center{align-items:center}.items-start{align-items:flex-start}
+.justify-center{justify-content:center}.justify-between{justify-content:space-between}
+.text-center{text-align:center}.text-right{text-align:right}
+.w-full{width:100%}.h-full{height:100%}
+.w-3{width:.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-9{width:2.25rem}.w-10{width:2.5rem}
+.h-4{height:1rem}.h-5{height:1.25rem}.h-screen{height:100vh}
+.max-w-7xl{max-width:80rem}.min-h-screen{min-height:100vh}
+.mx-auto{margin-left:auto;margin-right:auto}
+.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}
 
-.items-center { align-items: center; } .items-start { align-items: flex-start; }
-.justify-center { justify-content: center; } .justify-between { justify-content: space-between; }
-.text-center { text-align: center; } .text-left { text-align: left; } .text-right { text-align: right; }
+/* ── SPACING ── */
+.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}
+.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}
+.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}
+.px-8{padding-left:2rem;padding-right:2rem}
+.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}
+.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}
+.pl-6{padding-left:1.5rem}.pr-6{padding-right:1.5rem}.pl-9{padding-left:2.25rem}.pr-3{padding-right:.75rem}
+.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
+.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-4{margin-bottom:1rem}
+.ml-2{margin-left:.5rem}.mr-2{margin-right:.5rem}
+.space-y-1>*+*{margin-top:.25rem}.space-y-2>*+*{margin-top:.5rem}
+.space-y-3>*+*{margin-top:.75rem}.space-y-4>*+*{margin-top:1rem}
+.space-y-6>*+*{margin-top:1.5rem}.space-y-8>*+*{margin-top:2rem}
+.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}
 
-.w-full { width: 100%; } .h-full { height: 100%; }
-.w-3 { width: 0.75rem; } .w-4 { width: 1rem; } .w-5 { width: 1.25rem; } .w-7 { width: 1.75rem; }
-.w-8 { width: 2rem; } .w-9 { width: 2.25rem; } .w-10 { width: 2.5rem; } .w-20 { width: 5rem; }
-.w-40 { width: 10rem; } .w-56 { width: 14rem; } .w-64 { width: 16rem; }
-.h-2 { height: 0.5rem; } .h-4 { height: 1rem; } .h-5 { height: 1.25rem; } .h-8 { height: 2rem; }
-.h-10 { height: 2.5rem; } .h-20 { height: 5rem; } .h-48 { height: 12rem; } .h-screen { height: 100vh; }
-.max-w-5xl { max-width: 64rem; } .max-w-7xl { max-width: 80rem; } .max-w-md { max-width: 28rem; }
-.aspect-square { aspect-ratio: 1 / 1; }
+/* ── TYPOGRAPHY ── */
+.text-\[10px\]{font-size:.625rem}.text-xs{font-size:.75rem;line-height:1rem}
+.text-sm{font-size:.875rem;line-height:1.25rem}.text-base{font-size:1rem}
+.text-lg{font-size:1.125rem}.text-xl{font-size:1.25rem}.text-2xl{font-size:1.5rem}
+.text-3xl{font-size:1.875rem}.text-4xl{font-size:2.25rem}
+.font-medium{font-weight:500}.font-semibold{font-weight:600}
+.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-black{font-weight:900}
+.font-mono{font-family:'SF Mono',Menlo,monospace}
+.uppercase{text-transform:uppercase}
+.tracking-tight{letter-spacing:-.025em}.tracking-wider{letter-spacing:.05em}.tracking-widest{letter-spacing:.1em}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leading-snug{line-height:1.375}
 
-.p-1 { padding: 0.25rem; } .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; }
-.p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
-.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; } .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-.px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
-.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
-.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-.pt-4 { padding-top: 1rem; } .pb-1 { padding-bottom: 0.25rem; } .pb-2 { padding-bottom: 0.5rem; }
-.pl-3 { padding-left: 0.75rem; } .pl-4 { padding-left: 1rem; } .pl-6 { padding-left: 1.5rem; }
-.pr-4 { padding-right: 1rem; } .pr-6 { padding-right: 1.5rem; }
+/* ── COLORS ── */
+.text-white{color:#fff}
+.text-slate-300{color:var(--slate-300)}.text-slate-400{color:var(--slate-400)}
+.text-slate-500{color:var(--slate-500)}.text-slate-600{color:var(--slate-600)}
+.text-slate-700{color:var(--slate-700)}.text-slate-900{color:var(--slate-900)}
+.text-emerald-600{color:var(--emerald-600)}.text-emerald-700{color:var(--emerald-700)}
+.text-rose-500{color:var(--rose-500)}.text-rose-600{color:var(--rose-600)}
+.text-blue-600{color:var(--blue-600)}
+.text-amber-500{color:var(--amber-500)}.text-amber-600{color:var(--amber-600)}
 
-.mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
-.mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
-.ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
-.space-x-2 > * + * { margin-left: 0.5rem; } .space-x-3 > * + * { margin-left: 0.75rem; }
-.space-x-4 > * + * { margin-left: 1rem; } .space-y-1 > * + * { margin-top: 0.25rem; }
-.space-y-2 > * + * { margin-top: 0.5rem; } .space-y-3 > * + * { margin-top: 0.75rem; }
-.space-y-4 > * + * { margin-top: 1rem; } .space-y-5 > * + * { margin-top: 1.25rem; }
-.space-y-6 > * + * { margin-top: 1.5rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
-.gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+.bg-white{background-color:#fff}
+.bg-slate-50{background-color:var(--slate-50)}.bg-slate-100{background-color:var(--slate-100)}
+.bg-slate-900{background-color:var(--slate-900)}
+.bg-emerald-50{background-color:var(--emerald-50)}.bg-rose-50{background-color:var(--rose-50)}
+.bg-blue-50{background-color:var(--blue-50)}.bg-amber-50{background-color:var(--amber-50)}
+.bg-slate-50\/30{background-color:rgba(248,250,252,.3)}
+.bg-slate-950\/20{background-color:rgba(2,6,23,.2)}
 
-.cursor-pointer { cursor: pointer; } .select-none { user-select: none; }
+/* ── BORDERS ── */
+.border{border:1px solid}.border-b{border-bottom:1px solid}.border-t{border-top:1px solid}
+.border-l-4{border-left-width:4px;border-left-style:solid}
+.border-slate-100{border-color:var(--slate-100)}.border-slate-200{border-color:var(--slate-200)}
+.border-slate-900{border-color:var(--slate-900)}
+.border-emerald-200{border-color:#a7f3d0}.border-rose-200{border-color:#fecaca}
+.border-amber-200{border-color:#fde68a}
+.divide-y>*+*{border-top:1px solid var(--slate-100)}
 
-.text-\[10px\] { font-size: 0.625rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
-.text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-base { font-size: 1rem; }
-.text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
-.text-3xl { font-size: 1.875rem; }
-.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; } .font-black { font-weight: 900; }
-.font-mono { font-family: 'SF Mono', Menlo, monospace; }
-.uppercase { text-transform: uppercase; }
-.tracking-tight { letter-spacing: -0.025em; } .tracking-wider { letter-spacing: 0.05em; } .tracking-widest { letter-spacing: 0.1em; }
-.leading-snug { line-height: 1.375; } .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* ── RADII & SHADOWS ── */
+.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}
+.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}
+.shadow-xs{box-shadow:0 0 0 1px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.04)}
+.shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.shadow-md{box-shadow:0 4px 6px -1px rgba(0,0,0,.08),0 2px 4px -1px rgba(0,0,0,.04)}
+.shadow-xl{box-shadow:0 20px 25px -5px rgba(0,0,0,.08),0 10px 10px -5px rgba(0,0,0,.02)}
 
-.text-white { color: #fff; }
-.text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); }
-.text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); }
-.text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
-.text-slate-900 { color: var(--slate-900); }
-.text-emerald-500 { color: var(--emerald-500); } .text-emerald-600 { color: var(--emerald-600); }
-.text-emerald-700 { color: var(--emerald-700); }
-.text-rose-500 { color: var(--rose-500); } .text-rose-600 { color: var(--rose-600); }
-.text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); }
-.text-amber-500 { color: var(--amber-500); } .text-amber-600 { color: var(--amber-600); }
-.text-purple-600 { color: var(--purple-600); }
+/* ── INTERACTIONS ── */
+.transition-all{transition:all .2s ease}.transition-colors{transition:color .15s ease,background-color .15s ease}
+.cursor-pointer{cursor:pointer}
+.hover\:bg-slate-50:hover{background-color:var(--slate-50)}
+.hover\:bg-slate-100:hover{background-color:var(--slate-100)}
+.hover\:bg-slate-800:hover{background-color:#1e293b}
+.hover\:bg-rose-50:hover{background-color:var(--rose-50)}
+.hover\:text-slate-900:hover{color:var(--slate-900)}
+.active\:scale-98:active{transform:scale(.98)}
+.disabled\:opacity-40:disabled{opacity:.4}
+.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}
+button:disabled{opacity:.5;cursor:not-allowed}
+input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px var(--slate-400)}
 
-.bg-white { background-color: #fff; }
-.bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); }
-.bg-slate-200 { background-color: var(--slate-200); } .bg-slate-900 { background-color: var(--slate-900); }
-.bg-emerald-50 { background-color: var(--emerald-50); } .bg-emerald-500 { background-color: var(--emerald-500); }
-.bg-rose-50 { background-color: var(--rose-50); } .bg-rose-100 { background-color: #ffe4e6; }
-.bg-blue-50 { background-color: var(--blue-50); } .bg-blue-600 { background-color: var(--blue-600); }
-.bg-amber-50 { background-color: var(--amber-50); } .bg-purple-50 { background-color: var(--purple-50); }
-.bg-white\/90 { background-color: rgba(255,255,255,0.9); }
-.bg-slate-50\/30 { background-color: rgba(248,250,252,0.3); }
-.bg-slate-950\/20 { background-color: rgba(2,6,23,0.2); }
-
-.border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; }
-.border-l-4 { border-left-width: 4px; } .border-dashed { border-style: dashed; }
-.border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); }
-.border-slate-700 { border-color: #334155; } .border-slate-900 { border-color: var(--slate-900); }
-.border-emerald-500 { border-color: var(--emerald-500); } .border-transparent { border-color: transparent; }
-.divide-y > * + * { border-top: 1px solid var(--slate-100); }
-
-.rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; }
-.rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
-.shadow-xs { box-shadow: 0 0 0 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04); }
-.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04); }
-.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.02); }
-
-.transition-all { transition: all 0.2s ease; } .transition-colors { transition: color 0.15s ease, background-color 0.15s ease; }
-.transition-transform { transition: transform 0.2s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.animate-fade-in { animation: fadeIn 0.3s ease; }
-@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
-.animate-slide-right { animation: slideInRight 0.3s ease; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-
-.hover\:bg-slate-50:hover { background-color: var(--slate-50); }
-.hover\:bg-slate-100:hover { background-color: var(--slate-100); }
-.hover\:bg-slate-800:hover { background-color: #1e293b; }
-.hover\:bg-emerald-100:hover { background-color: #d1fae5; }
-.hover\:bg-rose-50:hover { background-color: var(--rose-50); }
-.hover\:bg-blue-50:hover { background-color: var(--blue-50); }
-.hover\:text-slate-600:hover { color: var(--slate-600); }
-.hover\:text-slate-900:hover { color: var(--slate-900); }
-.hover\:text-rose-600:hover { color: var(--rose-600); }
-.hover\:border-slate-300:hover { border-color: var(--slate-300); }
-.active\:scale-95:active { transform: scale(0.95); } .active\:scale-98:active { transform: scale(0.98); }
-
-.backdrop-blur-xs { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
-input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-.disabled\:opacity-40:disabled { opacity: 0.4; }
-.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
-
-.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-@media (min-width: 768px) {
-    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-    .md\:flex-row { flex-direction: row; }
-    .md\:w-96 { width: 24rem; }
-}
-@media (min-width: 1024px) {
-    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+/* ── GRID ── */
+.grid-cols-1{grid-template-columns:repeat(1,1fr)}
+.grid-cols-2{grid-template-columns:repeat(2,1fr)}
+.grid-cols-3{grid-template-columns:repeat(3,1fr)}
+@media(min-width:768px){
+    .md\:grid-cols-3{grid-template-columns:repeat(3,1fr)}
+    .md\:flex-row{flex-direction:row}
 }
 
-/* Toast Notification */
-.toast {
-    position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
-    background: white; border: 1px solid var(--slate-200); border-radius: 1rem;
-    padding: 1rem 1.5rem; box-shadow: var(--shadow-xl);
-    display: flex; align-items: center; gap: 0.75rem;
-    animation: slideInRight 0.3s ease; max-width: 320px;
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate-fade-in{animation:fadeIn .3s ease}
+@keyframes slideInRight{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.animate-pulse{animation:pulse 1.5s cubic-bezier(.4,0,.6,1) infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{
+    position:fixed;bottom:2rem;right:2rem;z-index:200;
+    background:white;border:1px solid var(--slate-200);border-radius:1rem;
+    padding:1rem 1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);
+    display:flex;align-items:center;gap:.75rem;
+    animation:slideInRight .3s ease;max-width:320px;
 }
-.toast.success { border-left: 4px solid var(--emerald-500); }
-.toast.error { border-left: 4px solid var(--rose-500); }
-.toast .icon { width: 1.25rem; height: 1.25rem; }
-.toast .message { font-size: 0.875rem; font-weight: 600; color: var(--slate-800); }
+.toast.success{border-left:4px solid var(--emerald-500)}
+.toast.error{border-left:4px solid var(--rose-500)}
+.toast .icon{width:1.25rem;height:1.25rem}
+.toast .message{font-size:.875rem;font-weight:600;color:var(--slate-800)}
 
-/* Demo Badge */
-.demo-badge {
-    position: fixed; top: 1rem; right: 1rem; z-index: 60;
-    background: var(--amber-50); color: var(--amber-700);
-    padding: 0.375rem 0.75rem; border-radius: 0.5rem;
-    font-size: 0.625rem; font-weight: 900; text-transform: uppercase;
-    letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.375rem;
-    animation: pulse 2s infinite;
+/* ── DEMO BADGE ── */
+.demo-badge{
+    position:fixed;top:1rem;right:1rem;z-index:60;
+    background:var(--amber-50);color:var(--amber-600);
+    padding:.375rem .75rem;border-radius:.5rem;
+    font-size:.625rem;font-weight:900;text-transform:uppercase;
+    letter-spacing:.05em;display:flex;align-items:center;gap:.375rem;
+    animation:pulse 2s infinite;
 }
 
+/* ── FORM ── */
+.form-input{
+    width:100%;background:var(--slate-50);border:1px solid var(--slate-200);
+    border-radius:.75rem;padding:.625rem 1rem;font-size:.875rem;transition:all .15s ease;
+}
+.form-input:focus{outline:none;box-shadow:0 0 0 2px var(--slate-400)}
+.form-label{font-size:.625rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--slate-400);display:block;margin-bottom:.25rem}
 
+/* ── CASHIER SELECTOR CARD ── */
+.cashier-selector-card{
+    background:white;border:1px solid var(--slate-100);border-radius:1rem;
+    padding:1.25rem 1.5rem;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:1rem;
+    box-shadow:0 0 0 1px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.04);
+}
+.cashier-avatar{
+    width:2.5rem;height:2.5rem;border-radius:.75rem;
+    background:var(--slate-900);color:white;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:.75rem;text-transform:uppercase;
+    flex-shrink:0;
+}
+.cashier-select-wrap{
+    position:relative;flex:1;min-width:200px;
+}
+.cashier-select-wrap select{
+    width:100%;background:var(--slate-50);border:2px solid var(--slate-200);
+    border-radius:.75rem;padding:.625rem 2.5rem .625rem 1rem;
+    font-size:.875rem;font-weight:600;color:var(--slate-900);
+    cursor:pointer;appearance:none;-webkit-appearance:none;transition:all .15s;
+}
+.cashier-select-wrap select:focus{outline:none;border-color:var(--slate-900);box-shadow:none}
+.cashier-select-wrap::after{
+    content:'▼';position:absolute;right:.875rem;top:50%;transform:translateY(-50%);
+    font-size:.6rem;color:var(--slate-400);pointer-events:none;
+}
+.cashier-status-pill{
+    display:inline-flex;align-items:center;gap:.375rem;
+    padding:.3rem .75rem;border-radius:9999px;
+    font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+}
+.cashier-status-pill.active{background:var(--emerald-50);color:var(--emerald-700)}
+.cashier-status-pill.inactive{background:var(--slate-100);color:var(--slate-500)}
+.cashier-status-dot{width:.5rem;height:.5rem;border-radius:50%}
+.cashier-status-dot.active{background:var(--emerald-500)}
+.cashier-status-dot.inactive{background:var(--slate-400)}
 
-/* Form Input Styles */
-.form-input {
-    width: 100%; background: var(--slate-50); border: 1px solid var(--slate-200);
-    border-radius: 0.75rem; padding: 0.625rem 1rem; font-size: 0.875rem;
+/* ── CASH SUMMARY CARD ── */
+.cash-summary{
+    background:linear-gradient(135deg,var(--slate-900),var(--slate-700));
+    border-radius:1rem;padding:1.5rem;color:white;
+}
+.cash-summary .label{font-size:.625rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;opacity:.7}
+.cash-summary .value{font-size:1.75rem;font-weight:900;font-family:monospace;letter-spacing:-.02em}
+.cash-summary .detail{display:flex;justify-content:space-between;font-size:.75rem;opacity:.85;margin-top:.25rem}
+
+/* ── STATUS BADGES ── */
+.status-badge{padding:.25rem .625rem;border-radius:.375rem;font-size:.625rem;font-weight:800;text-transform:uppercase}
+.status-badge.apertura{background:var(--emerald-50);color:var(--emerald-700)}
+.status-badge.ingreso{background:var(--blue-50);color:var(--blue-600)}
+.status-badge.retiro{background:var(--rose-50);color:var(--rose-600)}
+.status-badge.cierre{background:var(--purple-50);color:var(--purple-600)}
+
+/* ── FILTER BAR ── */
+.filter-bar{
+    display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;
+    padding:.875rem 1.5rem;background:var(--slate-50);border-bottom:1px solid var(--slate-100);
+}
+.filter-bar select,.filter-bar input{
+    background:white;border:1px solid var(--slate-200);border-radius:.5rem;
+    padding:.4rem .75rem;font-size:.75rem;color:var(--slate-700);
+    transition:border-color .15s;
+}
+.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--slate-400)}
+
+/* ── MODAL ── */
+.modal-overlay{
+    position:fixed;inset:0;background:rgba(2,6,23,.35);backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;z-index:100;
+    opacity:0;visibility:hidden;transition:all .2s ease;
+}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal-content{
+    background:white;border-radius:1.25rem;padding:1.75rem;width:100%;max-width:32rem;
+    box-shadow:0 25px 50px -12px rgba(0,0,0,.2);
+    transform:translateY(12px);transition:transform .2s ease;
+    max-height:90vh;overflow-y:auto;
+}
+.modal-overlay.active .modal-content{transform:translateY(0)}
+.modal-content.modal-sm{max-width:28rem}
+
+/* ── ARQUEO ── */
+.denom-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:.5rem;
+}
+.denom-row{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--slate-50);border:1px solid var(--slate-100);
+    border-radius:.75rem;padding:.5rem .75rem;gap:.5rem;
+}
+.denom-label{font-size:.75rem;font-weight:700;color:var(--slate-700);white-space:nowrap;min-width:4rem}
+.denom-input{
+    width:4rem;background:white;border:1px solid var(--slate-200);
+    border-radius:.5rem;padding:.3rem .5rem;font-size:.75rem;font-weight:700;
+    font-family:monospace;text-align:center;
+}
+.denom-input:focus{outline:none;border-color:var(--slate-900)}
+.denom-subtotal{font-size:.7rem;font-family:monospace;color:var(--slate-400);min-width:4.5rem;text-align:right}
+
+.arqueo-summary{
+    background:var(--slate-50);border:1px solid var(--slate-200);border-radius:.75rem;padding:1rem;
+}
+.arqueo-row{display:flex;justify-content:space-between;align-items:center;padding:.3rem 0}
+.arqueo-row+.arqueo-row{border-top:1px dashed var(--slate-200)}
+.arqueo-diff.ok{color:var(--emerald-600)}
+.arqueo-diff.mismatch{color:var(--rose-600)}
+
+/* ── SPINNER ── */
+.spinner{
+    width:1rem;height:1rem;border:2px solid rgba(255,255,255,.3);
+    border-top-color:white;border-radius:50%;
+    animation:spin .8s linear infinite;display:none;
+}
+.btn-loading .spinner{display:inline-block}
+.btn-loading .btn-text{display:none}
+
+/* ── EMPTY ROW ── */
+.empty-row td{padding:2.5rem;text-align:center;color:var(--slate-400);font-size:.875rem}
+
+/* ── CORTE PREVIEW ── */
+.corte-preview{
+    background:white;border:2px dashed var(--slate-200);border-radius:.75rem;
+    padding:1.25rem;font-family:monospace;font-size:.75rem;color:var(--slate-700);
+}
+.corte-preview .cp-title{text-align:center;font-size:.875rem;font-weight:900;margin-bottom:.75rem;color:var(--slate-900)}
+.corte-preview .cp-row{display:flex;justify-content:space-between;padding:.2rem 0}
+.corte-preview .cp-divider{border:none;border-top:1px dashed var(--slate-200);margin:.5rem 0}
+.corte-preview .cp-total{font-weight:900;font-size:.875rem;color:var(--emerald-700)}
+
+/* ── CACHE RESET BUTTON ── */
+.cache-reset-btn {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 100;
+    background: var(--amber-50);
+    color: var(--amber-700);
+    border: 1px solid var(--amber-200);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
     transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
 }
-.form-input:focus { outline: none; box-shadow: 0 0 0 2px var(--slate-400); }
-.form-input.mono { font-family: monospace; font-weight: 700; }
-.form-label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); display: block; margin-bottom: 0.25rem; }
-
-/* Status & Type Badges */
-.status-badge { padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.625rem; font-weight: 800; text-transform: uppercase; }
-.status-badge.apertura { background: var(--emerald-50); color: var(--emerald-700); }
-.status-badge.ingreso { background: var(--blue-50); color: var(--blue-600); }
-.status-badge.retiro { background: var(--rose-50); color: var(--rose-600); }
-.status-badge.cierre { background: var(--purple-50); color: var(--purple-600); }
-
-/* Action Buttons */
-.action-btn {
-    width: 1.75rem; height: 1.75rem; border-radius: 0.375rem;
-    border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s ease;
+.cache-reset-btn:hover {
+    background: var(--amber-100);
+    border-color: var(--amber-300);
 }
-.action-btn:hover { background: var(--slate-50); }
-
-/* Modal Styles */
-.modal-overlay {
-    position: fixed; inset: 0; background: var(--slate-950/20); backdrop-filter: blur(2px);
-    display: flex; align-items: center; justify-content: center; z-index: 100;
-    opacity: 0; visibility: hidden; transition: all 0.2s ease;
-}
-.modal-overlay.active { opacity: 1; visibility: visible; }
-.modal-content {
-    background: white; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 28rem;
-    box-shadow: var(--shadow-xl); transform: translateY(10px); transition: transform 0.2s ease;
-}
-.modal-overlay.active .modal-content { transform: translateY(0); }
-
-/* Cash Summary Card */
-.cash-summary {
-    background: linear-gradient(135deg, var(--slate-900), var(--slate-700));
-    border-radius: 1rem; padding: 1.5rem; color: white;
-}
-.cash-summary .label { font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; }
-.cash-summary .value { font-size: 1.5rem; font-weight: 900; font-family: monospace; }
-.cash-summary .detail { display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem; }
-
-/* Filter Bar */
-.filter-bar {
-    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
-    padding: 1rem; background: var(--slate-50); border-radius: 0.75rem; margin-bottom: 1rem;
-}
-.filter-bar .form-input { min-width: 140px; }
-.filter-bar select { min-width: 150px; }
     </style>
-    <link rel="stylesheet" href="shared/responsive.css?v=1">
 </head>
-<body class="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased custom-scrollbar">
+<body class="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased custom-scrollbar">
 
-    <!-- Demo Mode Badge -->
+    <!-- Demo Badge -->
     <div class="demo-badge">
         <i data-lucide="zap" class="w-3 h-3"></i>
         <span>Modo Demo</span>
     </div>
 
+    <!-- Cache Reset Button -->
+    <button onclick="clearAllCache()" class="cache-reset-btn" title="Limpiar caché y recargar">
+        <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+        <span>Reset Demo</span>
+    </button>
 
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
-            <div class="flex items-center gap-4">
-                <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
-                    <span class="text-white text-sm font-black tracking-tighter">N:</span>
-                </div>
-                <div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
-                    <span class="text-xs font-normal text-slate-400 ml-2">Control de Caja</span>
-                </div>
+    <!-- ══════════════════════════════════════════
+         HEADER — dinámico desde sesión
+    ══════════════════════════════════════════ -->
+    <header class="bg-white border-b border-slate-100 h-20 px-8 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+        <div class="flex items-center gap-4">
+            <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                <span class="text-white text-sm font-black tracking-tighter">N:</span>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <p class="text-base font-bold text-slate-900">Diego Mendoza</p>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-0.5">Administrador</p>
-                </div>
-                <span class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
-                    <i data-lucide="store" class="w-3 h-3"></i>Central
-                </span>
-            </div>
-        </header>
-
-        <div class="max-w-7xl mx-auto px-8 py-8 space-y-8">
-            <!-- Page Header -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 class="text-3xl font-black tracking-tight text-slate-900">Control de Caja</h1>
-                    <p class="text-slate-500 mt-1 text-sm font-medium flex items-center gap-2">
-                        <i data-lucide="circle" class="w-3 h-3 text-emerald-500 fill-emerald-500"></i>
-                        Caja #1 — Turno Activo
-                    </p>
-                </div>
-                <div class="flex gap-3">
-                    <button id="btnAbrirCaja" class="bg-emerald-600 hover:bg-emerald-700 text-white active:scale-98 font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                        <i data-lucide="play" class="w-4 h-4"></i><span>Abrir Caja</span>
-                    </button>
-                    <button id="btnCerrarTurno" class="bg-rose-600 hover:bg-rose-700 text-white active:scale-98 font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
-                        <i data-lucide="square" class="w-4 h-4"></i><span>Cerrar Turno</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
-                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="wallet" class="w-4 h-4"></i>Fondo Inicial
-                    </span>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiInitial">$1,500.00</span>
-                    </div>
-                    <p class="text-xs text-slate-400">Monto asignado al inicio del turno</p>
-                </div>
-                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
-                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="coins" class="w-4 h-4"></i>Efectivo en Caja
-                    </span>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-black text-emerald-600 tracking-tight font-mono" id="kpiCurrent">$6,842.50</span>
-                    </div>
-                    <p class="text-xs text-slate-400">Saldo actual disponible</p>
-                </div>
-                <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
-                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="history" class="w-4 h-4"></i>Corte Anterior
-                    </span>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiPrevious">$5,342.50</span>
-                    </div>
-                    <p class="text-xs text-slate-400">Total del turno previo</p>
-                </div>
-            </div>
-
-            <!-- Cash Summary Card (Demo Info) -->
-            <div class="cash-summary">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="label">Saldo en Tiempo Real</p>
-                        <p class="value" id="summaryCurrent">$6,842.50</p>
-                    </div>
-                    <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded">Actualizado: <span id="summaryTime">14:30</span></span>
-                </div>
-                <div class="space-y-2">
-                    <div class="detail"><span>Ingresos del turno</span><span class="font-mono">+$5,918.04</span></div>
-                    <div class="detail"><span>Retiros del turno</span><span class="font-mono text-rose-300">-$575.54</span></div>
-                    <div class="detail"><span>Ventas en efectivo</span><span class="font-mono">3 transacciones</span></div>
-                </div>
-            </div>
-
-            <!-- Movements Table with Filters -->
-            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
-                <div class="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <h2 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="list" class="w-4 h-4"></i>Movimientos del Turno
-                    </h2>
-                    <button id="btnRegistrarMovimiento" class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i><span>Registrar Movimiento</span>
-                    </button>
-                </div>
-
-                <!-- Filter Bar -->
-                <div class="filter-bar px-6 py-3 border-b border-slate-100">
-                    <div class="relative flex-1 min-w-[200px]">
-                        <input type="text" id="filterSearch" placeholder="Buscar concepto..." class="form-input py-2 pl-9 pr-3 text-xs w-full" oninput="filterMovements()">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                    </div>
-                    <select id="filterType" class="form-input py-2 px-3 text-xs cursor-pointer" onchange="filterMovements()">
-                        <option value="">Todos los tipos</option>
-                        <option value="Apertura">Apertura</option>
-                        <option value="Ingreso">Ingreso</option>
-                        <option value="Retiro">Retiro</option>
-                        <option value="Cierre">Cierre</option>
-                    </select>
-                    <input type="time" id="filterTimeFrom" class="form-input py-2 px-3 text-xs" title="Hora desde" onchange="filterMovements()">
-                    <input type="time" id="filterTimeTo" class="form-input py-2 px-3 text-xs" title="Hora hasta" onchange="filterMovements()">
-                    <button onclick="clearFilters()" class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i>Limpiar
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
-                                <th class="p-4 pl-6">Hora</th>
-                                <th class="p-4">Tipo</th>
-                                <th class="p-4">Concepto</th>
-                                <th class="p-4 text-right">Monto</th>
-                                <th class="p-4 text-right pr-6">Saldo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="movimientosBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700"></tbody>
-                    </table>
-                </div>
+            <div>
+                <span class="text-xl font-bold tracking-tight text-slate-900">NexPoS</span>
+                <span class="text-xs font-normal text-slate-400 ml-2">Control de Caja</span>
             </div>
         </div>
-    </div>
+        <div class="flex items-center gap-4">
+            <!-- Sucursal badge -->
+            <span id="headerBranch" class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1">
+                <i data-lucide="store" class="w-3 h-3"></i>
+                <span>—</span>
+            </span>
+            <!-- Usuario de sesión -->
+            <div class="text-right">
+                <p class="text-sm font-bold text-slate-900" id="headerName">—</p>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest" id="headerRole">—</p>
+            </div>
+        </div>
+    </header>
 
-    <!-- Movement Registration Modal -->
+    <!-- ══════════════════════════════════════════
+         MAIN
+    ══════════════════════════════════════════ -->
+    <div class="max-w-7xl mx-auto px-8 py-8 space-y-6">
+
+        <!-- Page title -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight text-slate-900">Control de Caja</h1>
+                <p class="text-slate-500 mt-1 text-sm font-medium flex items-center gap-2">
+                    <i data-lucide="circle" class="w-3 h-3 text-emerald-500 fill-emerald-500"></i>
+                    Caja #1 — Turno Activo
+                </p>
+            </div>
+            <div class="flex gap-3">
+                <button id="btnAbrirCaja" onclick="abrirCaja()"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white active:scale-98 font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4"></i><span>Abrir Caja</span>
+                </button>
+                <button id="btnCerrarTurno" onclick="openCloseShiftModal()"
+                    class="bg-rose-600 hover:bg-rose-700 text-white active:scale-98 font-bold py-3 px-5 rounded-xl shadow-md transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                    <i data-lucide="square" class="w-4 h-4"></i><span>Cerrar Turno</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             CAJERO ACTIVO SELECTOR
+        ══════════════════════════════════════ -->
+        <div class="cashier-selector-card animate-fade-in">
+            <!-- Avatar + info del cajero seleccionado -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="cashier-avatar" id="cashierAvatar">—</div>
+                <div>
+                    <p class="text-sm font-bold text-slate-900" id="cashierSelectedName">Sin cajero seleccionado</p>
+                    <p class="text-xs text-slate-400" id="cashierSelectedCode">Selecciona un cajero para ver su caja</p>
+                </div>
+            </div>
+
+            <!-- Dropdown selector -->
+            <div class="cashier-select-wrap">
+                <select id="cashierSelect" onchange="onCashierChange()">
+                    <option value="">— Seleccionar cajero activo —</option>
+                </select>
+            </div>
+
+            <!-- Status pill -->
+            <div class="flex items-center gap-2">
+                <span class="cashier-status-pill inactive" id="cashierStatusPill">
+                    <span class="cashier-status-dot inactive" id="cashierStatusDot"></span>
+                    <span id="cashierStatusText">Sin turno</span>
+                </span>
+                <!-- Botón corte individual -->
+                <button onclick="openCorteModal()" id="btnCorteIndividual" disabled
+                    class="border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Corte</span>
+                </button>
+                <!-- Botón arqueo -->
+                <button onclick="openArqueoModal()" id="btnArqueo" disabled
+                    class="border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                    <span>Arqueo</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             KPI CARDS
+        ══════════════════════════════════════ -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="wallet" class="w-4 h-4"></i>Fondo Inicial
+                </span>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-900 tracking-tight font-mono" id="kpiInitial">$—</span>
+                </div>
+                <p class="text-xs text-slate-400" id="kpiInitialSub">Selecciona un cajero</p>
+            </div>
+            <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="coins" class="w-4 h-4"></i>Efectivo en Caja
+                </span>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-emerald-600 tracking-tight font-mono" id="kpiCurrent">$—</span>
+                </div>
+                <p class="text-xs text-slate-400">Saldo actual del cajero</p>
+            </div>
+            <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-xs space-y-2">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="receipt" class="w-4 h-4"></i>Ventas del Turno
+                </span>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-blue-600 tracking-tight font-mono" id="kpiSales">$—</span>
+                </div>
+                <p class="text-xs text-slate-400"><span id="kpiSalesCount">0</span> ventas registradas</p>
+            </div>
+        </div>
+
+        <!-- Cash summary gradient -->
+        <div class="cash-summary">
+            <div class="flex justify-between items-start mb-4 flex-wrap gap-3">
+                <div>
+                    <p class="label">Saldo en Tiempo Real</p>
+                    <p class="value font-mono" id="summaryCurrent">$—</p>
+                    <p class="text-xs opacity-60 mt-1" id="summaryCashier">Selecciona un cajero activo</p>
+                </div>
+                <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded-lg">
+                    Actualizado: <span id="summaryTime">—</span>
+                </span>
+            </div>
+            <div class="space-y-1.5">
+                <div class="detail"><span>Ingresos del turno</span><span class="font-mono" id="summaryIngresos">+$0.00</span></div>
+                <div class="detail"><span>Retiros del turno</span><span class="font-mono text-rose-300" id="summaryRetiros">-$0.00</span></div>
+                <div class="detail"><span>Ventas en efectivo</span><span class="font-mono" id="summarySalesCount">0 transacciones</span></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             MOVEMENTS TABLE
+        ══════════════════════════════════════ -->
+        <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-md">
+            <div class="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                        Movimientos del Turno
+                        <span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full font-bold" id="movCountBadge">0</span>
+                    </h2>
+                </div>
+                <button id="btnRegistrarMovimiento" onclick="openMovementModal()" disabled
+                    class="bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="plus" class="w-4 h-4"></i><span>Registrar Movimiento</span>
+                </button>
+            </div>
+
+            <!-- Filter bar -->
+            <div class="filter-bar">
+                <div class="relative flex-1" style="min-width:180px">
+                    <input type="text" id="filterSearch" placeholder="Buscar concepto..."
+                        class="w-full" style="padding-left:2.25rem;background:white;border:1px solid #e2e8f0;border-radius:.5rem;padding-top:.4rem;padding-bottom:.4rem;font-size:.75rem;color:#334155"
+                        oninput="filterMovements()">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute" style="left:.6rem;top:50%;transform:translateY(-50%);pointer-events:none"></i>
+                </div>
+                <select id="filterType" onchange="filterMovements()"
+                    style="background:white;border:1px solid #e2e8f0;border-radius:.5rem;padding:.4rem .75rem;font-size:.75rem;color:#334155;cursor:pointer">
+                    <option value="">Todos los tipos</option>
+                    <option value="Apertura">Apertura</option>
+                    <option value="Ingreso">Ingreso</option>
+                    <option value="Retiro">Retiro</option>
+                    <option value="Cierre">Cierre</option>
+                </select>
+                <input type="time" id="filterTimeFrom" onchange="filterMovements()"
+                    style="background:white;border:1px solid #e2e8f0;border-radius:.5rem;padding:.4rem .75rem;font-size:.75rem;color:#334155"
+                    title="Hora desde">
+                <input type="time" id="filterTimeTo" onchange="filterMovements()"
+                    style="background:white;border:1px solid #e2e8f0;border-radius:.5rem;padding:.4rem .75rem;font-size:.75rem;color:#334155"
+                    title="Hora hasta">
+                <button onclick="clearFilters()"
+                    class="flex items-center gap-1.5 px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>Limpiar
+                </button>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100 text-xs font-black uppercase tracking-wider text-slate-400">
+                            <th class="p-4 pl-6">Hora</th>
+                            <th class="p-4">Tipo</th>
+                            <th class="p-4">Cajero</th>
+                            <th class="p-4">Concepto</th>
+                            <th class="p-4 text-right">Monto</th>
+                            <th class="p-4 text-right pr-6">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movimientosBody" class="text-sm divide-y divide-slate-100 font-medium text-slate-700">
+                        <tr class="empty-row"><td colspan="6">Selecciona un cajero para ver sus movimientos</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div><!-- /main -->
+
+    <!-- ══════════════════════════════════════════
+         MODAL: REGISTRAR MOVIMIENTO
+    ══════════════════════════════════════════ -->
     <div id="movementModal" class="modal-overlay">
-        <div class="modal-content space-y-4">
+        <div class="modal-content modal-sm space-y-4">
             <div class="flex justify-between items-center">
                 <h3 class="text-lg font-bold text-slate-900">Registrar Movimiento</h3>
                 <button onclick="closeMovementModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
+            <!-- Cajero asignado (readonly) -->
+            <div class="flex items-center gap-3 bg-slate-50 rounded-xl p-3">
+                <div class="cashier-avatar text-xs" id="movModalAvatar" style="width:2rem;height:2rem;font-size:.65rem">—</div>
+                <div>
+                    <p class="text-xs font-bold text-slate-900" id="movModalCashierName">Sin cajero</p>
+                    <p class="text-[10px] text-slate-400">Movimiento será asignado a este cajero</p>
+                </div>
+            </div>
             <div class="space-y-3">
                 <div>
                     <label class="form-label">Tipo de Movimiento</label>
-                    <select id="modalType" class="form-input cursor-pointer" onchange="updateAmountPlaceholder()">
+                    <select id="modalType" class="form-input cursor-pointer">
                         <option value="Ingreso">Ingreso (+)</option>
-                        <option value="Retiro">Retiro (-)</option>
+                        <option value="Retiro">Retiro (−)</option>
                     </select>
                 </div>
                 <div>
@@ -417,292 +596,772 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
                     <input type="text" id="modalConcept" placeholder="Ej: Pago a proveedor, Venta manual..." class="form-input">
                 </div>
                 <div>
-                    <label class="form-label">Monto</label>
-                    <input type="number" id="modalAmount" placeholder="0.00" step="0.01" min="0" class="form-input mono">
+                    <label class="form-label">Monto ($)</label>
+                    <input type="number" id="modalAmount" placeholder="0.00" step="0.01" min="0.01" class="form-input font-mono">
                 </div>
             </div>
             <div class="flex gap-3 pt-2">
-                <button onclick="closeMovementModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
-                <button onclick="saveMovement()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Guardar</button>
+                <button onclick="closeMovementModal()"
+                    class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Cancelar
+                </button>
+                <button onclick="saveMovement()" id="btnSaveMovement"
+                    class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <span class="btn-text">Guardar</span>
+                    <span class="spinner"></span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Close Shift Modal -->
+    <!-- ══════════════════════════════════════════
+         MODAL: CERRAR TURNO
+    ══════════════════════════════════════════ -->
     <div id="closeShiftModal" class="modal-overlay">
-        <div class="modal-content space-y-4">
+        <div class="modal-content modal-sm space-y-4">
             <div class="flex justify-between items-center">
                 <h3 class="text-lg font-bold text-slate-900">Cerrar Turno</h3>
-                <button onclick="closeCloseShiftModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <button onclick="closeCloseShiftModal()" class="text-slate-400 hover:text-slate-600">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="space-y-3">
-                <p class="text-sm text-slate-600">¿Estás seguro de cerrar el turno actual? Se generará un reporte de corte.</p>
-                <div class="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
-                    <div class="flex justify-between"><span class="text-slate-500">Fondo inicial</span><span class="font-mono font-bold">$1,500.00</span></div>
-                    <div class="flex justify-between"><span class="text-slate-500">Ingresos</span><span class="font-mono font-bold text-emerald-600">+$5,918.04</span></div>
-                    <div class="flex justify-between"><span class="text-slate-500">Retiros</span><span class="font-mono font-bold text-rose-600">-$575.54</span></div>
-                    <hr class="border-slate-200">
-                    <div class="flex justify-between text-base"><span class="font-bold">Saldo final</span><span class="font-mono font-black text-emerald-600">$6,842.50</span></div>
-                </div>
-                <div>
-                    <label class="form-label">Observaciones (opcional)</label>
-                    <textarea id="closeShiftNotes" placeholder="Notas del cierre..." class="form-input min-h-[80px] resize-none"></textarea>
-                </div>
+            <p class="text-sm text-slate-500">Se cerrará el turno del cajero seleccionado y se generará el corte.</p>
+            <div class="bg-slate-50 rounded-xl p-4 space-y-2 text-sm" id="closeShiftSummary"></div>
+            <div>
+                <label class="form-label">Observaciones (opcional)</label>
+                <textarea id="closeShiftNotes" placeholder="Notas del cierre..." class="form-input" style="min-height:72px;resize:none"></textarea>
             </div>
             <div class="flex gap-3 pt-2">
-                <button onclick="closeCloseShiftModal()" class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
-                <button onclick="confirmCloseShift()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">Confirmar Cierre</button>
+                <button onclick="closeCloseShiftModal()"
+                    class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Cancelar
+                </button>
+                <button onclick="confirmCloseShift()"
+                    class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Confirmar Cierre
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-[100] space-y-2"></div>
+    <!-- ══════════════════════════════════════════
+         MODAL: ARQUEO DE CAJA
+    ══════════════════════════════════════════ -->
+    <div id="arqueoModal" class="modal-overlay">
+        <div class="modal-content space-y-5" style="max-width:36rem">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Arqueo de Caja</h3>
+                    <p class="text-xs text-slate-400 mt-0.5" id="arqueoSubtitle">Conteo físico del efectivo</p>
+                </div>
+                <button onclick="closeArqueoModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
 
+            <p class="text-xs text-slate-500">Ingresa la cantidad de cada denominación para calcular el total contado físicamente.</p>
+
+            <!-- Billetes -->
+            <div>
+                <p class="form-label mb-2">💵 Billetes</p>
+                <div class="denom-grid">
+                    <div class="denom-row"><span class="denom-label">$1,000</span><input class="denom-input" type="number" min="0" value="0" id="d1000" oninput="calcArqueo()"><span class="denom-subtotal" id="s1000">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$500</span><input class="denom-input" type="number" min="0" value="0" id="d500" oninput="calcArqueo()"><span class="denom-subtotal" id="s500">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$200</span><input class="denom-input" type="number" min="0" value="0" id="d200" oninput="calcArqueo()"><span class="denom-subtotal" id="s200">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$100</span><input class="denom-input" type="number" min="0" value="0" id="d100" oninput="calcArqueo()"><span class="denom-subtotal" id="s100">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$50</span><input class="denom-input" type="number" min="0" value="0" id="d50" oninput="calcArqueo()"><span class="denom-subtotal" id="s50">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$20</span><input class="denom-input" type="number" min="0" value="0" id="d20" oninput="calcArqueo()"><span class="denom-subtotal" id="s20">$0.00</span></div>
+                </div>
+            </div>
+
+            <!-- Monedas -->
+            <div>
+                <p class="form-label mb-2">🪙 Monedas</p>
+                <div class="denom-grid">
+                    <div class="denom-row"><span class="denom-label">$10</span><input class="denom-input" type="number" min="0" value="0" id="d10" oninput="calcArqueo()"><span class="denom-subtotal" id="s10">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$5</span><input class="denom-input" type="number" min="0" value="0" id="d5" oninput="calcArqueo()"><span class="denom-subtotal" id="s5">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$2</span><input class="denom-input" type="number" min="0" value="0" id="d2" oninput="calcArqueo()"><span class="denom-subtotal" id="s2">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$1</span><input class="denom-input" type="number" min="0" value="0" id="d1" oninput="calcArqueo()"><span class="denom-subtotal" id="s1">$0.00</span></div>
+                    <div class="denom-row"><span class="denom-label">$0.50</span><input class="denom-input" type="number" min="0" value="0" id="d050" oninput="calcArqueo()"><span class="denom-subtotal" id="s050">$0.00</span></div>
+                </div>
+            </div>
+
+            <!-- Resumen del arqueo -->
+            <div class="arqueo-summary">
+                <div class="arqueo-row">
+                    <span class="text-sm text-slate-500">Total contado</span>
+                    <span class="text-sm font-black font-mono text-slate-900" id="arqueoContado">$0.00</span>
+                </div>
+                <div class="arqueo-row">
+                    <span class="text-sm text-slate-500">Saldo esperado (sistema)</span>
+                    <span class="text-sm font-black font-mono text-slate-900" id="arqueoSistema">$0.00</span>
+                </div>
+                <div class="arqueo-row" style="padding-top:.5rem;margin-top:.25rem;border-top:2px solid #e2e8f0">
+                    <span class="text-sm font-bold text-slate-700">Diferencia</span>
+                    <span class="text-base font-black font-mono arqueo-diff" id="arqueosDiff">$0.00</span>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closeArqueoModal()"
+                    class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Cancelar
+                </button>
+                <button onclick="guardarArqueo()"
+                    class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Guardar Arqueo</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MODAL: CORTE INDIVIDUAL
+    ══════════════════════════════════════════ -->
+    <div id="corteModal" class="modal-overlay">
+        <div class="modal-content modal-sm space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-900">Corte Individual</h3>
+                <button onclick="closeCorteModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="corte-preview" id="cortePreviewContent"></div>
+            <div class="flex gap-3">
+                <button onclick="closeCorteModal()"
+                    class="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all">
+                    Cerrar
+                </button>
+                <button onclick="printCorte()"
+                    class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="printer" class="w-4 h-4"></i><span>Imprimir</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2" style="z-index:200"></div>
+
+    <!-- ══════════════════════════════════════════
+         JAVASCRIPT
+    ══════════════════════════════════════════ -->
     <script>
-// === DATABASE ===
-const DB_VERSION = '1.0';
+// ── CACHE CONTROL ─────────────────────────────────────────────────────────────
+// Versión de datos para invalidar caché antiguo
+const DB_VERSION = '1.1'; // Incrementar para forzar refresh
+const CACHE_TIMESTAMP_KEY = 'nexpos_cache_ts';
+
+// Función para verificar si el caché está obsoleto (más de 24h)
+function isCacheExpired() {
+    const ts = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+    if (!ts) return true;
+    const age = Date.now() - parseInt(ts);
+    return age > 24 * 60 * 60 * 1000; // 24 horas
+}
+
+// Función para limpiar TODO el localStorage de NexPoS
+function clearAllCache() {
+    if (!confirm('¿Limpiar todos los datos demo y recargar?')) return;
+
+    // Limpiar todas las claves de NexPoS
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('nexpos_')) {
+            localStorage.removeItem(key);
+        }
+    });
+
+    // Actualizar timestamp
+    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+
+    // Recargar página con parámetro anti-cache
+    window.location.href = window.location.pathname + '?t=' + Date.now();
+
+    showToast('Caché limpiado. Recargando...', 'success');
+}
+
+// ── DB ────────────────────────────────────────────────────────────────────────
 const DB = {
     _get(key, def) {
         try {
-            const stored = localStorage.getItem('nexpos_' + key);
-            if (!stored) return def;
-            const data = JSON.parse(stored);
-            if (data.version !== DB_VERSION) return def;
-            return data.value ?? def;
+            const s = localStorage.getItem('nexpos_' + key);
+            if (!s) return def;
+            const d = JSON.parse(s);
+            // Verificar versión para invalidar datos antiguos
+            if (d.version !== DB_VERSION) return def;
+            return d.value ?? def;
         } catch { return def; }
     },
     _set(key, val) {
         localStorage.setItem('nexpos_' + key, JSON.stringify({ value: val, version: DB_VERSION }));
     },
+    getUsers() {
+        let u = this._get('users', null);
+        if (!u) {
+            u = [
+                { id:1, name:'Diego Mendoza', code:'CAJ-0042', email:'diego@nexpos.mx', role:'Admin', branch:'Central', active:true, lastLogin:'2026-05-28 14:30' },
+                { id:2, name:'María López',   code:'CAJ-0043', email:'maria@nexpos.mx',  role:'Encargado', branch:'Central', active:true, lastLogin:'2026-05-28 11:45' },
+                { id:3, name:'Carlos Ruiz',   code:'CAJ-0044', email:'carlos@nexpos.mx', role:'Cajero', branch:'Central', active:true, lastLogin:'2026-05-27 18:05' },
+                { id:4, name:'Ana Torres',    code:'CAJ-0045', email:'ana@nexpos.mx',    role:'Cajero', branch:'Suc. Norte', active:true, lastLogin:'2026-05-27 10:00' },
+            ];
+            this._set('users', u);
+        }
+        return u;
+    },
     getSales() { return this._get('sales', []); },
     setSales(s) { this._set('sales', s); },
-    getCashBalance() { return this._get('cash_balance', { initial: 1500, current: 1500, isOpen: true }); },
-    setCashBalance(b) { this._set('cash_balance', b); },
+    getCashBalance(cashierId) {
+        const all = this._get('cash_balance_all', {});
+        return all[cashierId] || { initial: 0, current: 0, isOpen: false };
+    },
+    setCashBalance(cashierId, b) {
+        const all = this._get('cash_balance_all', {});
+        all[cashierId] = b;
+        this._set('cash_balance_all', all);
+    },
     getCashMovements() { return this._get('cash_movements', []); },
     setCashMovements(m) { this._set('cash_movements', m); },
-
+    addMovement(m) {
+        const movs = this.getCashMovements();
+        movs.unshift(m);
+        this.setCashMovements(movs);
+        return m;
+    },
     seedDemoData() {
-        if (this.getCashMovements().length === 0) {
-            this.setCashMovements([
-                { id: 1, time: '09:00', type: 'Apertura', concept: 'Fondo inicial de caja', amount: 1500, balance: 1500 },
-                { id: 2, time: '10:23', type: 'Ingreso', concept: 'Venta ticket TKT-00430', amount: 1280, balance: 2780 },
-                { id: 3, time: '11:45', type: 'Ingreso', concept: 'Venta ticket TKT-00431', amount: 2450, balance: 5230 },
-                { id: 4, time: '13:10', type: 'Retiro', concept: 'Pago a proveedor', amount: -800, balance: 4430 },
-                { id: 5, time: '14:30', type: 'Ingreso', concept: 'Venta ticket TKT-00432', amount: 188.04, balance: 4618.04 },
-            ]);
-            this.setCashBalance({ initial: 1500, current: 4618.04, isOpen: true });
+        // Si el caché está expirado o es primera vez, regenerar datos
+        if (isCacheExpired() || this.getSales().length === 0) {
+            // Limpiar datos antiguos si la versión cambió
+            if (this._get('version', null) !== DB_VERSION) {
+                ['sales', 'cash_balance_all', 'cash_movements', 'users'].forEach(k => {
+                    localStorage.removeItem('nexpos_' + k);
+                });
+            }
+
+            // Seed ventas
+            if (this.getSales().length === 0) {
+                this.setSales([
+                    { ticket:'TKT-00430', date:'28/05/2026', time:'10:23', cashier:'Diego Mendoza', cashierId:1, method:'Efectivo', status:'Completada', subtotal:1103.45, iva:176.55, total:1280.00, items:[] },
+                    { ticket:'TKT-00431', date:'28/05/2026', time:'11:45', cashier:'María López',   cashierId:2, method:'Tarjeta',  status:'Completada', subtotal:2112.07, iva:337.93, total:2450.00, items:[] },
+                    { ticket:'TKT-00429', date:'27/05/2026', time:'18:05', cashier:'María López',   cashierId:2, method:'Efectivo', status:'Cancelada',  subtotal:297.41,  iva:47.59,  total:345.00,  items:[] },
+                    { ticket:'TKT-00428', date:'27/05/2026', time:'16:30', cashier:'Carlos Ruiz',   cashierId:3, method:'Efectivo', status:'Completada', subtotal:489.48,  iva:78.32,  total:567.80,  items:[] },
+                    { ticket:'TKT-00427', date:'27/05/2026', time:'14:00', cashier:'Carlos Ruiz',   cashierId:3, method:'Efectivo', status:'Completada', subtotal:775.86,  iva:124.14, total:900.00,  items:[] },
+                ]);
+            }
+
+            // Seed movimientos
+            if (this.getCashMovements().length === 0) {
+                this.setCashMovements([
+                    { id:1, time:'09:00', type:'Apertura', concept:'Fondo inicial de caja', amount:1500, balance:1500, cashierId:1, cashierName:'Diego Mendoza' },
+                    { id:2, time:'10:23', type:'Ingreso',  concept:'Venta TKT-00430',       amount:1280, balance:2780, cashierId:1, cashierName:'Diego Mendoza' },
+                    { id:3, time:'11:45', type:'Ingreso',  concept:'Venta TKT-00431',       amount:2450, balance:5230, cashierId:2, cashierName:'María López'   },
+                    { id:4, time:'13:10', type:'Retiro',   concept:'Pago a proveedor',      amount:-800, balance:4430, cashierId:2, cashierName:'María López'   },
+                    { id:5, time:'14:30', type:'Ingreso',  concept:'Venta TKT-00432',       amount:188,  balance:4618, cashierId:3, cashierName:'Carlos Ruiz'   },
+                    { id:6, time:'08:50', type:'Apertura', concept:'Fondo inicial de caja', amount:1500, balance:1500, cashierId:2, cashierName:'María López'   },
+                    { id:7, time:'08:55', type:'Apertura', concept:'Fondo inicial de caja', amount:1500, balance:1500, cashierId:3, cashierName:'Carlos Ruiz'   },
+                ]);
+                // Seed balances
+                this.setCashBalance(1, { initial:1500, current:2780, isOpen:true });
+                this.setCashBalance(2, { initial:1500, current:3930, isOpen:true });
+                this.setCashBalance(3, { initial:1500, current:2968, isOpen:true });
+            }
+
+            // Guardar timestamp y versión
+            localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+            this._set('version', DB_VERSION);
         }
     }
 };
 
+// ── SESSION ───────────────────────────────────────────────────────────────────
+function getSession() {
+    try {
+        return JSON.parse(localStorage.getItem('nexpos_session') || 'null');
+    } catch { return null; }
+}
+
+function getSessionFallback() {
+    // Demo fallback si no hay sesión real
+    return { userId:1, role:'Administrador', name:'Diego Mendoza', branch:'Central' };
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let selectedCashier = null;
+let session = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
 function init() {
+    // Forzar seed de datos frescos
     DB.seedDemoData();
-    renderMovements();
-    updateKPIs();
+
+    // Leer sesión — fallback a demo si no existe
+    session = getSession() || getSessionFallback();
+
+    // Header dinámico
+    document.getElementById('headerName').textContent   = session.name || '—';
+    document.getElementById('headerRole').textContent   = session.role || '—';
+    const branchEl = document.getElementById('headerBranch');
+    branchEl.querySelector('span').textContent = session.branch || 'Sin sucursal';
+
+    // Poblar selector de cajeros
+    populateCashierSelect();
+
+    // Hora
+    document.getElementById('summaryTime').textContent =
+        new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+
     lucide.createIcons();
 }
 
-function updateKPIs() {
-    const b = DB.getCashBalance();
-    document.getElementById('kpiInitial').innerText = `$${b.initial.toFixed(2)}`;
-    document.getElementById('kpiCurrent').innerText = `$${b.current.toFixed(2)}`;
-    document.getElementById('summaryCurrent').innerText = `$${b.current.toFixed(2)}`;
-    document.getElementById('summaryTime').innerText = new Date().toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
+function populateCashierSelect() {
+    const branch  = session.branch || '';
+    const users   = DB.getUsers();
+    // Filtramos por rol Cajero o Encargado, y por sucursal de la sesión
+    const eligible = users.filter(u =>
+        (u.role === 'Cajero' || u.role === 'Encargado') &&
+        (!branch || u.branch === branch)
+    );
+
+    const select = document.getElementById('cashierSelect');
+    select.innerHTML = '<option value="">— Seleccionar cajero activo —</option>';
+
+    if (eligible.length === 0) {
+        // Mostrar todos si no hay sucursal o no hay coincidencias
+        users.filter(u => u.role === 'Cajero' || u.role === 'Encargado')
+             .forEach(u => {
+                 const o = document.createElement('option');
+                 o.value = u.id;
+                 o.textContent = `${u.name} (${u.code}) — ${u.branch}`;
+                 select.appendChild(o);
+             });
+    } else {
+        eligible.forEach(u => {
+            const o = document.createElement('option');
+            o.value = u.id;
+            o.textContent = `${u.name} (${u.code})`;
+            select.appendChild(o);
+        });
+    }
 }
 
-function renderMovements() {
-    const movs = DB.getCashMovements();
-    const tbody = document.getElementById('movimientosBody');
+// ── CASHIER CHANGE ────────────────────────────────────────────────────────────
+function onCashierChange() {
+    const id  = parseInt(document.getElementById('cashierSelect').value);
+    if (!id) {
+        selectedCashier = null;
+        resetCashierUI();
+        return;
+    }
 
-    if (movs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Sin movimientos registrados</td></tr>`;
+    selectedCashier = DB.getUsers().find(u => u.id === id) || null;
+    if (!selectedCashier) { resetCashierUI(); return; }
+
+    // Avatar initials
+    const initials = selectedCashier.name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
+    document.getElementById('cashierAvatar').textContent = initials;
+    document.getElementById('cashierSelectedName').textContent = selectedCashier.name;
+    document.getElementById('cashierSelectedCode').textContent = `${selectedCashier.code} · ${selectedCashier.role}`;
+
+    // Status pill
+    const balance = DB.getCashBalance(id);
+    const isOpen  = balance.isOpen;
+    const pill    = document.getElementById('cashierStatusPill');
+    const dot     = document.getElementById('cashierStatusDot');
+    const txt     = document.getElementById('cashierStatusText');
+    pill.className = `cashier-status-pill ${isOpen ? 'active' : 'inactive'}`;
+    dot.className  = `cashier-status-dot ${isOpen ? 'active' : 'inactive'}`;
+    txt.textContent = isOpen ? 'Turno activo' : 'Sin turno';
+
+    // Enable buttons
+    document.getElementById('btnCorteIndividual').disabled = false;
+    document.getElementById('btnArqueo').disabled = false;
+    document.getElementById('btnRegistrarMovimiento').disabled = !isOpen;
+
+    // Update KPIs
+    updateKPIs();
+    filterMovements();
+    lucide.createIcons();
+}
+
+function resetCashierUI() {
+    document.getElementById('cashierAvatar').textContent = '—';
+    document.getElementById('cashierSelectedName').textContent = 'Sin cajero seleccionado';
+    document.getElementById('cashierSelectedCode').textContent = 'Selecciona un cajero para ver su caja';
+    document.getElementById('cashierStatusPill').className = 'cashier-status-pill inactive';
+    document.getElementById('cashierStatusDot').className  = 'cashier-status-dot inactive';
+    document.getElementById('cashierStatusText').textContent = 'Sin turno';
+    document.getElementById('btnCorteIndividual').disabled = true;
+    document.getElementById('btnArqueo').disabled = true;
+    document.getElementById('btnRegistrarMovimiento').disabled = true;
+    // Reset KPIs
+    ['kpiInitial','kpiCurrent','kpiSales','summaryCurrent'].forEach(id =>
+        document.getElementById(id).textContent = '$—');
+    document.getElementById('kpiSalesCount').textContent = '0';
+    document.getElementById('kpiInitialSub').textContent = 'Selecciona un cajero';
+    document.getElementById('summaryCashier').textContent = 'Selecciona un cajero activo';
+    document.getElementById('summaryIngresos').textContent = '+$0.00';
+    document.getElementById('summaryRetiros').textContent  = '-$0.00';
+    document.getElementById('summarySalesCount').textContent = '0 transacciones';
+    document.getElementById('movimientosBody').innerHTML =
+        '<tr class="empty-row"><td colspan="6">Selecciona un cajero para ver sus movimientos</td></tr>';
+    document.getElementById('movCountBadge').textContent = '0';
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+function updateKPIs() {
+    if (!selectedCashier) return;
+    const cid     = selectedCashier.id;
+    const balance = DB.getCashBalance(cid);
+    const sales   = DB.getSales().filter(s =>
+        s.status === 'Completada' && s.cashierId === cid && s.method !== 'Tarjeta'
+    );
+    const salesTotal = sales.reduce((sum, s) => sum + s.total, 0);
+
+    const movs     = DB.getCashMovements().filter(m => m.cashierId === cid);
+    const ingresos = movs.filter(m => m.amount > 0 && m.type !== 'Apertura')
+                        .reduce((s, m) => s + m.amount, 0);
+    const retiros  = movs.filter(m => m.amount < 0)
+                        .reduce((s, m) => s + Math.abs(m.amount), 0);
+
+    document.getElementById('kpiInitial').textContent  = `$${balance.initial.toFixed(2)}`;
+    document.getElementById('kpiCurrent').textContent  = `$${balance.current.toFixed(2)}`;
+    document.getElementById('kpiSales').textContent    = `$${salesTotal.toFixed(2)}`;
+    document.getElementById('kpiSalesCount').textContent = sales.length;
+    document.getElementById('kpiInitialSub').textContent = `Apertura del turno actual`;
+
+    document.getElementById('summaryCurrent').textContent  = `$${balance.current.toFixed(2)}`;
+    document.getElementById('summaryCashier').textContent  = `Cajero: ${selectedCashier.name}`;
+    document.getElementById('summaryIngresos').textContent = `+$${ingresos.toFixed(2)}`;
+    document.getElementById('summaryRetiros').textContent  = `-$${retiros.toFixed(2)}`;
+    document.getElementById('summarySalesCount').textContent = `${sales.length} transacciones`;
+    document.getElementById('summaryTime').textContent =
+        new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ── MOVEMENTS TABLE ───────────────────────────────────────────────────────────
+function filterMovements() {
+    if (!selectedCashier) return;
+    const cid   = selectedCashier.id;
+    const query = document.getElementById('filterSearch').value.toLowerCase();
+    const type  = document.getElementById('filterType').value;
+    const from  = document.getElementById('filterTimeFrom').value;
+    const to    = document.getElementById('filterTimeTo').value;
+
+    let movs = DB.getCashMovements().filter(m => {
+        if (m.cashierId !== cid) return false;
+        if (query && !m.concept.toLowerCase().includes(query)) return false;
+        if (type  && m.type !== type) return false;
+        if (from  && m.time < from) return false;
+        if (to    && m.time > to)   return false;
+        return true;
+    });
+
+    renderMovementsTable(movs);
+}
+
+function renderMovementsTable(movs) {
+    const tbody = document.getElementById('movimientosBody');
+    document.getElementById('movCountBadge').textContent = movs.length;
+
+    if (!movs.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Sin movimientos para este cajero</td></tr>';
         return;
     }
 
     tbody.innerHTML = movs.map(m => {
-        const isPositive = m.amount >= 0;
-        const typeClass = m.type.toLowerCase();
+        const pos   = m.amount >= 0;
+        const tClass = m.type.toLowerCase();
         return `
-        <tr class="hover:bg-slate-50/40 transition-colors">
+        <tr class="hover:bg-slate-50 transition-colors">
             <td class="p-4 pl-6 font-mono text-xs text-slate-500">${m.time}</td>
-            <td class="p-4"><span class="status-badge ${typeClass}">${m.type}</span></td>
-            <td class="p-4">${m.concept}</td>
-            <td class="p-4 text-right font-mono font-bold" style="color: ${isPositive ? 'var(--emerald-600)' : 'var(--rose-600)'}">${isPositive ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}</td>
-            <td class="p-4 text-right pr-6 font-mono font-bold">$${m.balance.toFixed(2)}</td>
+            <td class="p-4"><span class="status-badge ${tClass}">${m.type}</span></td>
+            <td class="p-4 text-xs text-slate-500">${m.cashierName || '—'}</td>
+            <td class="p-4 text-sm">${m.concept}</td>
+            <td class="p-4 text-right font-mono font-bold" style="color:${pos ? 'var(--emerald-600)' : 'var(--rose-600)'}">
+                ${pos ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}
+            </td>
+            <td class="p-4 text-right pr-6 font-mono font-bold text-slate-900">$${m.balance.toFixed(2)}</td>
         </tr>`;
     }).join('');
     lucide.createIcons();
 }
 
-function filterMovements() {
-    const query = document.getElementById('filterSearch').value.toLowerCase();
-    const type = document.getElementById('filterType').value;
-    const from = document.getElementById('filterTimeFrom').value;
-    const to = document.getElementById('filterTimeTo').value;
-
-    const movs = DB.getCashMovements().filter(m => {
-        const matchText = !query || m.concept.toLowerCase().includes(query);
-        const matchType = !type || m.type === type;
-        let matchTime = true;
-        if (from || to) {
-            if (from && m.time < from) matchTime = false;
-            if (to && m.time > to) matchTime = false;
-        }
-        return matchText && matchType && matchTime;
-    });
-
-    const tbody = document.getElementById('movimientosBody');
-    tbody.innerHTML = movs.length === 0 ? `<tr><td colspan="5" class="p-8 text-center text-slate-400">Sin resultados</td></tr>` :
-        movs.map(m => {
-            const isPositive = m.amount >= 0;
-            const typeClass = m.type.toLowerCase();
-            return `
-            <tr class="hover:bg-slate-50/40 transition-colors">
-                <td class="p-4 pl-6 font-mono text-xs text-slate-500">${m.time}</td>
-                <td class="p-4"><span class="status-badge ${typeClass}">${m.type}</span></td>
-                <td class="p-4">${m.concept}</td>
-                <td class="p-4 text-right font-mono font-bold" style="color: ${isPositive ? 'var(--emerald-600)' : 'var(--rose-600)'}">${isPositive ? '+' : ''}$${Math.abs(m.amount).toFixed(2)}</td>
-                <td class="p-4 text-right pr-6 font-mono font-bold">$${m.balance.toFixed(2)}</td>
-            </tr>`;
-        }).join('');
-}
-
 function clearFilters() {
     document.getElementById('filterSearch').value = '';
-    document.getElementById('filterType').value = '';
+    document.getElementById('filterType').value   = '';
     document.getElementById('filterTimeFrom').value = '';
-    document.getElementById('filterTimeTo').value = '';
+    document.getElementById('filterTimeTo').value   = '';
     filterMovements();
 }
 
-// Modal Functions
-function openMovementModal() {
-    document.getElementById('movementModal').classList.add('active');
-    document.getElementById('modalConcept').value = '';
-    document.getElementById('modalAmount').value = '';
-    document.getElementById('modalType').value = 'Ingreso';
-    updateAmountPlaceholder();
-    setTimeout(() => document.getElementById('modalConcept').focus(), 100);
+// ── ABRIR CAJA ────────────────────────────────────────────────────────────────
+function abrirCaja() {
+    if (!selectedCashier) { showToast('Selecciona un cajero primero', 'error'); return; }
+    const cid     = selectedCashier.id;
+    const balance = DB.getCashBalance(cid);
+    if (balance.isOpen) { showToast('Este cajero ya tiene turno activo', 'error'); return; }
+
+    const now  = new Date();
+    const time = now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+
+    DB.setCashBalance(cid, { initial:1500, current:1500, isOpen:true });
+    DB.addMovement({
+        id: Date.now(), time, type:'Apertura',
+        concept:`Apertura de turno — ${selectedCashier.name}`,
+        amount:1500, balance:1500,
+        cashierId: cid, cashierName: selectedCashier.name
+    });
+
+    onCashierChange(); // refresh UI
+    showToast(`Turno abierto para ${selectedCashier.name}`, 'success');
 }
 
+// ── REGISTRAR MOVIMIENTO ──────────────────────────────────────────────────────
+function openMovementModal() {
+    if (!selectedCashier) { showToast('Selecciona un cajero primero', 'error'); return; }
+    const initials = selectedCashier.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+    document.getElementById('movModalAvatar').textContent     = initials;
+    document.getElementById('movModalCashierName').textContent = selectedCashier.name;
+    document.getElementById('modalConcept').value = '';
+    document.getElementById('modalAmount').value  = '';
+    document.getElementById('modalType').value    = 'Ingreso';
+    document.getElementById('movementModal').classList.add('active');
+    setTimeout(() => document.getElementById('modalConcept').focus(), 100);
+    lucide.createIcons();
+}
 function closeMovementModal() {
     document.getElementById('movementModal').classList.remove('active');
 }
 
-function updateAmountPlaceholder() {
-    const type = document.getElementById('modalType').value;
-    document.getElementById('modalAmount').placeholder = type === 'Ingreso' ? '0.00' : '0.00';
-}
-
 function saveMovement() {
-    const type = document.getElementById('modalType').value;
+    const type    = document.getElementById('modalType').value;
     const concept = document.getElementById('modalConcept').value.trim();
-    const amount = parseFloat(document.getElementById('modalAmount').value);
+    const amount  = parseFloat(document.getElementById('modalAmount').value);
 
     if (!concept) { showToast('Ingresa un concepto', 'error'); return; }
     if (isNaN(amount) || amount <= 0) { showToast('Ingresa un monto válido', 'error'); return; }
+    if (!selectedCashier) { showToast('Sin cajero seleccionado', 'error'); return; }
 
-    const balance = DB.getCashBalance();
-    const movs = DB.getCashMovements();
-    const now = new Date();
-    const time = now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
-    const signedAmount = type === 'Retiro' ? -amount : amount;
-    const prevBalance = movs.length > 0 ? movs[0].balance : balance.initial;
+    const btn = document.getElementById('btnSaveMovement');
+    btn.disabled = true; btn.classList.add('btn-loading');
 
-    movs.unshift({
-        id: Date.now(), time, type, concept,
-        amount: signedAmount, balance: prevBalance + signedAmount
-    });
+    setTimeout(() => {
+        const cid     = selectedCashier.id;
+        const balance = DB.getCashBalance(cid);
+        const movs    = DB.getCashMovements().filter(m => m.cashierId === cid);
+        const prevBal = movs.length > 0 ? movs[0].balance : balance.current;
+        const signed  = type === 'Retiro' ? -amount : amount;
+        const newBal  = prevBal + signed;
 
-    balance.current += signedAmount;
-    DB.setCashMovements(movs);
-    DB.setCashBalance(balance);
+        DB.addMovement({
+            id: Date.now(),
+            time: new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' }),
+            type, concept, amount: signed, balance: newBal,
+            cashierId: cid, cashierName: selectedCashier.name
+        });
+        DB.setCashBalance(cid, { ...balance, current: newBal });
 
-    renderMovements();
-    updateKPIs();
-    closeMovementModal();
-    showToast(`Movimiento registrado: ${concept}`, 'success');
+        closeMovementModal();
+        updateKPIs();
+        filterMovements();
+        btn.disabled = false; btn.classList.remove('btn-loading');
+        showToast(`Movimiento registrado: ${concept}`, 'success');
+    }, 600);
 }
 
+// ── CERRAR TURNO ──────────────────────────────────────────────────────────────
 function openCloseShiftModal() {
-    document.getElementById('closeShiftModal').classList.add('active');
-}
+    if (!selectedCashier) { showToast('Selecciona un cajero primero', 'error'); return; }
+    const cid     = selectedCashier.id;
+    const balance = DB.getCashBalance(cid);
+    const movs    = DB.getCashMovements().filter(m => m.cashierId === cid);
+    const ingresos = movs.filter(m => m.amount > 0 && m.type !== 'Apertura').reduce((s,m)=>s+m.amount,0);
+    const retiros  = movs.filter(m => m.amount < 0).reduce((s,m)=>s+Math.abs(m.amount),0);
 
+    document.getElementById('closeShiftSummary').innerHTML = `
+        <div class="flex justify-between text-sm mb-1"><span class="text-slate-500">Cajero</span><span class="font-bold text-slate-900">${selectedCashier.name}</span></div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-slate-500">Fondo inicial</span><span class="font-mono font-bold">$${balance.initial.toFixed(2)}</span></div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-slate-500">Ingresos</span><span class="font-mono font-bold text-emerald-600">+$${ingresos.toFixed(2)}</span></div>
+        <div class="flex justify-between text-sm mb-1"><span class="text-slate-500">Retiros</span><span class="font-mono font-bold text-rose-600">-$${retiros.toFixed(2)}</span></div>
+        <hr style="border-color:var(--slate-200);margin:.5rem 0">
+        <div class="flex justify-between text-base"><span class="font-bold">Saldo final</span><span class="font-mono font-black text-emerald-600">$${balance.current.toFixed(2)}</span></div>
+    `;
+    document.getElementById('closeShiftNotes').value = '';
+    document.getElementById('closeShiftModal').classList.add('active');
+    lucide.createIcons();
+}
 function closeCloseShiftModal() {
     document.getElementById('closeShiftModal').classList.remove('active');
 }
-
 function confirmCloseShift() {
-    const balance = DB.getCashBalance();
-    const movs = DB.getCashMovements();
-    const ingresos = movs.filter(m => m.type === 'Ingreso').reduce((s, m) => s + m.amount, 0);
-    const egresos = movs.filter(m => m.type === 'Retiro').reduce((s, m) => s + Math.abs(m.amount), 0);
-    const notes = document.getElementById('closeShiftNotes').value;
+    if (!selectedCashier) return;
+    const cid     = selectedCashier.id;
+    const balance = DB.getCashBalance(cid);
+    const notes   = document.getElementById('closeShiftNotes').value;
+    const now     = new Date();
 
-    const now = new Date();
-    const time = now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
-    movs.unshift({
-        id: Date.now(), time, type: 'Cierre',
-        concept: `Cierre de turno${notes ? ' - ' + notes : ''}`,
-        amount: 0, balance: balance.current
+    DB.addMovement({
+        id: Date.now(),
+        time: now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' }),
+        type: 'Cierre',
+        concept: `Cierre de turno${notes ? ' — ' + notes : ''}`,
+        amount: 0, balance: balance.current,
+        cashierId: cid, cashierName: selectedCashier.name
+    });
+    DB.setCashBalance(cid, { ...balance, isOpen: false });
+
+    closeCloseShiftModal();
+    onCashierChange();
+    showToast(`Turno cerrado para ${selectedCashier.name} · Saldo: $${balance.current.toFixed(2)}`, 'success');
+    setTimeout(() => showToast('Reporte de corte generado (simulado)', 'success'), 1200);
+}
+
+// ── ARQUEO ────────────────────────────────────────────────────────────────────
+const DENOMS = [
+    { id:'d1000', val:1000, sid:'s1000' },
+    { id:'d500',  val:500,  sid:'s500'  },
+    { id:'d200',  val:200,  sid:'s200'  },
+    { id:'d100',  val:100,  sid:'s100'  },
+    { id:'d50',   val:50,   sid:'s50'   },
+    { id:'d20',   val:20,   sid:'s20'   },
+    { id:'d10',   val:10,   sid:'s10'   },
+    { id:'d5',    val:5,    sid:'s5'    },
+    { id:'d2',    val:2,    sid:'s2'    },
+    { id:'d1',    val:1,    sid:'s1'    },
+    { id:'d050',  val:.5,   sid:'s050'  },
+];
+
+function openArqueoModal() {
+    if (!selectedCashier) { showToast('Selecciona un cajero primero', 'error'); return; }
+    document.getElementById('arqueoSubtitle').textContent =
+        `Cajero: ${selectedCashier.name} · ${selectedCashier.code}`;
+    DENOMS.forEach(d => {
+        document.getElementById(d.id).value = 0;
+        document.getElementById(d.sid).textContent = '$0.00';
+    });
+    const balance = DB.getCashBalance(selectedCashier.id);
+    document.getElementById('arqueoSistema').textContent = `$${balance.current.toFixed(2)}`;
+    document.getElementById('arqueoContado').textContent = '$0.00';
+    const diffEl = document.getElementById('arqueosDiff');
+    diffEl.textContent = '$0.00';
+    diffEl.className   = 'text-base font-black font-mono arqueo-diff ok';
+    document.getElementById('arqueoModal').classList.add('active');
+    lucide.createIcons();
+}
+function closeArqueoModal() {
+    document.getElementById('arqueoModal').classList.remove('active');
+}
+function calcArqueo() {
+    let total = 0;
+    DENOMS.forEach(d => {
+        const qty     = parseInt(document.getElementById(d.id).value) || 0;
+        const subtotal = qty * d.val;
+        total += subtotal;
+        document.getElementById(d.sid).textContent = `$${subtotal.toFixed(2)}`;
     });
 
-    DB.setCashMovements(movs);
-    DB.setCashBalance({ initial: 0, current: 0, isOpen: false });
+    const balance  = DB.getCashBalance(selectedCashier.id);
+    const sistema  = balance.current;
+    const diff     = total - sistema;
+    const diffEl   = document.getElementById('arqueosDiff');
 
-    renderMovements();
-    updateKPIs();
-    closeCloseShiftModal();
-
-    showToast(`Turno cerrado. Saldo final: $${balance.current.toFixed(2)}`, 'success');
-
-    setTimeout(() => {
-        showToast('Reporte de corte generado', 'success');
-    }, 1500);
+    document.getElementById('arqueoContado').textContent = `$${total.toFixed(2)}`;
+    diffEl.textContent = `${diff >= 0 ? '+' : ''}$${diff.toFixed(2)}`;
+    diffEl.className   = `text-base font-black font-mono arqueo-diff ${diff === 0 ? 'ok' : 'mismatch'}`;
 }
-
-// Button Handlers
-document.getElementById('btnAbrirCaja').addEventListener('click', function() {
-    const balance = DB.getCashBalance();
-    if (balance.isOpen) { showToast('La caja ya está abierta', 'error'); return; }
-
+function guardarArqueo() {
+    if (!selectedCashier) return;
+    let total = 0;
+    DENOMS.forEach(d => total += (parseInt(document.getElementById(d.id).value)||0) * d.val);
+    const balance = DB.getCashBalance(selectedCashier.id);
+    const diff    = total - balance.current;
+    closeArqueoModal();
+    if (diff === 0) {
+        showToast(`Arqueo correcto — $${total.toFixed(2)} contado`, 'success');
+    } else {
+        showToast(`Arqueo guardado — Diferencia: ${diff >= 0 ? '+' : ''}$${diff.toFixed(2)}`, diff === 0 ? 'success' : 'error');
+    }
+    // Registrar el arqueo como movimiento
     const now = new Date();
-    const time = now.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
-    const movs = DB.getCashMovements();
-    movs.unshift({ id: Date.now(), time, type: 'Apertura', concept: 'Fondo inicial de caja', amount: 1500, balance: 1500 });
-
-    DB.setCashBalance({ initial: 1500, current: 1500, isOpen: true });
-    DB.setCashMovements(movs);
-
-    renderMovements();
-    updateKPIs();
-    showToast('Caja #1 abierta con fondo de $1,500.00', 'success');
-});
-
-document.getElementById('btnCerrarTurno').addEventListener('click', openCloseShiftModal);
-document.getElementById('btnRegistrarMovimiento').addEventListener('click', openMovementModal);
-
-// Toast Notifications
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
-    container.appendChild(toast);
-    lucide.createIcons();
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+    DB.addMovement({
+        id: Date.now(),
+        time: now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' }),
+        type: 'Ingreso',
+        concept: `Arqueo de caja — Contado: $${total.toFixed(2)} / Sistema: $${balance.current.toFixed(2)} / Dif: ${diff >= 0 ? '+' : ''}$${diff.toFixed(2)}`,
+        amount: 0, balance: balance.current,
+        cashierId: selectedCashier.id, cashierName: selectedCashier.name
+    });
+    filterMovements();
 }
 
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+// ── CORTE INDIVIDUAL ──────────────────────────────────────────────────────────
+function openCorteModal() {
+    if (!selectedCashier) return;
+    const cid    = selectedCashier.id;
+    const bal    = DB.getCashBalance(cid);
+    const movs   = DB.getCashMovements().filter(m => m.cashierId === cid);
+    const ingresos = movs.filter(m => m.amount > 0 && m.type !== 'Apertura').reduce((s,m)=>s+m.amount,0);
+    const retiros  = movs.filter(m => m.amount < 0).reduce((s,m)=>s+Math.abs(m.amount),0);
+    const sales    = DB.getSales().filter(s => s.status==='Completada' && s.cashierId===cid);
+    const efectivo = sales.filter(s => s.method==='Efectivo').reduce((s,v)=>s+v.total,0);
+    const tarjeta  = sales.filter(s => s.method==='Tarjeta').reduce((s,v)=>s+v.total,0);
+    const now      = new Date();
+
+    document.getElementById('cortePreviewContent').innerHTML = `
+        <div class="cp-title">CORTE INDIVIDUAL — ${selectedCashier.name.toUpperCase()}</div>
+        <div class="cp-row"><span>Código:</span><span>${selectedCashier.code}</span></div>
+        <div class="cp-row"><span>Fecha:</span><span>${now.toLocaleDateString('es-MX')}</span></div>
+        <div class="cp-row"><span>Hora:</span><span>${now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}</span></div>
+        <hr class="cp-divider">
+        <div class="cp-row"><span>Fondo inicial:</span><span>$${bal.initial.toFixed(2)}</span></div>
+        <div class="cp-row"><span>Ingresos:</span><span>+$${ingresos.toFixed(2)}</span></div>
+        <div class="cp-row"><span>Retiros:</span><span>-$${retiros.toFixed(2)}</span></div>
+        <hr class="cp-divider">
+        <div class="cp-row"><span>Ventas efectivo:</span><span>$${efectivo.toFixed(2)}</span></div>
+        <div class="cp-row"><span>Ventas tarjeta:</span><span>$${tarjeta.toFixed(2)}</span></div>
+        <div class="cp-row"><span>Total tickets:</span><span>${sales.length}</span></div>
+        <hr class="cp-divider">
+        <div class="cp-row cp-total"><span>SALDO FINAL:</span><span>$${bal.current.toFixed(2)}</span></div>
+        <hr class="cp-divider">
+        <div class="cp-row" style="font-size:.65rem;color:#94a3b8"><span>NexPoS · Modo Demo</span><span>${selectedCashier.branch}</span></div>
+    `;
+    document.getElementById('corteModal').classList.add('active');
+    lucide.createIcons();
+}
+function closeCorteModal() {
+    document.getElementById('corteModal').classList.remove('active');
+}
+function printCorte() {
+    showToast('Enviando a impresora (simulado)', 'success');
+    closeCorteModal();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(message, type = 'success') {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<i data-lucide="${type === 'success' ? 'circle-check' : 'circle-alert'}" class="icon ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i><span class="message">${message}</span>`;
+    c.appendChild(t);
+    lucide.createIcons();
+    setTimeout(() => {
+        t.style.opacity = '0'; t.style.transform = 'translateX(20px)';
+        setTimeout(() => t.remove(), 300);
+    }, 3500);
+}
+
+// Close modals on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')
+        document.querySelectorAll('.modal-overlay.active').forEach(o => o.classList.remove('active'));
 });
 
 window.onload = init;
     </script>
-    <script src="shared/navbar.js?v=1"></script>
+
+    <script src="shared/navbar.js" onerror="console.log('navbar.js not found - standalone mode')"></script>
 </body>
 </html>
